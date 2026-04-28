@@ -63,25 +63,23 @@ public class FtbQuestsTab extends ConfigurableItemTab {
 
     @Override
     public void initTabOnScreens() {
-        // Register FTB Quests screen classes with inverted display at the top
+        if (!ModIntegrationManager.isModLoaded(ModIntegration.FTB_QUESTS)) {
+            // FTB Quests not installed — let FtbTeamsTab claim the shared ScreenWrapper if needed.
+            return;
+        }
+        // When FTB Quests is present we own the shared ftblibrary ScreenWrapper registration;
+        // FtbTeamsTab detects this and skips its own ScreenWrapper registration to avoid a duplicate.
         ScreenRegistry.builder()
             .withStandardDimensions()
             .inverted()
             .atTop()
             .registerAllTabs(
-                "dev.ftb.mods.ftblibrary.ui.ScreenWrapper", // Main FTB Quests screen
-                "dev.ftb.mods.ftbquests.client.gui.quests.QuestScreen",
-                "dev.ftb.mods.ftbquests.client.gui.QuestionScreen",
-                "dev.ftb.mods.ftbquests.client.gui.QuestsScreen",
-                "dev.ftb.mods.ftbquests.client.screens.QuestScreen",
-                "dev.ftb.mods.ftbquests.client.QuestScreen"
+                vodmordia.modtabs.utils.ScreenClasses.FTB_LIBRARY_WRAPPER,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_QUEST_SCREEN,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_QUESTION_SCREEN,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_QUESTS_SCREEN,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_QUEST_SCREEN_ALT1,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_QUEST_SCREEN_ALT2
             );
-
-        // Force register ScreenWrapper to override any existing registration from FTB Teams
-        ScreenRegistry.builder()
-            .withStandardDimensions()
-            .inverted()
-            .atTop()
-            .forceRegisterAllTabs("dev.ftb.mods.ftblibrary.ui.ScreenWrapper");
     }
 }

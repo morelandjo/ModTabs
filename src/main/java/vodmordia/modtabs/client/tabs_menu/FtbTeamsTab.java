@@ -45,24 +45,32 @@ public class FtbTeamsTab extends ConfigurableIconTab {
 
     @Override
     public void initTabOnScreens() {
-        // Register FTB Teams screen classes with inverted display at the top
-        // FTB Teams uses the same ScreenWrapper as FTB Quests
-        ScreenRegistry.builder()
-            .withStandardDimensions()
-            .inverted()
-            .atTop()
-            .registerAllTabs(
-                "dev.ftb.mods.ftblibrary.ui.ScreenWrapper", // Main FTB Teams screen
-                "dev.ftb.mods.ftbteams.client.gui.TeamsScreen",
-                "dev.ftb.mods.ftbteams.client.screens.TeamsScreen",
-                "dev.ftb.mods.ftbteams.client.TeamsScreen"
-            );
+        if (!ModIntegrationManager.isModLoaded(ModIntegration.FTB_TEAMS)) {
+            return;
+        }
+        // FTB Quests and FTB Teams share dev.ftb.mods.ftblibrary.ui.ScreenWrapper. When Quests is
+        // also installed it owns the ScreenWrapper registration, so we only claim it here as a
+        // fallback — otherwise the two tabs would register the same screen with identical params
+        // and fight over it via forceRegister.
+        boolean questsLoaded = ModIntegrationManager.isModLoaded(ModIntegration.FTB_QUESTS);
 
-        // Force register ScreenWrapper to override any existing registration from FTB Quests
+        String[] screens = questsLoaded
+            ? new String[] {
+                vodmordia.modtabs.utils.ScreenClasses.FTB_TEAMS_SCREEN,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_TEAMS_SCREEN_ALT1,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_TEAMS_SCREEN_ALT2
+            }
+            : new String[] {
+                vodmordia.modtabs.utils.ScreenClasses.FTB_LIBRARY_WRAPPER,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_TEAMS_SCREEN,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_TEAMS_SCREEN_ALT1,
+                vodmordia.modtabs.utils.ScreenClasses.FTB_TEAMS_SCREEN_ALT2
+            };
+
         ScreenRegistry.builder()
             .withStandardDimensions()
             .inverted()
             .atTop()
-            .forceRegisterAllTabs("dev.ftb.mods.ftblibrary.ui.ScreenWrapper");
+            .registerAllTabs(screens);
     }
 }

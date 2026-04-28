@@ -13,6 +13,7 @@ import vodmordia.modtabs.config.Config;
 import vodmordia.modtabs.config.ModTabsConfig;
 import vodmordia.modtabs.config.TabDisplayVisibility;
 import vodmordia.modtabs.client.animation.TabBarAnimationManager;
+import vodmordia.modtabs.utils.ScreenClasses;
 
 import java.util.*;
 import java.util.function.Function;
@@ -44,48 +45,54 @@ public class TabsMenu {
     private static TabDisplayVisibility getTabDisplayVisibilityForScreen(Screen screen) {
         String screenClassName = screen.getClass().getName();
 
-        // Check each screen type and its corresponding display visibility setting
+        // Check each screen type and its corresponding display visibility setting.
+        // Class-name strings come from ScreenClasses so a mod rename only edits one constant.
         switch (screenClassName) {
-            case "net.minecraft.client.gui.screens.inventory.InventoryScreen":
+            case ScreenClasses.VANILLA_INVENTORY:
                 return ModTabsConfig.inventoryTabDisplayVisibility;
-            case "net.minecraft.client.gui.screens.advancements.AdvancementsScreen":
-            case "betteradvancements.common.gui.BetterAdvancementsScreen":
+            case ScreenClasses.VANILLA_ADVANCEMENTS:
+            case ScreenClasses.BETTER_ADVANCEMENTS:
                 return ModTabsConfig.advancementsTabDisplayVisibility;
-            case "com.dhanantry.arsnouveau.client.gui.SpellBookGUI":
-            case "com.dhanantry.arsnouveau.client.gui.SpellBookScreen":
+            case ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI_LEGACY1:
+            case ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI_LEGACY2:
                 return ModTabsConfig.arsNouveauTabDisplayVisibility;
-            case "com.jozufozu.flywheel.util.transform.TransformStack":
-            case "net.backpacked.client.screen.BackpackScreen":
-            case "com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen":
+            case ScreenClasses.BACKPACKED_FLYWHEEL_TRANSFORM:
+            case ScreenClasses.BACKPACKED_SCREEN_ALT:
+            case ScreenClasses.BACKPACKED_SCREEN:
                 return ModTabsConfig.backpackedTabDisplayVisibility;
-            case "sfiomn.legendarysurvivaloverhaul.client.gui.BodyHealthScreen":
+            case ScreenClasses.LSO_BODY_HEALTH:
                 return ModTabsConfig.bodyDamageTabDisplayVisibility;
-            case "com.cobblemon.mod.common.client.gui.PartyGUI":
-            case "com.cobblemon.mod.common.client.gui.party.PartyGUI":
+            case ScreenClasses.COBBLEMON_PARTY_LEGACY:
+            case ScreenClasses.COBBLEMON_PARTY:
                 return ModTabsConfig.cobblemonTabDisplayVisibility;
-            case "squeek.appleskin.client.gui.screen.FoodStatsScreen":
+            case ScreenClasses.APPLESKIN_FOOD_STATS:
                 return ModTabsConfig.dietTabDisplayVisibility;
-            case "dev.ftb.mods.ftblibrary.ui.ScreenWrapper":
+            case ScreenClasses.FTB_LIBRARY_WRAPPER:
                 // This could be FTB Quests or FTB Teams - use FTB Quests setting as default
                 return ModTabsConfig.ftbQuestsTabDisplayVisibility;
-            case "journeymap.client.ui.fullscreen.Fullscreen":
+            case ScreenClasses.JOURNEYMAP_FULLSCREEN:
                 return ModTabsConfig.journeyMapTabDisplayVisibility;
-            case "com.dhanantry.scguns.client.screen.AttachmentScreen":
-            case "com.brandon3055.draconicevolution.client.gui.GuiDraconicEvolution":
+            case ScreenClasses.SCGUNS_ATTACHMENT:
+            case ScreenClasses.DRACONIC_EVOLUTION_GUI:
                 return ModTabsConfig.draconicEvolutionTabDisplayVisibility;
-            case "pepjebs.mapatlases.client.ui.MapAtlasesAccessUtils":
+            case ScreenClasses.MAP_ATLASES_ACCESS_UTILS:
                 return ModTabsConfig.mapAtlasesTabDisplayVisibility;
-            case "xaero.map.gui.GuiMap":
+            case ScreenClasses.XAEROS_MAP:
                 return ModTabsConfig.xaerosMapTabDisplayVisibility;
-            case "puffish.skillsmod.client.screen.SkillScreen":
+            case ScreenClasses.PUFFERFISH_SKILLS_ALT1:
+            case ScreenClasses.PUFFERFISH_SKILLS_ALT2:
                 return ModTabsConfig.pufferfishSkillsTabDisplayVisibility;
-            case "net.puffish.skillsmod.client.screen.SkillScreen":
-                return ModTabsConfig.pufferfishSkillsTabDisplayVisibility;
-            case "com.dhanantry.scguns.client.screen.PassiveSkillScreen":
+            case ScreenClasses.SCGUNS_PASSIVE_SKILL:
                 return ModTabsConfig.passiveSkillTreeTabDisplayVisibility;
-            case "net.swzo.brassworksmissions.client.gui.UiScreen":
+            case ScreenClasses.BRASSWORKS_MISSIONS_UI:
                 return ModTabsConfig.brassworksMissionsTabDisplayVisibility;
-            case "net.minecraft.client.gui.screens.inventory.AbstractContainerScreen":
+            case ScreenClasses.BIOLOGY_DICTIONARY_HOME_SCREEN:
+            case ScreenClasses.BIOLOGY_DICTIONARY_ABOUT_SCREEN:
+            case ScreenClasses.BIOLOGY_DICTIONARY_CONFIG_SCREEN:
+            case ScreenClasses.BIOLOGY_DICTIONARY_ENTITY_OVERVIEW_SCREEN:
+            case ScreenClasses.BIOLOGY_DICTIONARY_ENTITY_DETAIL_SCREEN:
+                return ModTabsConfig.biologyDictionaryTabDisplayVisibility;
+            case ScreenClasses.VANILLA_CONTAINER:
                 // Check if it's a sophisticated backpack screen
                 if (screenClassName.contains("sophisticatedbackpacks")) {
                     return ModTabsConfig.sophisticatedBackpacksTabDisplayVisibility;
@@ -226,9 +233,6 @@ public class TabsMenu {
                 screenInfo.customTabY = registration.customTabY;
                 screenInfo.screenEdgeOffset = registration.screenEdgeOffset;
                 tabsScreens.put(registration.screenClass, screenInfo);
-
-                // Debug logging for FTB Quests ScreenWrapper specifically
-            } else {
             }
 
             // Add all registered tabs to this screen with default priority 10
@@ -457,7 +461,6 @@ public class TabsMenu {
                 event.addListener(new NextTabsButton(currentTabsCount, TabsMenu.leftScreenPos, TabsMenu.topScreenPos, screenInfo.displayMode,
                         button -> nextTabButtons(event.getScreen())));
             }
-        } else {
         }
     }
 
@@ -680,10 +683,10 @@ public class TabsMenu {
         public void addTab(int priority, TabBase newTab) {
             if (this.tabs.containsKey(priority)) {
                 List<TabBase> existingTabs = this.tabs.get(priority);
-                // Check for duplicate tabs of the same class
-                boolean alreadyExists = existingTabs.stream()
-                    .anyMatch(tab -> tab.getClass().equals(newTab.getClass()));
-                if (!alreadyExists) {
+                // Dedup by instance, not by class — multiple CustomJsonTab instances
+                // (one per JSON definition) all share the same class but are distinct tabs.
+                // A class-based check would silently drop every custom tab after the first.
+                if (!existingTabs.contains(newTab)) {
                     existingTabs.add(newTab);
                 }
             } else {

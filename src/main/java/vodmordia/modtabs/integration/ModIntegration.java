@@ -12,6 +12,7 @@ public enum ModIntegration {
     RESKILLABLE_REIMAGINED("reskillable", "Reskillable Reimagined"),
     FTB_QUESTS("ftbquests", "FTB Quests"),
     FTB_TEAMS("ftbteams", "FTB Teams"),
+    FTB_CHUNKS("ftbchunks", "FTB Chunks"),
     QUARK_ODDITIES("quarkoddities", "Quark Oddities"),
     COSMETIC_ARMOR("cosmeticarmorreworked", "Cosmetic Armor"),
     MAP_ATLASES("map_atlases", "Map Atlases"),
@@ -35,7 +36,9 @@ public enum ModIntegration {
     ECCENTRIC_TOME("eccentrictome", "Eccentric Tome"),
     BETTER_ADVANCEMENTS("betteradvancements", "Better Advancements"),
     RPG_CRAFTING("rpgcrafting", "RPG Crafting"),
-    MOTP("memory_of_the_past", "MOTP - RPG Player Leveling");
+    MOTP("memory_of_the_past", "MOTP - RPG Player Leveling"),
+    BIOLOGY_DICTIONARY("biologydictionary", "Biology Dictionary"),
+    RELIABLE_BACKPACKS("reliable_backpacks", "Reliable Backpacks");
 
     private final String modId;
     private final String displayName;

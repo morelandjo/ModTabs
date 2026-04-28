@@ -271,22 +271,12 @@ public class EccentricTomeTab extends ConfigurableItemTab {
     }
 
     private static boolean isTome(ItemStack stack) {
-        try {
-            Class<?> tomeItemClass = Class.forName("website.eccentric.tome.TomeItem");
-            return tomeItemClass.isInstance(stack.getItem());
-        } catch (Exception e) {
-            return false;
-        }
+        return vodmordia.modtabs.utils.ClassCache.isInstance(vodmordia.modtabs.utils.ScreenClasses.ECCENTRIC_TOME_ITEM, stack.getItem());
     }
 
     @Override
     public boolean isCurrentlyUsed(Screen currentScreen) {
-        try {
-            Class<?> tomeScreenClass = Class.forName("website.eccentric.tome.client.TomeScreen");
-            return tomeScreenClass.isInstance(currentScreen);
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return vodmordia.modtabs.utils.ClassCache.isInstance(vodmordia.modtabs.utils.ScreenClasses.ECCENTRIC_TOME_SCREEN, currentScreen);
     }
 
     @Override
@@ -545,12 +535,7 @@ public class EccentricTomeTab extends ConfigurableItemTab {
         }
 
         private boolean isTome(ItemStack stack) {
-            try {
-                Class<?> tomeItemClass = Class.forName("website.eccentric.tome.TomeItem");
-                return tomeItemClass.isInstance(stack.getItem());
-            } catch (Exception e) {
-                return false;
-            }
+            return vodmordia.modtabs.utils.ClassCache.isInstance(vodmordia.modtabs.utils.ScreenClasses.ECCENTRIC_TOME_ITEM, stack.getItem());
         }
 
         // Delegate all other methods to the original screen

@@ -1,82 +1,76 @@
 package vodmordia.modtabs.client.tabs_menu;
 
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import vodmordia.modtabs.ModTabs;
-import vodmordia.modtabs.api.tabs_menu.ConfigurableIconTab;
+import vodmordia.modtabs.api.tabs_menu.IntegrationIconTab;
 import vodmordia.modtabs.api.tabs_menu.TabConfig;
-import vodmordia.modtabs.api.tabs_menu.ScreenRegistry;
+import vodmordia.modtabs.api.tabs_menu.TabSpec;
 import vodmordia.modtabs.config.Config;
 import vodmordia.modtabs.integration.ModIntegration;
-import vodmordia.modtabs.integration.ModIntegrationManager;
-
+import vodmordia.modtabs.utils.ClassCache;
+import vodmordia.modtabs.utils.ScreenClasses;
 
 @TabConfig(configKey = "mapAtlasesTab", defaultEnabled = true, defaultOrder = 0)
-public class MapAtlasesTab extends ConfigurableIconTab {
-    private static final ResourceLocation MAP_ATLAS_ICON = ResourceLocation.fromNamespaceAndPath("map_atlases", "textures/item/atlas_generic.png");
+public class MapAtlasesTab extends IntegrationIconTab {
+    private static final ResourceLocation MAP_ATLAS_ICON =
+            ResourceLocation.fromNamespaceAndPath("map_atlases", "textures/item/atlas_generic.png");
+
+    private static final TabSpec SPEC = TabSpec.withoutCurrentScreen(
+            "mapAtlasesTab",
+            ModIntegration.MAP_ATLASES,
+            () -> Config.Baked.mapAtlasesTabEnabled,
+            "mapAtlases",
+            "map_atlases",
+            TabSpec.Layout.invertedTop(),
+            ScreenClasses.MAP_ATLASES_OVERVIEW
+    );
 
     public MapAtlasesTab() {
-        super(MAP_ATLAS_ICON, Config.Baked.mapAtlasesTabCustomIcon, "mapAtlases");
+        super(SPEC, MAP_ATLAS_ICON, Config.Baked.mapAtlasesTabCustomIcon);
+    }
+
+    @Override
+    public boolean isEnabled(Player player) {
+        // Tab only shows when an atlas is actually present in the player's inventory.
+        return super.isEnabled(player) && hasAtlas(player);
+    }
+
+    private static boolean hasAtlas(Player player) {
+        try {
+            Class<?> accessUtils = ClassCache.resolve("pepjebs.mapatlases.utils.MapAtlasesAccessUtils");
+            if (accessUtils == null) return false;
+            ItemStack atlas = (ItemStack) accessUtils
+                    .getMethod("getAtlasFromPlayerByConfig", Player.class)
+                    .invoke(null, player);
+            return ClassCache.isInstance(ScreenClasses.MAP_ATLASES_ITEM, atlas.getItem());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public void openTargetScreen(Player player) {
         if (Config.Baked.mapAtlasesTabEnabled && player.level().isClientSide) {
             try {
-                Class<?> mapAtlasesAccessUtilsClass = Class.forName("pepjebs.mapatlases.utils.MapAtlasesAccessUtils");
-                java.lang.reflect.Method getAtlasMethod = mapAtlasesAccessUtilsClass.getMethod("getAtlasFromPlayerByConfig", Player.class);
-                ItemStack atlas = (ItemStack) getAtlasMethod.invoke(null, player);
+                Class<?> accessUtils = ClassCache.resolve("pepjebs.mapatlases.utils.MapAtlasesAccessUtils");
+                if (accessUtils == null) return;
+                ItemStack atlas = (ItemStack) accessUtils
+                        .getMethod("getAtlasFromPlayerByConfig", Player.class)
+                        .invoke(null, player);
 
-                Class<?> mapAtlasItemClass = Class.forName("pepjebs.mapatlases.item.MapAtlasItem");
-                if (mapAtlasItemClass.isInstance(atlas.getItem())) {
-                    Class<?> networkHelperClass = Class.forName("net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper");
-                    Class<?> packetClass = Class.forName("pepjebs.mapatlases.networking.C2S2COpenAtlasScreenPacket");
-                    Class<?> customPacketPayloadClass = Class.forName("net.minecraft.network.protocol.common.custom.CustomPacketPayload");
+                if (!ClassCache.isInstance(ScreenClasses.MAP_ATLASES_ITEM, atlas.getItem())) return;
 
-                    Object packet = packetClass.getDeclaredConstructor().newInstance();
-                    java.lang.reflect.Method sendToServerMethod = networkHelperClass.getMethod("sendToServer", customPacketPayloadClass);
-                    sendToServerMethod.invoke(null, packet);
-                }
+                Class<?> networkHelper = ClassCache.resolve("net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper");
+                Class<?> packetClass = ClassCache.resolve("pepjebs.mapatlases.networking.C2S2COpenAtlasScreenPacket");
+                Class<?> customPacketPayload = ClassCache.resolve("net.minecraft.network.protocol.common.custom.CustomPacketPayload");
+                if (networkHelper == null || packetClass == null || customPacketPayload == null) return;
+
+                Object packet = packetClass.getDeclaredConstructor().newInstance();
+                networkHelper.getMethod("sendToServer", customPacketPayload).invoke(null, packet);
             } catch (Exception e) {
                 // Map Atlases not present or failed to open atlas
             }
         }
-    }
-
-    @Override
-    public boolean isEnabled(Player player) {
-        if (!Config.Baked.mapAtlasesTabEnabled || !ModIntegrationManager.isModLoaded(ModIntegration.MAP_ATLASES)) {
-            return false;
-        }
-        try {
-            Class<?> mapAtlasesAccessUtilsClass = Class.forName("pepjebs.mapatlases.utils.MapAtlasesAccessUtils");
-            java.lang.reflect.Method getAtlasMethod = mapAtlasesAccessUtilsClass.getMethod("getAtlasFromPlayerByConfig", Player.class);
-            ItemStack atlas = (ItemStack) getAtlasMethod.invoke(null, player);
-
-            Class<?> mapAtlasItemClass = Class.forName("pepjebs.mapatlases.item.MapAtlasItem");
-            return mapAtlasItemClass.isInstance(atlas.getItem());
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-
-    @Override
-    public boolean isCurrentlyUsed(Screen currentScreen) {
-        return false;
-    }
-
-    @Override
-    public Component getTooltip() {
-        return Component.translatable("tooltip." + ModTabs.MOD_ID + ".tab.map_atlases.description");
-    }
-
-    @Override
-    public void initTabOnScreens() {
-        // Register Map Atlases screen with inverted tabs at the top
-        ScreenRegistry.registerInvertedScreens("pepjebs.mapatlases.client.screen.AtlasOverviewScreen");
     }
 }

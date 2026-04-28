@@ -212,22 +212,14 @@ public class ArsNouveauTab extends ConfigurableItemTab {
     }
 
     private boolean isSpellbook(ItemStack stack) {
-        try {
-            Class<?> spellBookClass = Class.forName("com.hollingsworth.arsnouveau.common.items.SpellBook");
-            return spellBookClass.isInstance(stack.getItem());
-        } catch (Exception e) {
-            return false;
-        }
+        return vodmordia.modtabs.utils.ClassCache.isInstance(
+                vodmordia.modtabs.utils.ScreenClasses.ARS_NOUVEAU_SPELLBOOK_ITEM, stack.getItem());
     }
 
     @Override
     public boolean isCurrentlyUsed(Screen currentScreen) {
-        try {
-            Class<?> guiSpellBookClass = Class.forName("com.hollingsworth.arsnouveau.client.gui.book.GuiSpellBook");
-            return guiSpellBookClass.isInstance(currentScreen);
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return vodmordia.modtabs.utils.ClassCache.isInstance(
+                vodmordia.modtabs.utils.ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI, currentScreen);
     }
 
     @Override
@@ -241,6 +233,6 @@ public class ArsNouveauTab extends ConfigurableItemTab {
             .withStandardDimensions()
             .inverted()
             .atTop()
-            .registerAllTabs("com.hollingsworth.arsnouveau.client.gui.book.GuiSpellBook");
+            .registerAllTabs(vodmordia.modtabs.utils.ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI);
     }
 }

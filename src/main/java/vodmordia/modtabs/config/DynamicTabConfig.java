@@ -17,7 +17,7 @@ public class DynamicTabConfig {
         registerTab("advancementsTab", true, 0);
         registerTab("arsElixirumTab", true, 0);
         registerTab("arsNouveauTab", true, 0);
-        registerTab("backpackTab", true, 0);
+        registerTab("backpackedTab", true, 0);
         registerTab("bodyDamageTab", true, 0);
         registerTab("cobblemonTab", true, 0);
         registerTab("cosmeticArmorTab", true, 0);

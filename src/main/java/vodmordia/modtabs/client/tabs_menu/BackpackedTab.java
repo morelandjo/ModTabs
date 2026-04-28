@@ -71,7 +71,11 @@ public class BackpackedTab extends ConfigurableItemTab {
 
     private boolean hasBackpack(Player player) {
         try {
-            Class<?> backpackItemClass = Class.forName("com.mrcrayfish.backpacked.item.BackpackItem");
+            Class<?> backpackItemClass = vodmordia.modtabs.utils.ClassCache.resolve(
+                    vodmordia.modtabs.utils.ScreenClasses.BACKPACKED_ITEM);
+            if (backpackItemClass == null) {
+                return false;
+            }
 
             // Check player's main inventory (hotbar + main inventory slots)
             for (ItemStack stack : player.getInventory().items) {
@@ -125,12 +129,8 @@ public class BackpackedTab extends ConfigurableItemTab {
 
     @Override
     public boolean isCurrentlyUsed(Screen currentScreen) {
-        try {
-            Class<?> backpackScreenClass = Class.forName("com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen");
-            return backpackScreenClass.isInstance(currentScreen);
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return vodmordia.modtabs.utils.ClassCache.isInstance(
+                vodmordia.modtabs.utils.ScreenClasses.BACKPACKED_SCREEN, currentScreen);
     }
 
     @Override
@@ -144,6 +144,6 @@ public class BackpackedTab extends ConfigurableItemTab {
             .withStandardDimensions()
             .withPositioning(TabPositioning.GUI_RELATIVE)
             .inverted()
-            .registerAllTabs("com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen");
+            .registerAllTabs(vodmordia.modtabs.utils.ScreenClasses.BACKPACKED_SCREEN);
     }
 }

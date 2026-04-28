@@ -19,6 +19,7 @@ public class Config
 		public static boolean reskillableReimaginedTabEnabled;
 		public static boolean ftbQuestsTabEnabled;
 		public static boolean ftbTeamsTabEnabled;
+		public static boolean ftbChunksTabEnabled;
 		public static boolean dietTabEnabled;
 		public static boolean pufferfishSkillsTabEnabled;
 		public static boolean passiveSkillTreeTabEnabled;
@@ -37,6 +38,8 @@ public class Config
 		public static boolean brassworksMissionsTabEnabled;
 		public static boolean eccentricTomeTabEnabled;
 		public static boolean rpgCraftingTabEnabled;
+		public static boolean biologyDictionaryTabEnabled;
+		public static boolean reliableBackpacksTabEnabled;
 		public static boolean stickyInventoryTab;
 
 		// Custom icon settings
@@ -55,6 +58,7 @@ public class Config
 		public static String dietTabCustomIcon;
 		public static String ftbQuestsTabCustomIcon;
 		public static String ftbTeamsTabCustomIcon;
+		public static String ftbChunksTabCustomIcon;
 		public static String journeyMapTabCustomIcon;
 		public static String l2ArtifactsTabCustomIcon;
 		public static String l2AttributesTabCustomIcon;
@@ -68,6 +72,8 @@ public class Config
 		public static String sophisticatedBackpacksTabCustomIcon;
 		public static String travelersBackpackTabCustomIcon;
 		public static String xaerosMapTabCustomIcon;
+		public static String biologyDictionaryTabCustomIcon;
+		public static String reliableBackpacksTabCustomIcon;
 
 		// Custom tabs settings
 		public static boolean customTabsEnabled;
@@ -86,6 +92,7 @@ public class Config
 		public static TabDisplayVisibility dietTabDisplayVisibility;
 		public static TabDisplayVisibility ftbQuestsTabDisplayVisibility;
 		public static TabDisplayVisibility ftbTeamsTabDisplayVisibility;
+		public static TabDisplayVisibility ftbChunksTabDisplayVisibility;
 		public static TabDisplayVisibility journeyMapTabDisplayVisibility;
 		public static TabDisplayVisibility l2ArtifactsTabDisplayVisibility;
 		public static TabDisplayVisibility l2AttributesTabDisplayVisibility;
@@ -102,6 +109,8 @@ public class Config
 		public static TabDisplayVisibility brassworksMissionsTabDisplayVisibility;
 		public static TabDisplayVisibility eccentricTomeTabDisplayVisibility;
 		public static TabDisplayVisibility rpgCraftingTabDisplayVisibility;
+		public static TabDisplayVisibility biologyDictionaryTabDisplayVisibility;
+		public static TabDisplayVisibility reliableBackpacksTabDisplayVisibility;
 
 		// Tab order overrides
 		public static int inventoryTabOrder;
@@ -111,6 +120,7 @@ public class Config
 		public static int reskillableReimaginedTabOrder;
 		public static int ftbQuestsTabOrder;
 		public static int ftbTeamsTabOrder;
+		public static int ftbChunksTabOrder;
 		public static int mapAtlasesTabOrder;
 		public static int xaerosMapTabOrder;
 		public static int journeyMapTabOrder;
@@ -133,6 +143,8 @@ public class Config
 		public static int brassworksMissionsTabOrder;
 		public static int eccentricTomeTabOrder;
 		public static int rpgCraftingTabOrder;
+		public static int biologyDictionaryTabOrder;
+		public static int reliableBackpacksTabOrder;
 
 		public static void bakeClient()
 		{
@@ -145,6 +157,7 @@ public class Config
 				bodyDamageTabEnabled = ModTabsConfig.bodyDamageTabEnabled;
 				reskillableReimaginedTabEnabled = ModTabsConfig.reskillableReimaginedTabEnabled;
 				ftbQuestsTabEnabled = ModTabsConfig.ftbQuestsTabEnabled;
+				ftbChunksTabEnabled = ModTabsConfig.ftbChunksTabEnabled;
 				mapAtlasesTabEnabled = ModTabsConfig.mapAtlasesTabEnabled;
 				xaerosMapTabEnabled = ModTabsConfig.xaerosMapTabEnabled;
 				journeyMapTabEnabled = ModTabsConfig.journeyMapTabEnabled;
@@ -169,6 +182,8 @@ public class Config
 				brassworksMissionsTabEnabled = ModTabsConfig.brassworksMissionsTabEnabled;
 				eccentricTomeTabEnabled = ModTabsConfig.eccentricTomeTabEnabled;
 				rpgCraftingTabEnabled = ModTabsConfig.rpgCraftingTabEnabled;
+				biologyDictionaryTabEnabled = ModTabsConfig.biologyDictionaryTabEnabled;
+				reliableBackpacksTabEnabled = ModTabsConfig.reliableBackpacksTabEnabled;
 				stickyInventoryTab = ModTabsConfig.stickyInventoryTab;
 
 				// Load custom tabs settings
@@ -183,6 +198,7 @@ public class Config
 				reskillableReimaginedTabOrder = ModTabsConfig.reskillableReimaginedTabOrder;
 				ftbQuestsTabOrder = ModTabsConfig.ftbQuestsTabOrder;
 				ftbTeamsTabOrder = ModTabsConfig.ftbTeamsTabOrder;
+				ftbChunksTabOrder = ModTabsConfig.ftbChunksTabOrder;
 				mapAtlasesTabOrder = ModTabsConfig.mapAtlasesTabOrder;
 				xaerosMapTabOrder = ModTabsConfig.xaerosMapTabOrder;
 				journeyMapTabOrder = ModTabsConfig.journeyMapTabOrder;
@@ -205,6 +221,8 @@ public class Config
 				brassworksMissionsTabOrder = ModTabsConfig.brassworksMissionsTabOrder;
 				eccentricTomeTabOrder = ModTabsConfig.eccentricTomeTabOrder;
 				rpgCraftingTabOrder = ModTabsConfig.rpgCraftingTabOrder;
+				biologyDictionaryTabOrder = ModTabsConfig.biologyDictionaryTabOrder;
+				reliableBackpacksTabOrder = ModTabsConfig.reliableBackpacksTabOrder;
 
 				// Load tab display visibility settings
 				inventoryTabDisplayVisibility = ModTabsConfig.inventoryTabDisplayVisibility;
@@ -221,6 +239,7 @@ public class Config
 				dietTabDisplayVisibility = ModTabsConfig.dietTabDisplayVisibility;
 				ftbQuestsTabDisplayVisibility = ModTabsConfig.ftbQuestsTabDisplayVisibility;
 				ftbTeamsTabDisplayVisibility = ModTabsConfig.ftbTeamsTabDisplayVisibility;
+				ftbChunksTabDisplayVisibility = ModTabsConfig.ftbChunksTabDisplayVisibility;
 				journeyMapTabDisplayVisibility = ModTabsConfig.journeyMapTabDisplayVisibility;
 				l2ArtifactsTabDisplayVisibility = ModTabsConfig.l2ArtifactsTabDisplayVisibility;
 				l2AttributesTabDisplayVisibility = ModTabsConfig.l2AttributesTabDisplayVisibility;
@@ -235,6 +254,8 @@ public class Config
 				travelersBackpackTabDisplayVisibility = ModTabsConfig.travelersBackpackTabDisplayVisibility;
 				xaerosMapTabDisplayVisibility = ModTabsConfig.xaerosMapTabDisplayVisibility;
 				rpgCraftingTabDisplayVisibility = ModTabsConfig.advancementsTabDisplayVisibility; // Shares config with advancements
+				biologyDictionaryTabDisplayVisibility = ModTabsConfig.biologyDictionaryTabDisplayVisibility;
+				reliableBackpacksTabDisplayVisibility = ModTabsConfig.reliableBackpacksTabDisplayVisibility;
 
 				// Load custom icon settings
 				inventoryTabCustomIcon = ModTabsConfig.inventoryTabCustomIcon;
@@ -252,6 +273,7 @@ public class Config
 				dietTabCustomIcon = ModTabsConfig.dietTabCustomIcon;
 				ftbQuestsTabCustomIcon = ModTabsConfig.ftbQuestsTabCustomIcon;
 				ftbTeamsTabCustomIcon = ModTabsConfig.ftbTeamsTabCustomIcon;
+				ftbChunksTabCustomIcon = ModTabsConfig.ftbChunksTabCustomIcon;
 				journeyMapTabCustomIcon = ModTabsConfig.journeyMapTabCustomIcon;
 				l2ArtifactsTabCustomIcon = ModTabsConfig.l2ArtifactsTabCustomIcon;
 				l2AttributesTabCustomIcon = ModTabsConfig.l2AttributesTabCustomIcon;
@@ -265,6 +287,8 @@ public class Config
 				sophisticatedBackpacksTabCustomIcon = ModTabsConfig.sophisticatedBackpacksTabCustomIcon;
 				travelersBackpackTabCustomIcon = ModTabsConfig.travelersBackpackTabCustomIcon;
 				xaerosMapTabCustomIcon = ModTabsConfig.xaerosMapTabCustomIcon;
+				biologyDictionaryTabCustomIcon = ModTabsConfig.biologyDictionaryTabCustomIcon;
+				reliableBackpacksTabCustomIcon = ModTabsConfig.reliableBackpacksTabCustomIcon;
 			}
 			catch (Exception e)
 			{

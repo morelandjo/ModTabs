@@ -1,89 +1,85 @@
 package vodmordia.modtabs.client.tabs_menu;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import sfiomn.legendarysurvivaloverhaul.client.ClientHooks;
 import vodmordia.modtabs.ModTabs;
-import vodmordia.modtabs.api.tabs_menu.ConfigurableItemTab;
+import vodmordia.modtabs.api.tabs_menu.IntegrationItemTab;
 import vodmordia.modtabs.api.tabs_menu.TabConfig;
-import vodmordia.modtabs.api.tabs_menu.ScreenRegistry;
-import vodmordia.modtabs.api.tabs_menu.TabPositioning;
+import vodmordia.modtabs.api.tabs_menu.TabSpec;
 import vodmordia.modtabs.config.Config;
 import vodmordia.modtabs.integration.ModIntegration;
 import vodmordia.modtabs.integration.ModIntegrationManager;
+import vodmordia.modtabs.utils.ClassCache;
+import vodmordia.modtabs.utils.ScreenClasses;
 
-import static sfiomn.legendarysurvivaloverhaul.config.Config.Baked.localizedBodyDamageEnabled;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 @TabConfig(configKey = "bodyDamageTab", defaultEnabled = true, defaultOrder = 0)
-public class BodyDamageTab extends ConfigurableItemTab {
+public class BodyDamageTab extends IntegrationItemTab {
+
+    private static final TabSpec SPEC = new TabSpec(
+            "bodyDamageTab",
+            ModIntegration.LEGENDARY_SURVIVAL_OVERHAUL,
+            () -> Config.Baked.bodyDamageTabEnabled,
+            "bodyDamage",
+            "body_damage",
+            new TabSpec.Layout(false, TabSpec.Layout.Position.GUI_RELATIVE, TabSpec.Layout.Dimensions.BODY_HEALTH),
+            new String[] { ScreenClasses.LSO_BODY_HEALTH_SCREENS },
+            new String[] { ScreenClasses.LSO_BODY_HEALTH_SCREENS }
+    );
 
     public BodyDamageTab() {
-        super(() -> getFirstAidItem(), Config.Baked.bodyDamageTabCustomIcon, "bodyDamage");
+        super(SPEC, BodyDamageTab::getFirstAidItem, Config.Baked.bodyDamageTabCustomIcon);
     }
 
     private static ItemStack getFirstAidItem() {
-        // Try to get LSO's First Aid Supplies item via reflection, fallback to vanilla item
         try {
             Class<?> itemsClass = Class.forName("sfiomn.legendarysurvivaloverhaul.registry.ItemRegistry");
             Field firstAidField = itemsClass.getField("FIRST_AID_SUPPLIES");
             Object registryObject = firstAidField.get(null);
             Method getMethod = registryObject.getClass().getMethod("get");
-            Item firstAidItem = (Item) getMethod.invoke(registryObject);
-            return new ItemStack(firstAidItem);
+            return new ItemStack((Item) getMethod.invoke(registryObject));
         } catch (Exception e) {
-            // Fallback to vanilla item (heart)
             return new ItemStack(Items.GLISTERING_MELON_SLICE);
         }
     }
 
     @Override
-    public void openTargetScreen(Player player) {
-        if (ModIntegrationManager.isModLoaded(ModIntegration.LEGENDARY_SURVIVAL_OVERHAUL) && localizedBodyDamageEnabled)
-            ClientHooks.openBodyHealthScreen(player);
-    }
-
-    @Override
     public boolean isEnabled(Player player) {
-        return ModIntegrationManager.isModLoaded(ModIntegration.LEGENDARY_SURVIVAL_OVERHAUL) && Config.Baked.bodyDamageTabEnabled && localizedBodyDamageEnabled;
+        // LSO has its own per-feature toggle; the body-damage screen only exists when that flag is on.
+        return super.isEnabled(player) && isLocalizedBodyDamageEnabled();
     }
 
-
     @Override
-    public boolean isCurrentlyUsed(Screen currentScreen) {
-        if (!localizedBodyDamageEnabled) return false;
+    public void openTargetScreen(Player player) {
+        if (!ModIntegrationManager.isModLoaded(ModIntegration.LEGENDARY_SURVIVAL_OVERHAUL)
+                || !isLocalizedBodyDamageEnabled()) {
+            return;
+        }
         try {
-            Class<?> bodyHealthScreenClass = Class.forName("sfiomn.legendarysurvivaloverhaul.client.screens.BodyHealthScreen");
-            return bodyHealthScreenClass.isInstance(currentScreen);
-        } catch (ClassNotFoundException e) {
-            return false;
+            Class<?> hooksClass = Class.forName("sfiomn.legendarysurvivaloverhaul.client.ClientHooks");
+            Method openMethod = hooksClass.getMethod("openBodyHealthScreen", Player.class);
+            openMethod.invoke(null, player);
+        } catch (Exception e) {
+            ModTabs.LOGGER.debug("Failed to open LSO body health screen via reflection", e);
         }
     }
 
-    @Override
-    public Component getTooltip() {
-        return Component.translatable("tooltip." + ModTabs.MOD_ID + ".tab.body_damage.description");
-    }
-
-    @Override
-    public void initTabOnScreens() {
+    /**
+     * Read LSO's {@code Config.Baked.localizedBodyDamageEnabled} via reflection so this
+     * class doesn't carry a compile-time dependency on LSO. Returns false if LSO is
+     * absent or the field is missing.
+     */
+    private static boolean isLocalizedBodyDamageEnabled() {
+        Class<?> bakedClass = ClassCache.resolve("sfiomn.legendarysurvivaloverhaul.config.Config$Baked");
+        if (bakedClass == null) return false;
         try {
-            Class<?> bodyHealthScreenClass = Class.forName("sfiomn.legendarysurvivaloverhaul.client.screens.BodyHealthScreen");
-            @SuppressWarnings("unchecked")
-            Class<? extends Screen> screenClass = (Class<? extends Screen>) bodyHealthScreenClass;
-            ScreenRegistry.builder()
-                .withBodyHealthDimensions()
-                .withPositioning(TabPositioning.GUI_RELATIVE)
-                .registerAllTabs(screenClass);
-        } catch (ClassNotFoundException e) {
-            // Legendary Survival Overhaul not present, skip registration
+            return bakedClass.getField("localizedBodyDamageEnabled").getBoolean(null);
+        } catch (Exception e) {
+            return false;
         }
     }
 }

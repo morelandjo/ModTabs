@@ -1,24 +1,33 @@
 package vodmordia.modtabs.client.tabs_menu;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import vodmordia.modtabs.ModTabs;
-import vodmordia.modtabs.api.tabs_menu.ConfigurableIconTab;
+import vodmordia.modtabs.api.tabs_menu.IntegrationIconTab;
 import vodmordia.modtabs.api.tabs_menu.TabConfig;
-import vodmordia.modtabs.api.tabs_menu.ScreenRegistry;
+import vodmordia.modtabs.api.tabs_menu.TabSpec;
 import vodmordia.modtabs.config.Config;
 import vodmordia.modtabs.integration.ModIntegration;
-import vodmordia.modtabs.integration.ModIntegrationManager;
 
 @TabConfig(configKey = "journeyMapTab", defaultEnabled = true, defaultOrder = 0)
-public class JourneyMapTab extends ConfigurableIconTab {
-    private static final ResourceLocation JOURNEYMAP_ICON = ResourceLocation.fromNamespaceAndPath(ModTabs.MOD_ID, "textures/gui/journeymap.png");
+public class JourneyMapTab extends IntegrationIconTab {
+    private static final ResourceLocation JOURNEYMAP_ICON =
+            ResourceLocation.fromNamespaceAndPath(ModTabs.MOD_ID, "textures/gui/journeymap.png");
+
+    // JourneyMap opens its UI programmatically, so screenFqns is empty —
+    // no auto-registration. The tab still attaches to every other registered screen.
+    private static final TabSpec SPEC = TabSpec.withoutCurrentScreen(
+            "journeyMapTab",
+            ModIntegration.JOURNEY_MAP,
+            () -> Config.Baked.journeyMapTabEnabled,
+            "journeyMap",
+            "journey_map",
+            TabSpec.Layout.invertedTop()
+    );
 
     public JourneyMapTab() {
-        super(JOURNEYMAP_ICON, Config.Baked.journeyMapTabCustomIcon, "journeyMap");
+        super(SPEC, JOURNEYMAP_ICON, Config.Baked.journeyMapTabCustomIcon);
     }
 
     @Override
@@ -35,28 +44,5 @@ public class JourneyMapTab extends ConfigurableIconTab {
                 // JourneyMap not present or failed to open map
             }
         }
-    }
-
-    @Override
-    public boolean isEnabled(Player player) {
-        return Config.Baked.journeyMapTabEnabled && ModIntegrationManager.isModLoaded(ModIntegration.JOURNEY_MAP);
-    }
-
-
-    @Override
-    public boolean isCurrentlyUsed(Screen currentScreen) {
-        return false;
-    }
-
-    @Override
-    public Component getTooltip() {
-        return Component.translatable("tooltip." + ModTabs.MOD_ID + ".tab.journey_map.description");
-    }
-
-    @Override
-    public void initTabOnScreens() {
-        // JourneyMap doesn't have a dedicated screen that can be registered
-        // It opens the map programmatically, so we don't register any screen
-        // All screens will automatically have this tab through the new system
     }
 }

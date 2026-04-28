@@ -67,6 +67,12 @@ public class ModTabs
             vodmordia.modtabs.network.TomeConvertHandler::handle
         );
 
+        registrar.playToServer(
+            vodmordia.modtabs.network.OpenReliableBackpackPayload.TYPE,
+            vodmordia.modtabs.network.OpenReliableBackpackPayload.STREAM_CODEC,
+            vodmordia.modtabs.network.OpenReliableBackpackHandler::handle
+        );
+
         LOGGER.info("Registered ModTabs network packets");
     }
 
@@ -114,6 +120,7 @@ public class ModTabs
                 LOGGER.warn("Failed to run FTB Teams inspection: " + e.getMessage());
             }
             TabsMenu.register(new FtbTeamsTab());
+            TabsMenu.register(new FtbChunksTab());
 
             TabsMenu.register(new ReskillableReimaginedTab());
             TabsMenu.register(new MapAtlasesTab());
@@ -147,6 +154,8 @@ public class ModTabs
             TabsMenu.register(new EccentricTomeTab());
             TabsMenu.register(new RpgCraftingTab());
             TabsMenu.register(new MotpTab());
+            TabsMenu.register(new BiologyDictionaryTab());
+            TabsMenu.register(new ReliableBackpackTab());
 
             // Wait for Patchouli books to load, then load custom tabs
             waitForPatchouliAndLoadCustomTabs();
@@ -213,18 +222,29 @@ public class ModTabs
                 java.lang.reflect.Field booksLoadedField = clientInitClass.getDeclaredField("booksLoaded");
                 booksLoadedField.setAccessible(true);
 
-                // Wait for books to be loaded using Patchouli's synchronization mechanism
+                // Wait for books to be loaded using Patchouli's synchronization mechanism.
+                // Use a bounded timeout so a Patchouli internal change (renamed field, missed signal)
+                // can never hang this loader thread forever.
+                final long timeoutNanos = java.util.concurrent.TimeUnit.SECONDS.toNanos(30);
+                long remaining = timeoutNanos;
                 bookLoadLock.lock();
                 try {
                     while (!(Boolean) booksLoadedField.get(null)) {
+                        if (remaining <= 0) {
+                            LOGGER.warn("Timed out after 30s waiting for Patchouli books to load; proceeding anyway");
+                            break;
+                        }
                         if (Config.Baked.customTabsDebugLogging) {
                             LOGGER.info("Books not yet loaded, waiting...");
                         }
-                        bookLoadCondition.awaitUninterruptibly();
+                        remaining = bookLoadCondition.awaitNanos(remaining);
                     }
                     if (Config.Baked.customTabsDebugLogging) {
                         LOGGER.info("Patchouli signaled that books are loaded!");
                     }
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    LOGGER.warn("Interrupted while waiting for Patchouli books; proceeding anyway");
                 } finally {
                     bookLoadLock.unlock();
                 }
@@ -325,33 +345,37 @@ public class ModTabs
         }
 
         /**
-         * Refresh the current screen to show newly loaded custom tabs
+         * Refresh the current screen to show newly loaded custom tabs.
+         *
+         * <p>This is invoked from the {@code PatchouliCustomTabsLoader} worker thread, but
+         * {@link net.minecraft.client.Minecraft#setScreen} must run on the client thread —
+         * mutating the screen off-thread can race with rendering and crash. Schedule the
+         * refresh via {@code Minecraft.execute} so it lands on the right thread.
          */
         private static void refreshCurrentScreenForNewTabs() {
-            try {
-                net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
-                if (minecraft.screen != null) {
-                    // Get the current screen
+            net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+            minecraft.execute(() -> {
+                try {
                     net.minecraft.client.gui.screens.Screen currentScreen = minecraft.screen;
-
-                    // Check if this screen supports tabs
-                    if (vodmordia.modtabs.api.tabs_menu.TabsMenu.hasTabsForScreen(currentScreen.getClass())) {
-                        if (Config.Baked.customTabsDebugLogging) {
-                            LOGGER.info("Refreshing screen " + currentScreen.getClass().getSimpleName() + " to show new custom tabs");
-                        }
-
-                        // Force a refresh by closing and reopening the screen
-                        // This will trigger the tab building process again
-                        minecraft.setScreen(null);
-                        minecraft.setScreen(currentScreen);
+                    if (currentScreen == null) {
+                        return;
+                    }
+                    if (!vodmordia.modtabs.api.tabs_menu.TabsMenu.hasTabsForScreen(currentScreen.getClass())) {
+                        return;
+                    }
+                    if (Config.Baked.customTabsDebugLogging) {
+                        LOGGER.info("Refreshing screen " + currentScreen.getClass().getSimpleName() + " to show new custom tabs");
+                    }
+                    // Force a refresh by closing and reopening — re-runs the tab build pass.
+                    minecraft.setScreen(null);
+                    minecraft.setScreen(currentScreen);
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to refresh current screen for new custom tabs: " + e.getMessage());
+                    if (Config.Baked.customTabsDebugLogging) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (Exception e) {
-                LOGGER.warn("Failed to refresh current screen for new custom tabs: " + e.getMessage());
-                if (Config.Baked.customTabsDebugLogging) {
-                    e.printStackTrace();
-                }
-            }
+            });
         }
     }
 }

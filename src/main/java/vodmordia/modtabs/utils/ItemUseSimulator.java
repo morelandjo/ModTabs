@@ -16,7 +16,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import vodmordia.modtabs.ModTabs;
 import vodmordia.modtabs.config.CustomTabDefinition;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * Utility class for simulating item interactions without requiring the item to be in hand

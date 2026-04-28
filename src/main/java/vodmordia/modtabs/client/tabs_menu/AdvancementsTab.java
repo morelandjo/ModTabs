@@ -53,13 +53,8 @@ public class AdvancementsTab extends ConfigurableIconTab {
         }
         // Check if the screen is Better Advancements screen if the mod is loaded
         if (ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)) {
-            try {
-                Class<?> betterScreenClass = Class.forName("betteradvancements.common.gui.BetterAdvancementsScreen");
-                return betterScreenClass.isInstance(currentScreen);
-            } catch (Exception e) {
-                // If there's an issue with Better Advancements, just check vanilla
-                return false;
-            }
+            return vodmordia.modtabs.utils.ClassCache.isInstance(
+                    vodmordia.modtabs.utils.ScreenClasses.BETTER_ADVANCEMENTS, currentScreen);
         }
         return false;
     }
@@ -76,11 +71,8 @@ public class AdvancementsTab extends ConfigurableIconTab {
 
         // Also register Better Advancements screen if the mod is loaded
         if (ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)) {
-            System.out.println("[ModTabs] Better Advancements detected, registering BetterAdvancementsScreen for tabs");
             // Use string-based registration to avoid class loading issues
-            ScreenRegistry.registerInvertedScreens("betteradvancements.common.gui.BetterAdvancementsScreen");
-        } else {
-            System.out.println("[ModTabs] Better Advancements not detected");
+            ScreenRegistry.registerInvertedScreens(vodmordia.modtabs.utils.ScreenClasses.BETTER_ADVANCEMENTS);
         }
     }
 }

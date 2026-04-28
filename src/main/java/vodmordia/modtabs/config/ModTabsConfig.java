@@ -119,6 +119,36 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs")
     public static TabDisplayVisibility bodyDamageTabDisplayVisibility = TabDisplayVisibility.YES;
 
+    @Comment(category = "tabs") public static CommentText spacer_biologydictionary;
+
+    @Comment(category = "tabs") public static CommentText biologyDictionary;
+
+    @Entry(category = "tabs")
+    public static boolean biologyDictionaryTabEnabled = true;
+
+    @Entry(category = "tabs")
+    public static String biologyDictionaryTabCustomIcon = "";
+    @Entry(category = "tabs")
+    public static int biologyDictionaryTabOrder = 0;
+
+    @Entry(category = "tabs")
+    public static TabDisplayVisibility biologyDictionaryTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "tabs") public static CommentText spacer_reliable_backpacks;
+
+    @Comment(category = "tabs") public static CommentText reliableBackpacks;
+
+    @Entry(category = "tabs")
+    public static boolean reliableBackpacksTabEnabled = true;
+
+    @Entry(category = "tabs")
+    public static String reliableBackpacksTabCustomIcon = "";
+    @Entry(category = "tabs")
+    public static int reliableBackpacksTabOrder = 0;
+
+    @Entry(category = "tabs")
+    public static TabDisplayVisibility reliableBackpacksTabDisplayVisibility = TabDisplayVisibility.YES;
+
     @Comment(category = "tabs") public static CommentText spacer4b;
 
     @Comment(category = "tabs") public static CommentText brassworksMissions;
@@ -232,6 +262,22 @@ public class ModTabsConfig extends MidnightConfig {
     public static TabDisplayVisibility ftbQuestsTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "tabs") public static CommentText spacer9;
+
+    @Comment(category = "tabs") public static CommentText ftbChunks;
+
+    @Entry(category = "tabs")
+    public static boolean ftbChunksTabEnabled = true;
+
+
+    @Entry(category = "tabs")
+    public static String ftbChunksTabCustomIcon = "";
+    @Entry(category = "tabs")
+    public static int ftbChunksTabOrder = 0;
+
+    @Entry(category = "tabs")
+    public static TabDisplayVisibility ftbChunksTabDisplayVisibility = TabDisplayVisibility.TUCK;
+
+    @Comment(category = "tabs") public static CommentText spacer9b;
 
     @Comment(category = "tabs") public static CommentText ftbTeams;
 
