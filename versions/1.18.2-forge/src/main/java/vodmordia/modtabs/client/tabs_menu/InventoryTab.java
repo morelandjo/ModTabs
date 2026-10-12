@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import vodmordia.modtabs.ModTabs;
+import vodmordia.modtabs.integration.ModIntegration;
+import vodmordia.modtabs.integration.ModIntegrationManager;
 import vodmordia.modtabs.api.tabs_menu.ConfigurableIconTab;
 import vodmordia.modtabs.api.tabs_menu.TabConfig;
 import vodmordia.modtabs.api.tabs_menu.ScreenRegistry;
@@ -65,6 +67,14 @@ public class InventoryTab extends ConfigurableIconTab {
 
         // Note: BodyHealthScreen registration is handled by BodyDamageTab to avoid duplicates
 
-        // TODO(1.18.2 integrations): also register CuriosScreen once Curios is ported.
+        if (ModIntegrationManager.isModLoaded(ModIntegration.CURIOS)) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Screen> curiosScreenClass =
+                        (Class<? extends Screen>) Class.forName("top.theillusivec4.curios.client.gui.CuriosScreen");
+                ScreenRegistry.registerStandardScreens(curiosScreenClass);
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
     }
 }

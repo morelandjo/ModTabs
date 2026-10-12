@@ -41,7 +41,7 @@ public class PatchouliIntegration {
 
             // Call openBookGUI on client side
             if (player.getWorld().isClient) {
-                apiClass.getMethod("openBookGUI", Identifier.class)
+                Class.forName("vazkii.patchouli.api.PatchouliAPI$IPatchouliAPI").getMethod("openBookGUI", Identifier.class)
                         .invoke(apiInstance, bookId);
                 return true;
             } else {
@@ -74,7 +74,7 @@ public class PatchouliIntegration {
 
 
             // Get the book ItemStack
-            Object bookStack = apiClass.getMethod("getBookStack", Identifier.class)
+            Object bookStack = Class.forName("vazkii.patchouli.api.PatchouliAPI$IPatchouliAPI").getMethod("getBookStack", Identifier.class)
                     .invoke(apiInstance, bookId);
 
             if (bookStack instanceof ItemStack) {

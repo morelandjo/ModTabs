@@ -1,56 +1,103 @@
 # MODE|mod id|class|member|descriptor|note
 DEFERRED|modular_backpacks||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|kindred||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|origins||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|origins|io.github.apace100.origins.screen.ViewOriginScreen|<init>|()V|O-key screen constructor
 DEFERRED|backpacked||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|travelersbackpack||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.client.screens.TravelersBackpackScreen|||Target screen
+REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.capability.CapabilityUtils|isWearingBackpack|(Lnet/minecraft/world/entity/player/Player;)Z|Worn-backpack detection
+REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.network.ServerboundSpecialActionPacket|<init>|(BBD)V|Open-worn-backpack packet constructor (screenID, typeOfAction, scrollDelta)
+REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.TravelersBackpack|NETWORK|Lnet/minecraftforge/network/simple/SimpleChannel;|Packet send channel
+REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.init.ModItems|STANDARD_TRAVELERS_BACKPACK|Lnet/minecraftforge/registries/RegistryObject;|Tab icon item
+REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.util.Reference|WEARABLE_SCREEN_ID|B|Wearable screen id (2)
+REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.util.Reference|OPEN_SCREEN|B|Open-screen action id (4)
 DEFERRED|legendarysurvivaloverhaul||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|curios||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|curios|top.theillusivec4.curios.client.gui.CuriosScreen|||Target screen (1.18.2 has no CuriosScreenV2)
+REQUIRED|curios|top.theillusivec4.curios.common.network.client.CPacketOpenCurios|<init>|(Lnet/minecraft/world/item/ItemStack;)V|Open-curios packet constructor
+REQUIRED|curios|top.theillusivec4.curios.common.network.NetworkHandler|INSTANCE|Lnet/minecraftforge/network/simple/SimpleChannel;|Packet send channel
+REQUIRED|curios|top.theillusivec4.curios.api.CuriosApi|getCuriosHelper|()Ltop/theillusivec4/curios/api/type/util/ICuriosHelper;|Curios lookup entrypoint (backpack-in-curios detection)
+REQUIRED|curios|top.theillusivec4.curios.api.type.util.ICuriosHelper|findCurios|(Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Predicate;)Ljava/util/List;|Find curios by predicate
+REQUIRED|curios|top.theillusivec4.curios.api.SlotResult|stack|()Lnet/minecraft/world/item/ItemStack;|Slot result stack accessor
 DEFERRED|rereskillable||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|reskillable||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|ftbquests||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|ftbteams||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|ftbchunks||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|quarkoddities||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|quarkoddities|vazkii.quark.oddities.QuarkOddities|||Marker mod enabling Quark ODDITIES modules (backpack)
 DEFERRED|cosmeticarmorreworked||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|map_atlases||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|xaeroworldmap||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|journeymap||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|diet||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|xaeroworldmap|xaero.map.WorldMapSession|getCurrentSession||Map session API
+REQUIRED|journeymap|journeymap.client.ui.fullscreen.Fullscreen|||Target screen
+REQUIRED|diet|top.theillusivec4.diet.client.DietScreen|<init>|(Z)V|Target screen (boolean fromInventory)
 DEFERRED|bulking||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|skilltree||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|puffish_skills||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|puffish_skills|net.puffish.skillsmod.client.SkillsClientMod|getInstance||Client API
+REQUIRED|puffish_skills|net.puffish.skillsmod.client.SkillsClientMod|openScreen|(Ljava/util/Optional;)V|Open skills screen
+REQUIRED|puffish_skills|net.puffish.skillsmod.client.gui.SkillsScreen|||Target screen
 DEFERRED|l2hostility||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|l2library||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|l2complements||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|l2artifacts||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|l2tabs||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|sophisticatedbackpacks||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen|||Target screen
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackItem|||Backpack item detection
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.network.BackpackOpenMessage|<init>|(ILjava/lang/String;Ljava/lang/String;)V|Open-backpack packet (slot, identifier, handler)
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.network.SBPPacketHandler|INSTANCE|Lnet/p3pp3rf1y/sophisticatedbackpacks/network/SBPPacketHandler;|Packet send entrypoint
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems|BACKPACK|Lnet/minecraftforge/registries/RegistryObject;|Tab icon item
 DEFERRED|cobblemon||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|modulargolems||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|elixirum||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|ars_nouveau||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|ars_nouveau|com.hollingsworth.arsnouveau.client.gui.book.GuiSpellBook|||Target screen
+REQUIRED|ars_nouveau|com.hollingsworth.arsnouveau.common.items.SpellBook|onOpenBookMenuKeyPressed|(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)V|Opens the spellbook GUI (keybind path)
 DEFERRED|ars_zero||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|draconicevolution||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|eccentrictome||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|betteradvancements||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|draconicevolution|com.brandon3055.draconicevolution.client.gui.modular.itemconfig.GuiConfigurableItem|||Target screen
+REQUIRED|draconicevolution|com.brandon3055.draconicevolution.network.DraconicNetwork|sendOpenItemConfig|(Z)V|Opens item config GUI
+REQUIRED|draconicevolution|com.brandon3055.draconicevolution.api.capability.DECapabilities|PROPERTY_PROVIDER_CAPABILITY||Configurable-item capability
+REQUIRED|eccentrictome|website.eccentric.tome.Tome|convert|(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;|Converts a tome into the selected book (tome, book)
+REQUIRED|eccentrictome|website.eccentric.tome.Tome|getModsBooks|(Lnet/minecraft/world/item/ItemStack;)Ljava/util/Map;|Books stored in a tome
+REQUIRED|eccentrictome|website.eccentric.tome.Tome|isTome|(Lnet/minecraft/world/item/ItemStack;)Z|True for the tome item and converted books
+REQUIRED|eccentrictome|website.eccentric.tome.TomeItem|||Tome item class
+REQUIRED|eccentrictome|website.eccentric.tome.EccentricTome|TOME|Lnet/minecraftforge/registries/RegistryObject;|Tome item registry object
+REQUIRED|eccentrictome|website.eccentric.tome.client.TomeScreen|<init>|(Lnet/minecraft/world/item/ItemStack;)V|Constructed reflectively with the tome stack
+REQUIRED|eccentrictome|website.eccentric.tome.client.TomeScreen|book|Lnet/minecraft/world/item/ItemStack;|Hovered book read by TomeScreenWrapper
+REQUIRED|betteradvancements|betteradvancements.gui.BetterAdvancementsScreen|||Target screen (1.18.2 package is betteradvancements.gui)
+REQUIRED|betteradvancements|betteradvancements.gui.BetterAdvancementsScreen|<init>|(Lnet/minecraft/client/multiplayer/ClientAdvancements;)V|Constructed reflectively by AdvancementsTab
 DEFERRED|memory_of_the_past||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|runicskills||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|teams||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|recruits||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|recruits|com.talhanation.recruits.client.gui.team.TeamMainScreen|<init>|(Lnet/minecraft/world/entity/player/Player;)V|Team screen constructor (TEAM_SCREEN_KEY)
 DEFERRED|attributeslib||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|aether||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|epicfight||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|epicfight|yesman.epicfight.client.gui.screen.SkillEditScreen|||Target screen
+REQUIRED|epicfight|yesman.epicfight.world.capabilities.EpicFightCapabilities|getEntityPatch|(Lnet/minecraft/world/entity/Entity;Ljava/lang/Class;)Lyesman/epicfight/world/capabilities/entitypatch/EntityPatch;|Fetch LocalPlayerPatch
 DEFERRED|epicskills||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|mmorpg||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|blue_skies||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|completionistsindex||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|sdmshop||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|blue_skies|com.legacy.blue_skies.client.gui.screen.ArcsScreen|||Target screen
+REQUIRED|blue_skies|com.legacy.blue_skies.client.gui.screen.journal.BlueJournalScreen|open|(Z)V|Journal open entry point
+REQUIRED|blue_skies|com.legacy.blue_skies.client.gui.screen.journal.BlueJournalStartScreen|||Target screen
+REQUIRED|blue_skies|com.legacy.blue_skies.client.gui.screen.journal.BlueJournalSectionScreen|||Target screen
+REQUIRED|blue_skies|com.legacy.blue_skies.client.gui.screen.journal.BlueJournalEntryScreen|||Target screen
+REQUIRED|blue_skies|com.legacy.blue_skies.client.gui.screen.journal.BlueJournalSearchScreen|||Target screen
+REQUIRED|blue_skies|com.legacy.blue_skies.network.c_to_s.OpenInventoryPacket$Arcs|<init>|()V|Open-Arcs packet constructor
+REQUIRED|blue_skies|com.legacy.blue_skies.network.PacketHandler|INSTANCE|Lnet/minecraftforge/network/simple/SimpleChannel;|Packet channel
+REQUIRED|blue_skies|com.legacy.blue_skies.client.events.SkiesClientEvents|areInventoryTabsVisible|(Lnet/minecraft/client/gui/screens/Screen;)Z|Mixin target (SkiesClientEventsMixin)
+REQUIRED|sdmshop|net.sdm.sdmshopr.client.MainShopScreen|<init>|()V|Shop screen constructor (keybind path)
+REQUIRED|sdmshop|net.sdm.sdmshopr.shop.Shop|CLIENT|Lnet/sdm/sdmshopr/shop/Shop;|Client shop sync guard
 DEFERRED|jobsplus||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|questlog||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|fieldguide||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|modonomicon||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|quark||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+REQUIRED|quark|vazkii.quark.addons.oddities.item.BackpackItem|||Chest-slot backpack item (MenuProvider)
+REQUIRED|quark|vazkii.quark.addons.oddities.client.screen.BackpackInventoryScreen|||Target screen
+REQUIRED|quark|vazkii.quark.addons.oddities.inventory.BackpackMenu|||Backpack menu
+REQUIRED|completionistsindex|fuzs.completionistsindex.client.gui.screens.inventory.ModsIndexViewScreen|<init>|(Lnet/minecraft/client/gui/screens/Screen;)V|Tab opens this screen
+REQUIRED|completionistsindex|fuzs.completionistsindex.client.gui.screens.inventory.ItemsIndexViewScreen|||Target screen
+REQUIRED|completionistsindex|fuzs.completionistsindex.client.gui.screens.inventory.IndexViewScreen|||Target screen base
+REQUIRED|completionistsindex|fuzs.completionistsindex.client.handler.IndexButtonHandler|onScreenInit$Post$1|(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/Screen;IILjava/util/List;Ljava/util/function/Consumer;Ljava/util/function/Consumer;)V|Inventory button injection target of IndexButtonHandlerMixin
+REQUIRED|modonomicon|com.klikli_dev.modonomicon.item.ModonomiconItem|getBook|(Lnet/minecraft/world/item/ItemStack;)Lcom/klikli_dev/modonomicon/book/Book;|Resolves the Book for a book stack
+REQUIRED|modonomicon|com.klikli_dev.modonomicon.book.Book|getId|()Lnet/minecraft/resources/ResourceLocation;|Book id passed to openBook
+REQUIRED|modonomicon|com.klikli_dev.modonomicon.client.gui.BookGuiManager|get|()Lcom/klikli_dev/modonomicon/client/gui/BookGuiManager;|Singleton accessor
+REQUIRED|modonomicon|com.klikli_dev.modonomicon.client.gui.BookGuiManager|openBook|(Lnet/minecraft/resources/ResourceLocation;)V|Opens a book (1.18.2 takes ResourceLocation)
+REQUIRED|modonomicon|com.klikli_dev.modonomicon.client.gui.book.BookOverviewScreen|||Target screen
+REQUIRED|modonomicon|com.klikli_dev.modonomicon.client.gui.book.BookErrorScreen|||Target screen
 DEFERRED|biologydictionary||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|reliable_backpacks||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
-DEFERRED|itemcollectors||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
+DEFERRED|itemcollectors||||Screen-only (ScreenRegistry by corelib wrapper FQN + predicate); no compile dependency

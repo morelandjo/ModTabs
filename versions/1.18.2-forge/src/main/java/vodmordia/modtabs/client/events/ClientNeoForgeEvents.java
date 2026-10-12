@@ -377,14 +377,24 @@ public class ClientNeoForgeEvents {
         // 1.18.2: vanilla AdvancementsScreen.render never calls super.render (Forge 47 patches
         // that call in on 1.20.1; Forge 40 does not), so its renderables - our tabs - are never
         // drawn. Render them manually here like the modded hosts below.
-        // TODO(1.18.2 integrations): the class names below are the 1.20.1 ones; re-verify
-        // each when its integration is ported.
+        // xaero.map.gui.GuiMap verified against Xaero's World Map 1.18.2 1.47.0 (its render ends in
+        // xaerolib ScreenBase, drawn under the map; keep manual draw so tabs sit above the map).
+        // JourneyMap's Fullscreen is not a tab host screen (its render() draws only JM buttons and
+        // never calls Screen.render), so it needs no entry here.
+        // TODO(1.18.2 integrations): the class names below (other than Better Advancements, verified
+        // against 1.18.2-0.2.0.146) are the 1.20.1 ones; re-verify each when its integration is ported.
         if (event.getScreen() instanceof net.minecraft.client.gui.screens.advancements.AdvancementsScreen ||
+            // Item Collectors' corelib wrapper screens: WidgetScreen.render / WidgetContainerScreen.render
+            // draw their widgets directly and never call Screen.render (verified with javap on
+            // corelib 1.1.25 / 1.18.2), so renderables - our tabs - are not drawn. Only TabButtons
+            // that were actually added (predicate-gated in registration) are drawn below.
+            screenClassName.equals("com.supermartijn642.core.gui.WidgetScreen") ||
+            screenClassName.equals("com.supermartijn642.core.gui.WidgetContainerScreen") ||
             screenClassName.equals("net.puffish.skillsmod.client.gui.SkillsScreen") ||
             screenClassName.equals("dev.ftb.mods.ftblibrary.ui.ScreenWrapper") ||
             screenClassName.equals("xaero.map.gui.GuiMap") ||
             screenClassName.equals("pepjebs.mapatlases.client.screen.AtlasOverviewScreen") ||
-            screenClassName.equals("betteradvancements.common.gui.BetterAdvancementsScreen") ||
+            screenClassName.equals(ScreenClasses.BETTER_ADVANCEMENTS) ||
             screenClassName.equals(ScreenClasses.EPIC_FIGHT_SKILL_EDIT_SCREEN) ||
             screenClassName.equals(ScreenClasses.EPIC_SKILLS_SKILL_TREE_SCREEN) ||
             screenClassName.equals(ScreenClasses.MINE_AND_SLASH_TALENTS_SCREEN)) {

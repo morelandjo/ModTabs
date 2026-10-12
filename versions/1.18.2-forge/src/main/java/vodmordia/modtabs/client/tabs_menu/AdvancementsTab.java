@@ -11,6 +11,8 @@ import vodmordia.modtabs.api.tabs_menu.ConfigurableIconTab;
 import vodmordia.modtabs.api.tabs_menu.TabConfig;
 import vodmordia.modtabs.api.tabs_menu.ScreenRegistry;
 import vodmordia.modtabs.config.Config;
+import vodmordia.modtabs.integration.ModIntegration;
+import vodmordia.modtabs.integration.ModIntegrationManager;
 
 @TabConfig(configKey = "advancementsTab", defaultEnabled = true, defaultOrder = 0)
 public class AdvancementsTab extends ConfigurableIconTab {
@@ -26,7 +28,18 @@ public class AdvancementsTab extends ConfigurableIconTab {
 
     @Override
     public void openTargetScreen(Player player) {
-        // TODO(1.18.2 integrations): open BetterAdvancementsScreen when Better Advancements is ported.
+        if (ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)) {
+            // Use Better Advancements screen if the mod is loaded
+            try {
+                Class<?> betterScreenClass = Class.forName(vodmordia.modtabs.utils.ScreenClasses.BETTER_ADVANCEMENTS);
+                java.lang.reflect.Constructor<?> constructor = betterScreenClass.getConstructor(net.minecraft.client.multiplayer.ClientAdvancements.class);
+                Screen betterScreen = (Screen) constructor.newInstance(Minecraft.getInstance().getConnection().getAdvancements());
+                Minecraft.getInstance().setScreen(betterScreen);
+                return;
+            } catch (Exception e) {
+                // Fallback to vanilla if Better Advancements fails to load
+            }
+        }
         // Use vanilla advancements screen (fallback or default)
         AdvancementsScreen newGui = new AdvancementsScreen(Minecraft.getInstance().getConnection().getAdvancements());
         Minecraft.getInstance().setScreen(newGui);
@@ -42,7 +55,11 @@ public class AdvancementsTab extends ConfigurableIconTab {
         if (currentScreen instanceof AdvancementsScreen) {
             return true;
         }
-        // TODO(1.18.2 integrations): Better Advancements screen check.
+        // Check if the screen is Better Advancements screen if the mod is loaded
+        if (ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)) {
+            return vodmordia.modtabs.utils.ClassCache.isInstance(
+                    vodmordia.modtabs.utils.ScreenClasses.BETTER_ADVANCEMENTS, currentScreen);
+        }
         return false;
     }
 
@@ -56,6 +73,10 @@ public class AdvancementsTab extends ConfigurableIconTab {
         // Register the advancements screen with tabs displayed inverted at the top
         ScreenRegistry.registerInvertedScreens(AdvancementsScreen.class);
 
-        // TODO(1.18.2 integrations): register the Better Advancements screen when ported.
+        // Also register Better Advancements screen if the mod is loaded
+        if (ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)) {
+            // Use string-based registration to avoid class loading issues
+            ScreenRegistry.registerInvertedScreens(vodmordia.modtabs.utils.ScreenClasses.BETTER_ADVANCEMENTS);
+        }
     }
 }

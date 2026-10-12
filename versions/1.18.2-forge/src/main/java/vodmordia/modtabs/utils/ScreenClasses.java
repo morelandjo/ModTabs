@@ -60,13 +60,13 @@ public final class ScreenClasses {
     // -- Quark Backpack (Quark "Oddities" addon, mod id "quark") -----------
     /** Chest-slot {@code ArmorItem} that is itself a {@code MenuProvider}. */
     public static final String QUARK_BACKPACK_ITEM =
-            "org.violetmoon.quark.addons.oddities.item.BackpackItem";
+            "vazkii.quark.addons.oddities.item.BackpackItem";
     public static final String QUARK_BACKPACK_SCREEN =
-            "org.violetmoon.quark.addons.oddities.client.screen.BackpackInventoryScreen";
+            "vazkii.quark.addons.oddities.client.screen.BackpackInventoryScreen";
 
     // -- Better Advancements ----------------------------------------------
     public static final String BETTER_ADVANCEMENTS =
-            "betteradvancements.common.gui.BetterAdvancementsScreen";
+            "betteradvancements.gui.BetterAdvancementsScreen";
 
     // -- Body Damage (Legendary Survival Overhaul) ------------------------
     public static final String LSO_BODY_HEALTH =
@@ -186,11 +186,12 @@ public final class ScreenClasses {
 
     // -- Draconic Evolution (configurable item GUI) -----------------------
     public static final String DRACONIC_EVOLUTION_CONFIGURABLE_ITEM =
-            "com.brandon3055.draconicevolution.client.gui.modular.itemconfig.ConfigurableItemGui$Screen";
+            "com.brandon3055.draconicevolution.client.gui.modular.itemconfig.GuiConfigurableItem";
 
     // -- Travelers Backpack -----------------------------------------------
+    // 1.18.2 TB 7.1.x names the screen TravelersBackpackScreen (1.20.1 renamed it BackpackScreen).
     public static final String TRAVELERS_BACKPACK_SCREEN =
-            "com.tiviacz.travelersbackpack.client.screens.BackpackScreen";
+            "com.tiviacz.travelersbackpack.client.screens.TravelersBackpackScreen";
 
     // -- Biology Dictionary -----------------------------------------------
     public static final String BIOLOGY_DICTIONARY_HOME_SCREEN =
@@ -235,15 +236,13 @@ public final class ScreenClasses {
     public static final String ADVANCED_TEAM_CLIENT_TEAM =
             "com.clefal.teams.client.core.ClientTeam";
 
-    // -- Villager Recruits ------------------------------------------------
-    /** Faction landing screen opened by the U keybind. Constructor takes a {@link net.minecraft.world.entity.player.Player}. */
+    // -- Villager Recruits (1.18.2 Forge, 1.13.x) -------------------------
+    /** 1.18.2 Recruits has no FactionMainScreen / WorldMapScreen (those arrived in later releases);
+     *  the team screen opened by the TEAM_SCREEN_KEY keybind ({@code KeyEvents.onKeyInput}) is
+     *  {@code new TeamMainScreen(localPlayer)}. Constructor takes a
+     *  {@link net.minecraft.world.entity.player.Player}. The constant keeps its 1.20.1 name. */
     public static final String VILLAGER_RECRUITS_FACTION_MAIN_SCREEN =
-            "com.talhanation.recruits.client.gui.faction.FactionMainScreen";
-    /** Claim / world-map screen opened by the M keybind. No-arg constructor; the keybind
-     *  handler in {@code KeyEvents.onKeyInput} additionally gates on
-     *  {@code level.dimension() == Level.OVERWORLD}, so the tab replicates that check. */
-    public static final String VILLAGER_RECRUITS_WORLD_MAP_SCREEN =
-            "com.talhanation.recruits.client.gui.worldmap.WorldMapScreen";
+            "com.talhanation.recruits.client.gui.team.TeamMainScreen";
 
     // -- Diet / Bulking ---------------------------------------------------
     /** Diet's main player UI screen. Constructor: {@code DietScreen(boolean fromInventory)}.
@@ -251,7 +250,7 @@ public final class ScreenClasses {
      *  computed dynamically in init() as {@code groups.size() * 20 + 60}, so 248x166 is just
      *  a sane default for tab-bar positioning. */
     public static final String DIET_SCREEN =
-            "com.illusivesoulworks.diet.client.screen.DietScreen";
+            "top.theillusivec4.diet.client.DietScreen";
     /** Bulking's replacement screen. Same {@code (boolean fromInventory)} constructor as Diet's.
      *  Bulking ships mixins on {@code DietClientEvents.tick} / {@code .getButton} that swap
      *  any {@code new DietScreen(...)} call for {@code new BulkingScreen(...)}; since we
@@ -387,33 +386,22 @@ public final class ScreenClasses {
     public static final String COMPLETIONISTS_INDEX_BUTTON_HANDLER =
             "fuzs.completionistsindex.client.handler.IndexButtonHandler";
 
-    // -- SDM Shop (sdmshop, DeusSixik / Architectury, 7.x rebrand) ---------
-    // The mod was rebranded around v7.0 — old modid `sdmshoprework` and package
-    // `net.sixik.sdmshoprework.*` are gone; everything is now `sdmshop` /
-    // `net.sixik.sdmshop.*` and the open-screen API changed shape entirely.
-    /** Client entry point. The relevant overload is {@code openGui(ResourceLocation shopId)};
-     *  passing {@link #SDM_SHOP_AUTO_OPEN} matches what the in-game keybind does. The
-     *  call goes through an async server round-trip ({@code AsyncClientTasks.openShop})
-     *  which then dispatches to the configured style screen. */
+    // -- SDM Shop (1.18.2 Forge: "SDM ShopR" 5.x, mod id sdmshop) ----------
+    // The 1.18.2 line is the older sdmshopr codebase (package net.sdm.sdmshopr), not the 7.x
+    // rebrand: the shop opens with {@code new MainShopScreen().openGui()} (as its keybind does,
+    // gated on {@code Shop.CLIENT != null}) and there is no server round-trip sentinel.
+    /** Client entry point; holds the keybind handler. */
     public static final String SDM_SHOP_CLIENT =
-            "net.sixik.sdmshop.client.SDMShopClient";
-    /** Constants holder. {@code AUTO_SHOP_OPEN = new ResourceLocation("server", "auto_shop_open")}
-     *  is the sentinel the server treats as "open the default shop for this player". */
-    public static final String SDM_SHOP_CONSTANTS =
-            "net.sixik.sdmshop.SDMShopConstants";
-    /** Resource location namespace/path of the sentinel above — used to construct the
-     *  argument reflectively when the constants class isn't on the classpath. */
-    public static final String SDM_SHOP_AUTO_OPEN_NAMESPACE = "server";
-    public static final String SDM_SHOP_AUTO_OPEN_PATH = "auto_shop_open";
-    /** "Modern" style shop. Backed by FTB Library's {@code BaseScreen} → the actual
-     *  {@link net.minecraft.client.gui.screens.Screen} the player sees is
+            "net.sdm.sdmshopr.SDMShopRClient";
+    /** Shop holder; {@code Shop.CLIENT} is non-null once the server synced the shop to the client. */
+    public static final String SDM_SHOP_CLASS =
+            "net.sdm.sdmshopr.shop.Shop";
+    /** The shop screen: an FTB Library {@code BaseScreen}, so the Screen the player sees is
      *  {@link #FTB_LIBRARY_WRAPPER} with this as the {@code wrappedGui} field. */
-    public static final String SDM_SHOP_MODERN_SCREEN =
-            "net.sixik.sdmshop.client.screen.modern.ModernShopScreen";
-    /** "Blocky modern" style — the rewritten screen tree under {@code screen_new}.
-     *  Same wrapping (BaseScreen → ScreenWrapper) as ModernShopScreen. */
     public static final String SDM_SHOP_MAIN_SCREEN =
-            "net.sixik.sdmshop.client.screen_new.MainShopScreen";
+            "net.sdm.sdmshopr.client.MainShopScreen";
+    /** Package prefix of every SDM Shop screen, used to recognise it inside the FTB wrapper. */
+    public static final String SDM_SHOP_PACKAGE_PREFIX = "net.sdm.sdmshopr.";
 
     // -- Jobs+ (DAQEM, Forge 1.20.1) ------------------------------------
     // JobsScreen needs server-supplied data (jobs + coins) to construct, so we can't

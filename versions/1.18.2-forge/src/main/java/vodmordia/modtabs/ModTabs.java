@@ -19,9 +19,22 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.slf4j.Logger;
 import vodmordia.modtabs.api.tabs_menu.TabsMenu;
+import vodmordia.modtabs.client.tabs_menu.CuriosTab;
 import vodmordia.modtabs.client.tabs_menu.InventoryTab;
+import vodmordia.modtabs.client.tabs_menu.SophisticatedBackpacksTab;
+import vodmordia.modtabs.client.tabs_menu.TravelersBackpackTab;
+import vodmordia.modtabs.client.tabs_menu.CompletionistsIndexTab;
+import vodmordia.modtabs.client.tabs_menu.EccentricTomeTab;
+import vodmordia.modtabs.client.tabs_menu.ModonomiconTab;
 import vodmordia.modtabs.client.tabs_menu.AdvancementsTab;
+import vodmordia.modtabs.client.tabs_menu.XaerosMapTab;
+import vodmordia.modtabs.client.tabs_menu.JourneyMapTab;
 import vodmordia.modtabs.client.tabs_menu.CustomJsonTab;
+import vodmordia.modtabs.client.tabs_menu.ArsNouveauTab;
+import vodmordia.modtabs.client.tabs_menu.DietTab;
+import vodmordia.modtabs.client.tabs_menu.DraconicEvolutionTab;
+import vodmordia.modtabs.client.tabs_menu.EpicFightTab;
+import vodmordia.modtabs.client.tabs_menu.OriginsTab;
 import vodmordia.modtabs.client.keybinds.ModKeybinds;
 import vodmordia.modtabs.config.Config;
 import vodmordia.modtabs.config.ModTabsConfig;
@@ -29,6 +42,8 @@ import vodmordia.modtabs.integration.ModIntegrationManager;
 import vodmordia.modtabs.utils.CustomTabLoader;
 import vodmordia.modtabs.config.CustomTabDefinition;
 import vodmordia.modtabs.config.lib.MidnightConfig;
+import vodmordia.modtabs.network.TomeConvertHandler;
+import vodmordia.modtabs.network.TomeConvertPayload;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -76,9 +91,21 @@ public class ModTabs
                 () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remote, isServer) -> true));
 
         // Register network packets via SimpleChannel.
-        // TODO(1.18.2 integrations): TomeConvert (Eccentric Tome), OpenQuarkBackpack and
-        // OpenReliableBackpack packets (ids 0-2) are registered here once those integrations are ported.
-        // The CHANNEL itself is still created (static init) so the handshake advertises it.
+        // Ids: 0 = TomeConvert (Eccentric Tome), 1 = OpenQuarkBackpack, 2 = OpenReliableBackpack (not on 1.18.2).
+        CHANNEL.registerMessage(
+                0,
+                TomeConvertPayload.class,
+                TomeConvertPayload::encode,
+                TomeConvertPayload::decode,
+                TomeConvertHandler::handle
+        );
+        CHANNEL.registerMessage(
+                1,
+                vodmordia.modtabs.network.OpenQuarkBackpackPayload.class,
+                vodmordia.modtabs.network.OpenQuarkBackpackPayload::encode,
+                vodmordia.modtabs.network.OpenQuarkBackpackPayload::decode,
+                vodmordia.modtabs.network.OpenQuarkBackpackHandler::handle
+        );
 
         LOGGER.info("Registered ModTabs network packets");
     }
@@ -100,9 +127,27 @@ public class ModTabs
             // Register all tabs - each tab's isEnabled() method handles mod detection via @TabConfig
             TabsMenu.register(new InventoryTab());
             TabsMenu.register(new AdvancementsTab());
-            // TODO(1.18.2 integrations): integration tabs (Backpacked, Traveler's Backpack, FTB Quests/Teams/
-            // Chunks incl. their inspectors, Curios, Sophisticated Backpacks, Ars Nouveau, ...) are registered
-            // here as each integration is ported to 1.18.2.
+            TabsMenu.register(new XaerosMapTab());
+            TabsMenu.register(new JourneyMapTab());
+            TabsMenu.register(new vodmordia.modtabs.client.tabs_menu.VillagerRecruitsTab());
+            TabsMenu.register(new vodmordia.modtabs.client.tabs_menu.QuarkBackpackTab());
+            TabsMenu.register(new vodmordia.modtabs.client.tabs_menu.BlueSkiesArcsTab());
+            TabsMenu.register(new vodmordia.modtabs.client.tabs_menu.BlueSkiesJournalTab());
+            TabsMenu.register(new vodmordia.modtabs.client.tabs_menu.SdmShopTab());
+            // Ported integrations (1.18.2 Forge). FTB tabs and Backpacked are not ported.
+            // TODO(1.18.2 integrations)
+            TabsMenu.register(new vodmordia.modtabs.client.tabs_menu.PufferfishsSkillsTab());
+            TabsMenu.register(new DietTab());
+            TabsMenu.register(new DraconicEvolutionTab());
+            TabsMenu.register(new ArsNouveauTab());
+            TabsMenu.register(new OriginsTab());
+            TabsMenu.register(new EpicFightTab());
+            TabsMenu.register(new TravelersBackpackTab());
+            TabsMenu.register(new SophisticatedBackpacksTab());
+            TabsMenu.register(new CuriosTab());
+            TabsMenu.register(new EccentricTomeTab());
+            TabsMenu.register(new CompletionistsIndexTab());
+            TabsMenu.register(new ModonomiconTab());
 
             // One transient tab per nearby container block (chests, barrels, modded
             // inventories, …). Discovered fresh on every screen-init.
@@ -121,13 +166,37 @@ public class ModTabs
                     net.minecraft.client.gui.screens.inventory.HopperScreen.class
             );
 
-            // TODO(1.18.2 integrations): registerItemCollectorsScreens() once Item Collectors is ported.
+            registerItemCollectorsScreens();
 
             // Wait for Patchouli books to load, then load custom tabs
             waitForPatchouliAndLoadCustomTabs();
 
             // Finalize all pending screen registrations now that all tabs are registered
             TabsMenu.finalizePendingRegistrations();
+        }
+
+        /**
+         * Item Collectors: its GUIs are generic SuperMartijn642 corelib wrapper screens, so the wrapper
+         * classes are registered with a predicate that only passes when the wrapped widget belongs to
+         * itemcollectors. The layout is keyed by wrapper class (shared with other corelib screens' key,
+         * which never show tabs). Dimensions match the 1.18.2 BasicCollectorScreen (202x82) and
+         * AdvancedCollectorScreen (224x206) widgets. Both wrappers skip Screen.render's renderables
+         * loop, so ClientNeoForgeEvents.onScreenRenderPost draws the tab buttons manually.
+         */
+        private static void registerItemCollectorsScreens() {
+            if (!vodmordia.modtabs.integration.ModIntegrationManager.isModLoaded(vodmordia.modtabs.integration.ModIntegration.ITEM_COLLECTORS)) return;
+            java.util.function.Predicate<net.minecraft.client.gui.screens.Screen> isIc = screen -> {
+                try {
+                    Object w = screen.getClass().getMethod("getWidget").invoke(screen);
+                    return w != null && w.getClass().getName().startsWith("com.supermartijn642.itemcollectors.");
+                } catch (ReflectiveOperationException e) {
+                    return false;
+                }
+            };
+            vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder().withDimensions(p -> 202, p -> 82).withPredicate(isIc)
+                    .registerAllTabs("com.supermartijn642.core.gui.WidgetScreen");
+            vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder().withDimensions(p -> 224, p -> 206).withPredicate(isIc)
+                    .registerAllTabs("com.supermartijn642.core.gui.WidgetContainerScreen");
         }
 
         /**

@@ -38,8 +38,12 @@ mixin {
 }
 
 repositories {
-    // Integration-mod repositories (CurseMaven, Modrinth, ...) are re-added in later 1.18.2
-    // port phases, together with per-mod 1.18.2 pins.
+    // Integration-mod repositories are added here as each 1.18.2 integration is ported.
+    // Modrinth Maven: pin by Modrinth VERSION ID (version numbers can be shared across loaders).
+    maven {
+        url "https://api.modrinth.com/maven"
+        content { includeGroup "maven.modrinth" }
+    }
 }
 
 // =============================================================================
@@ -52,8 +56,61 @@ repositories {
 // file-only via the in-tree vodmordia.modtabs.config.lib.MidnightConfig replacement.
 // =============================================================================
 dependencies {
+    // Map mods (pinned by Modrinth version ID).
+    compileOnly "maven.modrinth:journeymap:Q3tpDCFf"        // 1.18.2-5.9.8-forge
+    compileOnly "maven.modrinth:xaeros-world-map:shVob7ZT"  // forge-1.18.2-1.47.0
+    // ---- 1.18.2 Forge integration pins (Modrinth version IDs) --------------------------------
+    // Reflection-only integrations: nothing here is referenced at compile time except through
+    // Class.forName; the jars are on the compile classpath for the integration-contract test.
+    // Quark 3.2-358 (1.18.2). Hard-deps AutoRegLib at runtime; not needed to compile.
+    compileOnly "maven.modrinth:quark:e4xifKGM"
+    // Quark Oddities 1.18: marker mod that enables Quark's ODDITIES module category (backpack).
+    compileOnly "maven.modrinth:quark-oddities:gvWA7HWA"
+    // Villager Recruits 1.13.2 (1.18.2 Forge).
+    compileOnly "maven.modrinth:villager-recruits:ZDBp3day"
+    // SDM Shop 1.18.2-5.4.4 ("SDM ShopR", mod id sdmshop). Runtime hard-deps: architectury,
+    // ftblibrary, ftbteams, ftbquests - not needed to compile (reflection only).
+    compileOnly "maven.modrinth:sdm-shop:qnf5i8rI"
+    // Blue Skies 1.3.12 (1.18.2 Forge). Runtime hard-dep: Structure Gel API.
+    compileOnly "maven.modrinth:blue-skies:I59lZxvQ"
+    // Integration mods (compileOnly; the tabs reach them by reflection, these are for the
+    // integration-contract test). Pinned by Modrinth version id, all 1.18.2 Forge.
+    compileOnly "maven.modrinth:curios:sVuCrC2E"                  // curios-forge-1.18.2-5.0.9.2
+    compileOnly "maven.modrinth:travelersbackpack:voGeNbOd"       // travelersbackpack-forge-1.18.2-7.1.49
+    compileOnly "maven.modrinth:sophisticated-core:V4IQWqjA"      // sophisticatedcore-1.18.2-0.6.4.604 (SB hard dep)
+    compileOnly "maven.modrinth:sophisticated-backpacks:ySJuJiG9" // sophisticatedbackpacks-1.18.2-3.20.3.1063
+    // Item Collectors (itemcollectors-1.1.12-forge-mc1.18, Modrinth version kX7m2O24, needs
+    // supermartijn642 core-lib) is screen-only: reached by class-name string, no compile dependency.
+
     // Mixin AP writes the refmap; Mixin 0.8.5 is the version bundled with Forge 1.18.2.
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    // --- Integrations (compileOnly), pinned by Modrinth version ID (Forge 1.18.2 builds) ---
+    // Diet 1.18.2-1.3.2.1 (package top.theillusivec4.diet)
+    compileOnly "maven.modrinth:diet:JnRy1qjV"
+    // Origins (Forge port) 1.18.2-1.5.0.2 (Apoli/Calio at runtime only; not needed to compile)
+    compileOnly "maven.modrinth:origins-forge:TuwzoRZB"
+    // Epic Fight 18.5.26 (1.18.2)
+    compileOnly "maven.modrinth:epic-fight:6SuH0tnY"
+    // Draconic Evolution 3.0.31.531 (1.18.2); Brandon's Core / CodeChicken Lib are referenced by name only
+    compileOnly "maven.modrinth:draconic-evolution:ASrbjsih"
+    // Ars Nouveau 2.9.0 (1.18.2) - the Modrinth 1.18.2 Forge build is the 2.x line
+    compileOnly "maven.modrinth:ars-nouveau:ffFSfxZE"
+    // Patchouli 1.18.2-71.1 (Forge). Reflection-only (PatchouliIntegration); compileOnly so the
+    // integration contracts are checked against the real jar.
+    compileOnly "maven.modrinth:patchouli:VReLlKMv"
+    // Modonomicon 1.18.2-1.33.1 (Forge). Reflection-only (ModonomiconTab).
+    compileOnly "maven.modrinth:modonomicon:P3p7OsR6"
+    // Eccentric Tome 1.18.2-1.10.2 (Forge). Reflection-only (EccentricTomeTab, TomeConvertHandler).
+    compileOnly "maven.modrinth:eccentric-tome:Aw03vtFo"
+    // Completionist's Index v3.0.0-1.18.2 (Fuzs, Forge). Reflection-only (CompletionistsIndexTab +
+    // IndexButtonHandlerMixin). Hard-deps puzzleslib at runtime; compileOnly needs only the mod jar.
+    compileOnly "maven.modrinth:completionists-index:xI0X8VeA"
+    // Better Advancements 1.18.2-0.2.0.146 (Forge). Reflection-only (AdvancementsTab).
+    compileOnly "maven.modrinth:better-advancements:FA2V323R"
+    // Pufferfish's Skills 0.19.2 (1.18.2 Forge; Modrinth slug "skills"). Reflection-only (PufferfishsSkillsTab).
+    compileOnly "maven.modrinth:skills:ipYRLUOy"
+
 }
 
 sourceSets.test.java.srcDir(rootProject.file('test-support/src/test/java'))
