@@ -77,4 +77,13 @@ public abstract class TabBase {
     public boolean isSticky() {
         return TabRegistry.isTabSticky(this);
     }
+
+    /**
+     * True when this tab is featured: it sorts ahead of non-featured tabs (keeping relative
+     * Order) and renders at bar scale × {@code featuredTabScale}%. Backed by the per-tab
+     * {@code <configKey>Featured} flag, toggled via the Global Settings "Featured" panel.
+     */
+    public boolean isFeatured() {
+        return TabRegistry.isTabFeatured(this);
+    }
 }

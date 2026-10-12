@@ -50,6 +50,11 @@ public class PufferfishsSkillsTab extends SimpleTextureTab {
     }
 
     @Override
+    protected String featuredConfigKey() {
+        return "pufferfishSkillsTab";
+    }
+
+    @Override
     public void initTabOnScreens() {
         vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder()
             .withStandardDimensions()

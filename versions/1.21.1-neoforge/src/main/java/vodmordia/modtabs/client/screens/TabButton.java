@@ -27,6 +27,10 @@ public class TabButton extends Button {
     public Screen screen;
     public boolean isDisabled;
     public TabDisplayMode displayMode;
+    /** Featured tabs draw (and hit-test) at bar scale × featuredTabScale%. Refreshed in setTabBase. */
+    private boolean featured;
+
+    public boolean isFeatured() { return featured; }
 
     // Long-press state — set when the user starts holding the mouse on the current screen's tab.
     private long pressStartMs = 0L;
@@ -43,7 +47,7 @@ public class TabButton extends Button {
     public TabButton(TabBase tabBase, Player player, Screen screen, int tabPositionIndex, int leftScreenPos, int topScreenPos, TabDisplayMode displayMode) {
         // Initial position uses *current* effective scale/spacing so the first frame is correct.
         super(calculateX(leftScreenPos, tabPositionIndex),
-              calculateY(topScreenPos, tabPositionIndex, displayMode),
+              calculateY(topScreenPos, TabsMenu.effectiveTabHeight(), displayMode),
               TAB_WIDTH, TAB_HEIGHT, Component.literal(""), button -> {}, DEFAULT_NARRATION);
 
         this.tabPositionIndex = tabPositionIndex;
@@ -56,14 +60,14 @@ public class TabButton extends Button {
     }
 
     private static int calculateX(int leftScreenPos, int tabPositionIndex) {
-        return leftScreenPos + tabPositionIndex * TabsMenu.primaryAxisStep();
+        return leftScreenPos + TabsMenu.slotPrimaryOffset(tabPositionIndex);
     }
 
-    private static int calculateY(int topScreenPos, int tabPositionIndex, TabDisplayMode displayMode) {
+    private static int calculateY(int topScreenPos, int tabHeight, TabDisplayMode displayMode) {
         // Inverted hangs below the GUI top edge, normal floats above by the scaled tab height.
         return displayMode == TabDisplayMode.INVERTED ?
             topScreenPos :
-            topScreenPos - TabsMenu.effectiveTabHeight();
+            topScreenPos - tabHeight;
     }
 
     @Override
@@ -113,6 +117,8 @@ public class TabButton extends Button {
 
     public void setTabBase(TabBase tabBase) {
         this.tabBase = tabBase;
+        this.featured = tabBase.isFeatured();
+        TabsMenu.setSlotFeatured(this.tabPositionIndex, this.featured);
         this.isDisabled = this.tabBase.isCurrentlyUsed(this.screen);
         this.setTooltip(Tooltip.create(this.tabBase.getTooltip()));
     }
@@ -141,7 +147,7 @@ public class TabButton extends Button {
         }
         // Recompute position from the bar anchor each render so live scale/spacing edits are visible.
         int x = calculateX(barLeft, tabPositionIndex);
-        int y = calculateY(barTop, tabPositionIndex, displayMode);
+        int y = calculateY(barTop, TabsMenu.tabHeight(featured), displayMode);
         setX(x);
         setY(y);
 
@@ -163,9 +169,9 @@ public class TabButton extends Button {
         int animatedX = x + offX;
         int animatedY = y + offY;
 
-        float scale = TabsMenu.currentEffectiveScale();
-        int scaledW = TabsMenu.effectiveTabWidth();
-        int scaledH = TabsMenu.effectiveTabHeight();
+        float scale = TabsMenu.tabScale(featured);
+        int scaledW = TabsMenu.tabWidth(featured);
+        int scaledH = TabsMenu.tabHeight(featured);
         float rotation = TabsMenu.currentEffectiveRotation();
 
         // Hit-test in the bar's unrotated frame, applying inverse rotation to the mouse.
@@ -238,7 +244,7 @@ public class TabButton extends Button {
         this.barLeft = leftScreenPos;
         this.barTop = topScreenPos;
         setX(calculateX(leftScreenPos, tabPositionIndex));
-        setY(calculateY(topScreenPos, tabPositionIndex, displayMode));
+        setY(calculateY(topScreenPos, TabsMenu.tabHeight(featured), displayMode));
     }
 
     @Override
@@ -248,7 +254,7 @@ public class TabButton extends Button {
         // frame's render runs would otherwise see stale coordinates after save/scale/spacing
         // changes.
         int x = calculateX(barLeft, tabPositionIndex);
-        int y = calculateY(barTop, tabPositionIndex, displayMode);
+        int y = calculateY(barTop, TabsMenu.tabHeight(featured), displayMode);
 
         // Tuck offset is now a rotation-aware 2D vector (always points screen-down after
         // rotation), so consume both axes regardless of bar orientation.
@@ -260,8 +266,8 @@ public class TabButton extends Button {
         }
         int animatedX = x + offX;
         int animatedY = y + offY;
-        int scaledW = TabsMenu.effectiveTabWidth();
-        int scaledH = TabsMenu.effectiveTabHeight();
+        int scaledW = TabsMenu.tabWidth(featured);
+        int scaledH = TabsMenu.tabHeight(featured);
         float rotation = TabsMenu.currentEffectiveRotation();
         if (rotation != 0f) {
             double[] center = TabsMenu.barCenter();

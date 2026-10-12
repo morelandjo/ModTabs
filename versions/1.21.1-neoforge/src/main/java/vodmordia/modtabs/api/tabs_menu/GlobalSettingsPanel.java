@@ -25,9 +25,9 @@ import java.util.List;
  */
 @OnlyIn(Dist.CLIENT)
 public final class GlobalSettingsPanel {
-    public enum GlobalSettingsTab { VISIBILITY, STICKY, ORDER, GENERAL }
+    public enum GlobalSettingsTab { VISIBILITY, STICKY, FEATURED, ORDER, GENERAL }
     /** Which numeric input on the General tab currently has focus, if any. */
-    private enum GsField { NONE, OFFSET_TOP, OFFSET_RIGHT, OFFSET_BOTTOM, OFFSET_LEFT }
+    private enum GsField { NONE, OFFSET_TOP, OFFSET_RIGHT, OFFSET_BOTTOM, OFFSET_LEFT, FEATURED_SCALE }
     private static GsField gsFocusedField = GsField.NONE;
     /** String draft of each numeric input — committed to ModTabsConfig only on Save. */
     private static String gsDraftOffsetTop = "0";
@@ -42,6 +42,10 @@ public final class GlobalSettingsPanel {
     private static java.util.Map<String, Boolean> gsDraftEnabled = null;
     /** Draft per-tab sticky state (pinned to the leading end of the bar). Committed on Save. */
     private static java.util.Map<String, Boolean> gsDraftSticky = null;
+    /** Draft per-tab featured state (sorted first, drawn larger). Committed on Save. */
+    private static java.util.Map<String, Boolean> gsDraftFeatured = null;
+    /** String draft of the featured-tab scale percent (General tab). Committed on Save. */
+    private static String gsDraftFeaturedScale = "125";
     private static java.util.List<String> gsDraftOrder = null;
     /** Snapshot of the configurable tabs at modal-open time, keyed by short configKey.
      *  Avoids re-probing every tab's {@code isEnabled} every render frame. */
@@ -49,6 +53,7 @@ public final class GlobalSettingsPanel {
     /** Vertical pixel scroll offsets applied to slot positions in each modal tab. */
     private static int gsScrollVisibility = 0;
     private static int gsScrollSticky = 0;
+    private static int gsScrollFeatured = 0;
     private static int gsScrollOrder = 0;
     /** -1 when not dragging; otherwise index in {@link #gsDraftOrder}. */
     private static int gsDraggingIndex = -1;
@@ -152,6 +157,14 @@ public final class GlobalSettingsPanel {
         try { ModTabsConfig.class.getField(shortKey + "TabSticky").setBoolean(null, value); }
         catch (Exception ignored) {}
     }
+    private static boolean readFeaturedField(String shortKey) {
+        try { return ModTabsConfig.class.getField(shortKey + "TabFeatured").getBoolean(null); }
+        catch (Exception ignored) { return false; }
+    }
+    private static void writeFeaturedField(String shortKey, boolean value) {
+        try { ModTabsConfig.class.getField(shortKey + "TabFeatured").setBoolean(null, value); }
+        catch (Exception ignored) {}
+    }
 
     private static int parseSafeInt(String s, int fallback) {
         if (s == null || s.isEmpty() || s.equals("-")) return fallback;
@@ -162,6 +175,7 @@ public final class GlobalSettingsPanel {
     public static void open() {
         gsDraftEnabled = new java.util.LinkedHashMap<>();
         gsDraftSticky = new java.util.LinkedHashMap<>();
+        gsDraftFeatured = new java.util.LinkedHashMap<>();
         gsDraftOrder = new java.util.ArrayList<>();
         gsTabsCache = new java.util.LinkedHashMap<>();
         java.util.List<TabBase> tabs = collectConfigurableTabs();
@@ -173,6 +187,7 @@ public final class GlobalSettingsPanel {
             if (k == null) continue;
             gsDraftEnabled.put(k, readEnabledField(k));
             gsDraftSticky.put(k, readStickyField(k));
+            gsDraftFeatured.put(k, readFeaturedField(k));
             gsDraftOrder.add(k);
             gsTabsCache.put(k, t);
         }
@@ -184,6 +199,7 @@ public final class GlobalSettingsPanel {
         gsDraftOffsetBottom = String.valueOf(Config.Baked.iconOffsetBottom);
         gsDraftOffsetLeft = String.valueOf(Config.Baked.iconOffsetLeft);
         gsDraftNearbyContainersEnabled = Config.Baked.nearbyContainersTabEnabled;
+        gsDraftFeaturedScale = String.valueOf(ModTabsConfig.featuredTabScale);
         globalSettingsOpen = true;
     }
 
@@ -198,6 +214,13 @@ public final class GlobalSettingsPanel {
                     writeStickyField(entry.getKey(), entry.getValue());
                 }
             }
+            if (gsDraftFeatured != null) {
+                for (var entry : gsDraftFeatured.entrySet()) {
+                    writeFeaturedField(entry.getKey(), entry.getValue());
+                }
+            }
+            ModTabsConfig.featuredTabScale = Math.max(50, Math.min(300,
+                    parseSafeInt(gsDraftFeaturedScale, ModTabsConfig.featuredTabScale)));
             // Write 1-based indices: the existing sort comparator treats order==0 as
             // "no explicit override" and banishes the tab to an alphabetical bucket.
             for (int i = 0; i < gsDraftOrder.size(); i++) {
@@ -216,11 +239,13 @@ public final class GlobalSettingsPanel {
         globalSettingsOpen = false;
         gsDraftEnabled = null;
         gsDraftSticky = null;
+        gsDraftFeatured = null;
         gsDraftOrder = null;
         gsTabsCache = null;
         gsDraggingIndex = -1;
         gsScrollVisibility = 0;
         gsScrollSticky = 0;
+        gsScrollFeatured = 0;
         gsScrollOrder = 0;
         gsFocusedField = GsField.NONE;
         // Force a re-init of the current screen so its tab row picks up the new
@@ -332,13 +357,27 @@ public final class GlobalSettingsPanel {
     }
 
     private static int gsMaxScrollSticky(Screen screen) {
-        if (gsDraftOrder == null || gsDraftSticky == null) return 0;
+        return gsMaxScrollFlagColumns(screen, gsDraftSticky);
+    }
+
+    private static int gsMaxScrollFeatured(Screen screen) {
+        return gsMaxScrollFlagColumns(screen, gsDraftFeatured);
+    }
+
+    /** Slot rect for icon at index within the featured column (0=normal, 1=featured). */
+    private static int[] gsFeaturedSlotRect(Screen screen, int column, int slotIndex) {
+        return gsTwoColSlotRect(screen, column, slotIndex, gsScrollFeatured);
+    }
+
+    /** Max scroll for a two-column on/off panel driven by a per-tab boolean draft map. */
+    private static int gsMaxScrollFlagColumns(Screen screen, java.util.Map<String, Boolean> flags) {
+        if (gsDraftOrder == null || flags == null) return 0;
         int[] cr = gsContentRect(screen);
         int colW = cr[2] / 2;
         int cellsPerRow = Math.max(1, (colW - GS_PAD * 2) / GS_CELL);
         int stickyCount = 0, notCount = 0;
         for (String key : gsDraftOrder) {
-            if (Boolean.TRUE.equals(gsDraftSticky.get(key))) stickyCount++; else notCount++;
+            if (Boolean.TRUE.equals(flags.get(key))) stickyCount++; else notCount++;
         }
         int rows = Math.max(rowsFor(stickyCount, cellsPerRow), rowsFor(notCount, cellsPerRow));
         int viewportH = cr[3] - GS_HEADER_H;
@@ -412,6 +451,15 @@ public final class GlobalSettingsPanel {
                     return key;
                 }
             }
+        } else if (gsActiveTab == GlobalSettingsTab.FEATURED) {
+            int notIdx = 0, featIdx = 0;
+            for (String key : gsDraftOrder) {
+                boolean featured = Boolean.TRUE.equals(gsDraftFeatured.get(key));
+                int[] slot = gsFeaturedSlotRect(screen, featured ? 1 : 0, featured ? featIdx++ : notIdx++);
+                if (mx >= slot[0] && mx < slot[0] + slot[2] && my >= slot[1] && my < slot[1] + slot[3]) {
+                    return key;
+                }
+            }
         } else if (gsActiveTab == GlobalSettingsTab.ORDER) {
             int idx = gsOrderHitTest(screen, mx, my);
             if (idx >= 0) {
@@ -471,7 +519,7 @@ public final class GlobalSettingsPanel {
         gui.fill(wx + GS_NAV_W, wy + GS_HEADER_H, wx + GS_NAV_W + 1, wy + wh, border);
 
         // Nav buttons
-        String[] navLabels = { "Visibility", "Sticky", "Order", "General" };
+        String[] navLabels = { "Visibility", "Sticky", "Featured", "Order", "General" };
         for (int i = 0; i < navLabels.length; i++) {
             int[] r = gsNavButtonRect(screen, i);
             boolean active = (gsActiveTab == GlobalSettingsTab.values()[i]);
@@ -490,6 +538,8 @@ public final class GlobalSettingsPanel {
             renderVisibilityTab(gui, screen);
         } else if (gsActiveTab == GlobalSettingsTab.STICKY) {
             renderStickyTab(gui, screen);
+        } else if (gsActiveTab == GlobalSettingsTab.FEATURED) {
+            renderFeaturedTab(gui, screen);
         } else if (gsActiveTab == GlobalSettingsTab.ORDER) {
             renderOrderTab(gui, screen, mouseX, mouseY);
         } else {
@@ -605,6 +655,29 @@ public final class GlobalSettingsPanel {
         gui.disableScissor();
     }
 
+    private static void renderFeaturedTab(GuiGraphics gui, Screen screen) {
+        int[] cr = gsContentRect(screen);
+        int colW = cr[2] / 2;
+        int leftColX = cr[0];
+        int rightColX = cr[0] + colW;
+        // Featured column (right) gets a light-blue tint to mark the highlighted side.
+        gui.fill(rightColX, cr[1], cr[0] + cr[2], cr[1] + cr[3], 0x3044AAFF);
+        gui.drawString(Minecraft.getInstance().font, "Normal", leftColX + GS_PAD, cr[1] + 4, 0xFFAAAAAA, false);
+        gui.drawString(Minecraft.getInstance().font, "Featured (first, larger)", rightColX + GS_PAD, cr[1] + 4, 0xFF88CCFF, false);
+        gui.fill(leftColX, cr[1] + GS_HEADER_H - 4, cr[0] + cr[2], cr[1] + GS_HEADER_H - 3, 0xFF44FF66);
+
+        gsScrollFeatured = Math.max(0, Math.min(gsScrollFeatured, gsMaxScrollFeatured(screen)));
+
+        gui.enableScissor(cr[0], cr[1] + GS_HEADER_H, cr[0] + cr[2], cr[1] + cr[3]);
+        int notIdx = 0, featIdx = 0;
+        for (String key : gsDraftOrder) {
+            boolean featured = Boolean.TRUE.equals(gsDraftFeatured.get(key));
+            int[] slot = gsFeaturedSlotRect(screen, featured ? 1 : 0, featured ? featIdx++ : notIdx++);
+            renderTabIconAt(gui, key, slot[0], slot[1]);
+        }
+        gui.disableScissor();
+    }
+
     private static void renderOrderTab(GuiGraphics gui, Screen screen, int mouseX, int mouseY) {
         int[] cr = gsContentRect(screen);
         gui.drawString(Minecraft.getInstance().font, "Drag to reorder",
@@ -655,12 +728,23 @@ public final class GlobalSettingsPanel {
         return new int[]{x, rowY, btnW, btnH};
     }
 
+    /** Featured-tab scale (%) input, below the nearby-containers toggle. */
+    private static int[] gsFeaturedScaleInputRect(Screen screen) {
+        int[] toggle = gsNearbyToggleRect(screen);
+        int rowY = toggle[1] + toggle[3] + 22;
+        int[] cr = gsContentRect(screen);
+        int x = cr[0] + (cr[2] - GS_INPUT_W) / 2;
+        return new int[]{x, rowY, GS_INPUT_W, GS_INPUT_H};
+    }
+
     private static GsField gsHitGeneralInput(Screen screen, double mx, double my) {
         GsField[] offsetFields = { GsField.OFFSET_TOP, GsField.OFFSET_RIGHT, GsField.OFFSET_BOTTOM, GsField.OFFSET_LEFT };
         for (int i = 0; i < 4; i++) {
             int[] r = gsOffsetInputRect(screen, i);
             if (mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[3]) return offsetFields[i];
         }
+        int[] fr = gsFeaturedScaleInputRect(screen);
+        if (mx >= fr[0] && mx < fr[0] + fr[2] && my >= fr[1] && my < fr[1] + fr[3]) return GsField.FEATURED_SCALE;
         return null;
     }
 
@@ -670,6 +754,7 @@ public final class GlobalSettingsPanel {
             case OFFSET_RIGHT -> gsDraftOffsetRight;
             case OFFSET_BOTTOM -> gsDraftOffsetBottom;
             case OFFSET_LEFT -> gsDraftOffsetLeft;
+            case FEATURED_SCALE -> gsDraftFeaturedScale;
             case NONE -> "";
         };
     }
@@ -680,6 +765,7 @@ public final class GlobalSettingsPanel {
             case OFFSET_RIGHT -> gsDraftOffsetRight = value;
             case OFFSET_BOTTOM -> gsDraftOffsetBottom = value;
             case OFFSET_LEFT -> gsDraftOffsetLeft = value;
+            case FEATURED_SCALE -> gsDraftFeaturedScale = value;
             case NONE -> {}
         }
     }
@@ -710,6 +796,14 @@ public final class GlobalSettingsPanel {
         String btnLabel = gsDraftNearbyContainersEnabled ? "Enabled" : "Disabled";
         int btnBg = gsDraftNearbyContainersEnabled ? 0xFF1F3322 : 0xFF331F1F;
         drawFooterButton(gui, toggleRect, btnLabel, btnBg);
+
+        // Section: featured-tab scale (percent of the bar scale, 50-300).
+        int[] fsRect = gsFeaturedScaleInputRect(screen);
+        String fsLabel = "Featured tab scale (%)";
+        int fslw = Minecraft.getInstance().font.width(fsLabel);
+        gui.drawString(Minecraft.getInstance().font, fsLabel,
+                cr[0] + (cr[2] - fslw) / 2, fsRect[1] - 12, 0xFFCCCCCC, false);
+        gsRenderInput(gui, fsRect, gsDraftFeaturedScale, gsFocusedField == GsField.FEATURED_SCALE);
     }
 
     private static void gsRenderInput(GuiGraphics gui, int[] r, String value, boolean focused) {
@@ -796,6 +890,7 @@ public final class GlobalSettingsPanel {
                 gsDraggingIndex = -1;
                 gsScrollVisibility = 0;
                 gsScrollSticky = 0;
+                gsScrollFeatured = 0;
                 gsScrollOrder = 0;
                 gsFocusedField = GsField.NONE;
                 return true;
@@ -831,6 +926,16 @@ public final class GlobalSettingsPanel {
                 int[] slot = gsStickySlotRect(screen, sticky ? 1 : 0, sticky ? stickyIdx++ : notIdx++);
                 if (mx >= slot[0] && mx < slot[0] + slot[2] && my >= slot[1] && my < slot[1] + slot[3]) {
                     gsDraftSticky.put(key, !sticky);
+                    return true;
+                }
+            }
+        } else if (gsActiveTab == GlobalSettingsTab.FEATURED) {
+            int notIdx = 0, featIdx = 0;
+            for (String key : gsDraftOrder) {
+                boolean featured = Boolean.TRUE.equals(gsDraftFeatured.get(key));
+                int[] slot = gsFeaturedSlotRect(screen, featured ? 1 : 0, featured ? featIdx++ : notIdx++);
+                if (mx >= slot[0] && mx < slot[0] + slot[2] && my >= slot[1] && my < slot[1] + slot[3]) {
+                    gsDraftFeatured.put(key, !featured);
                     return true;
                 }
             }
@@ -890,6 +995,9 @@ public final class GlobalSettingsPanel {
         } else if (gsActiveTab == GlobalSettingsTab.STICKY) {
             int max = gsMaxScrollSticky(screen);
             gsScrollSticky = Math.max(0, Math.min(max, gsScrollSticky - (int) (dy * step)));
+        } else if (gsActiveTab == GlobalSettingsTab.FEATURED) {
+            int max = gsMaxScrollFeatured(screen);
+            gsScrollFeatured = Math.max(0, Math.min(max, gsScrollFeatured - (int) (dy * step)));
         } else {
             int max = gsMaxScrollOrder(screen);
             gsScrollOrder = Math.max(0, Math.min(max, gsScrollOrder - (int) (dy * step)));

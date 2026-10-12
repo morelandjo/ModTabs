@@ -22,13 +22,13 @@ public class NextTabsButton extends ButtonWidget {
     public TabDisplayMode displayMode;
 
     public NextTabsButton(int tabPositionIndex, int leftScreenPos, int topScreenPos, ButtonWidget.PressAction press) {
-        super(leftScreenPos + tabPositionIndex * (TAB_WIDTH + 1), topScreenPos, NEXT_TABS_BUTTON_WIDTH, NEXT_TABS_BUTTON_HEIGHT, Text.empty(), press, DEFAULT_NARRATION_SUPPLIER);
+        super(leftScreenPos + TabsMenu.slotOffset(tabPositionIndex), topScreenPos, NEXT_TABS_BUTTON_WIDTH, NEXT_TABS_BUTTON_HEIGHT, Text.empty(), press, DEFAULT_NARRATION_SUPPLIER);
         this.tabPositionIndex = tabPositionIndex;
         this.displayMode = TabDisplayMode.NORMAL; // Default for backward compatibility
     }
 
     public NextTabsButton(int tabPositionIndex, int leftScreenPos, int topScreenPos, TabDisplayMode displayMode, ButtonWidget.PressAction press) {
-        super(leftScreenPos + tabPositionIndex * (TAB_WIDTH + 1),
+        super(leftScreenPos + TabsMenu.slotOffset(tabPositionIndex),
               calculateYPosition(topScreenPos, displayMode),
               NEXT_TABS_BUTTON_WIDTH, NEXT_TABS_BUTTON_HEIGHT, Text.empty(), press, DEFAULT_NARRATION_SUPPLIER);
         this.tabPositionIndex = tabPositionIndex;
@@ -66,7 +66,7 @@ public class NextTabsButton extends ButtonWidget {
     }
 
     public void updatePosition(int leftScreenPos, int topScreenPos) {
-        setX(leftScreenPos + tabPositionIndex * (TAB_WIDTH + 1));
+        setX(leftScreenPos + TabsMenu.slotOffset(tabPositionIndex));
         setY(calculateYPosition(topScreenPos, displayMode));
     }
 

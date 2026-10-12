@@ -446,6 +446,67 @@ public class TabsMenu {
         return Math.round(TAB_HEIGHT * currentEffectiveScale());
     }
 
+    // ---- Featured tabs --------------------------------------------------------
+    // Featured tabs render at bar scale × featuredTabScale%. Slots are laid out along the
+    // primary axis with each featured slot widened, so following tabs shift by the extra
+    // width; every tab stays flush with the bar's attached edge (the GUI-side edge in the
+    // unrotated frame) and grows away from it. The rotation pivot (barCenter) ignores the
+    // extra featured height so a rotated bar keeps its attached edge on the GUI.
+
+    /** Per visual slot: true when the tab currently in that slot is featured. */
+    private static boolean[] slotFeatured = new boolean[0];
+
+    /** Called by TabButton whenever its tab is (re)assigned — initial build and paging. */
+    public static void setSlotFeatured(int slot, boolean featured) {
+        if (slot >= 0 && slot < slotFeatured.length) slotFeatured[slot] = featured;
+    }
+
+    /** Featured multiplier on top of the bar scale (featuredTabScale percent, clamped 50–300). */
+    public static float featuredScaleFactor() {
+        int pct = Math.max(50, Math.min(300, ModTabsConfig.featuredTabScale));
+        return pct / 100f;
+    }
+
+    public static float tabScale(boolean featured) {
+        float scale = currentEffectiveScale();
+        return featured ? scale * featuredScaleFactor() : scale;
+    }
+
+    public static int tabWidth(boolean featured) {
+        return featured ? Math.round(TAB_WIDTH * tabScale(true)) : effectiveTabWidth();
+    }
+
+    public static int tabHeight(boolean featured) {
+        return featured ? Math.round(TAB_HEIGHT * tabScale(true)) : effectiveTabHeight();
+    }
+
+    /** Primary-axis offset of a slot from the bar's leading edge, widened by any featured
+     *  slots before it. Equals {@code slot * primaryAxisStep()} when nothing is featured. */
+    public static int slotPrimaryOffset(int slot) {
+        int offset = slot * primaryAxisStep();
+        int n = Math.min(slot, slotFeatured.length);
+        if (n > 0) {
+            int extra = tabWidth(true) - effectiveTabWidth();
+            for (int i = 0; i < n; i++) {
+                if (slotFeatured[i]) offset += extra;
+            }
+        }
+        return offset;
+    }
+
+    /** Extra primary-axis length added by featured slots on the current page. */
+    private static int featuredExtraLength() {
+        return slotPrimaryOffset(currentTabsCount) - currentTabsCount * primaryAxisStep();
+    }
+
+    /** Extra cross-axis height of the tallest featured tab over a normal tab (0 if none). */
+    private static int featuredExtraHeight() {
+        for (int i = 0; i < Math.min(currentTabsCount, slotFeatured.length); i++) {
+            if (slotFeatured[i]) return Math.max(0, tabHeight(true) - effectiveTabHeight());
+        }
+        return 0;
+    }
+
     public static void saveEdit(Screen screen) {
         if (screen == null) return;
         String fqn = screen.getClass().getName();
@@ -629,7 +690,8 @@ public class TabsMenu {
     }
 
     private static int handleHitTest(double mouseX, double mouseY) {
-        int[] b = computeTabBarBounds();
+        int[] b = computeTabBarVisualBounds();
+        // Inverse-rotate mouse so we can hit-test against unrotated handle positions.
         double[] m = inverseRotateMouseToBarFrame(mouseX, mouseY, b);
         double mx = m[0];
         double my = m[1];
@@ -723,10 +785,11 @@ public class TabsMenu {
         gui.pose().pushPose();
         gui.pose().translate(0, 0, 600);
 
-        int[] bounds = computeTabBarBounds();
+        // Frame + handles render inside a pose-rotated block so they spin with the bar.
+        int[] bounds = computeTabBarVisualBounds();
         int tabLeft = bounds[0], tabTop = bounds[1], tabRight = bounds[2], tabBottom = bounds[3];
-        double cx = (tabLeft + tabRight) / 2.0;
-        double cy = (tabTop + tabBottom) / 2.0;
+        double cx = barCenter()[0];
+        double cy = barCenter()[1];
         float rotation = currentEffectiveRotation();
         int hovered = handleHitTest(mouseX, mouseY);
 
@@ -744,10 +807,10 @@ public class TabsMenu {
         if (editedTab != null) {
             int offX = getAnimatedXOffset() + getDragOffsetX();
             int offY = getAnimatedYOffset() + getDragOffsetY();
-            int tabSw = effectiveTabWidth();
-            int tabSh = effectiveTabHeight();
             for (var child : screen.children()) {
                 if (child instanceof TabButton tb && tb.tabBase == editedTab) {
+                    int tabSw = tabWidth(tb.isFeatured());
+                    int tabSh = tabHeight(tb.isFeatured());
                     int ax = tb.getX() + offX;
                     int ay = tb.getY() + offY;
                     gui.fill(ax, ay, ax + tabSw, ay + tabSh, 0x8044FF66);
@@ -1070,12 +1133,29 @@ public class TabsMenu {
             bottom = topScreenPos + dragOffsetY;
         }
         int barLength = currentTabsCount > 0 ? currentTabsCount * tabW + (currentTabsCount - 1) * spacing : 0;
+        barLength += featuredExtraLength();
         int right = left + barLength;
         return new int[]{left, top, right, bottom};
     }
 
-    public static boolean isMouseOnTabBar(double mouseX, double mouseY) {
+    /**
+     * {@link #computeTabBarBounds} grown on the cross axis to cover taller featured tabs
+     * (away from the attached edge). Used for the editor frame, hit-tests and edge snapping;
+     * the rotation pivot still comes from {@link #barCenter} (the unextended bounds).
+     * Identical to computeTabBarBounds when no tab is featured.
+     */
+    public static int[] computeTabBarVisualBounds() {
         int[] b = computeTabBarBounds();
+        int extra = featuredExtraHeight();
+        if (extra > 0) {
+            if (currentDisplayMode == TabDisplayMode.INVERTED) b[3] += extra;
+            else b[1] -= extra;
+        }
+        return b;
+    }
+
+    public static boolean isMouseOnTabBar(double mouseX, double mouseY) {
+        int[] b = computeTabBarVisualBounds();
         double[] m = inverseRotateMouseToBarFrame(mouseX, mouseY, b);
         return m[0] >= b[0] && m[0] < b[2] && m[1] >= b[1] && m[1] < b[3];
     }
@@ -1084,10 +1164,10 @@ public class TabsMenu {
 
     private static void applyEdgeSnap(Screen screen) {
         if (screen == null) return;
-        int[] b = computeTabBarBounds();
+        int[] b = computeTabBarVisualBounds();
         float rot = currentEffectiveRotation();
-        double cx = (b[0] + b[2]) / 2.0;
-        double cy = (b[1] + b[3]) / 2.0;
+        double cx = barCenter()[0];
+        double cy = barCenter()[1];
         double cosA = Math.cos(Math.toRadians(rot));
         double sinA = Math.sin(Math.toRadians(rot));
         double minX = Double.POSITIVE_INFINITY, maxX = Double.NEGATIVE_INFINITY;
@@ -1181,9 +1261,9 @@ public class TabsMenu {
     private static double[] inverseRotateMouseToBarFrame(double mouseX, double mouseY, int[] bounds) {
         float rot = currentEffectiveRotation();
         if (rot == 0f) return new double[]{mouseX, mouseY};
-        double cx = (bounds[0] + bounds[2]) / 2.0;
-        double cy = (bounds[1] + bounds[3]) / 2.0;
-        return inverseRotatePoint(mouseX, mouseY, cx, cy, rot);
+        // Pivot is always barCenter() (featured-height-independent), matching TabButton.
+        double[] c = barCenter();
+        return inverseRotatePoint(mouseX, mouseY, c[0], c[1], rot);
     }
 
     public static String getConfigKeyForScreen(Screen screen) {
@@ -1312,7 +1392,7 @@ public class TabsMenu {
         if (!hasTabsForScreen(screen)) {
             return false;
         }
-        int[] b = computeTabBarBounds();
+        int[] b = computeTabBarVisualBounds();
         double[] m = inverseRotateMouseToBarFrame(mouseX, mouseY, b);
         int left = b[0], top = b[1], right = b[2], bottom = b[3];
         if (isInTuckMode) {
@@ -1526,8 +1606,13 @@ public class TabsMenu {
                         .toList());
             }
 
-            // Sort tabs by override order first, then alphabetically by class name
+            // Sort featured tabs ahead of the rest, then by override order, then
+            // alphabetically by class name. With no featured tabs this is the plain order sort.
             enabledTabs.sort((tab1, tab2) -> {
+                boolean featured1 = tab1.isFeatured();
+                boolean featured2 = tab2.isFeatured();
+                if (featured1 != featured2) return featured1 ? -1 : 1;
+
                 int order1 = tab1.getOverrideOrder();
                 int order2 = tab2.getOverrideOrder();
 
@@ -1634,6 +1719,8 @@ public class TabsMenu {
             // tabs land at the rightmost natural-frame slot — combined with a 180° rotation
             // that lands them on the screen-left visually.
             int buttonPosition = 0;
+            // Fresh per-slot featured map; each TabButton records its own slot via setTabBase.
+            slotFeatured = new boolean[Math.max(0, currentTabsCount)];
             boolean reverseOrder = layout.tabOrder == vodmordia.modtabs.layout.TabOrder.RIGHT_TO_LEFT;
 
             // Sticky tabs always render first, pinned to the leading slots of the bar.

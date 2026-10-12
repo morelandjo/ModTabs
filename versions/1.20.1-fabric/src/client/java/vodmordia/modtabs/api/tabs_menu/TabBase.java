@@ -85,4 +85,29 @@ public abstract class TabBase {
     public int getOverrideOrder() {
         return TabRegistry.getTabOrder(this);
     }
+
+    /**
+     * Config-key prefix used for the {@code <key>Featured} flag on ModTabsConfig. Uses the
+     * {@code @TabConfig} key when present, otherwise the class name with a lower-case first
+     * letter (InventoryTab → inventoryTab). Override when the config name differs.
+     */
+    protected String featuredConfigKey() {
+        TabConfig annotation = getClass().getAnnotation(TabConfig.class);
+        if (annotation != null) return annotation.configKey();
+        String name = getClass().getSimpleName();
+        return name.isEmpty() ? name : Character.toLowerCase(name.charAt(0)) + name.substring(1);
+    }
+
+    /**
+     * True when this tab is featured: it sorts ahead of non-featured tabs and renders at
+     * {@code featuredTabScale}% of the normal tab size. Backed by {@code <key>Featured}.
+     */
+    public boolean isFeatured() {
+        try {
+            var field = vodmordia.modtabs.config.ModTabsConfig.class.getField(featuredConfigKey() + "Featured");
+            return field.getType() == boolean.class && field.getBoolean(null);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
