@@ -30,6 +30,13 @@ public class ScreenRegistry {
         private TabDisplayMode displayMode = TabDisplayMode.NORMAL;
         private TabPositioning positioning = TabPositioning.SCREEN_BOTTOM;
         private int offset = 0;
+        private boolean actualGeometry = false;
+
+        /** Use the host HandledScreen's real x/y/backgroundWidth (GUI_RELATIVE positioning only). */
+        public ScreenRegistrationBuilder withActualGeometry() {
+            this.actualGeometry = true;
+            return this;
+        }
 
         public ScreenRegistrationBuilder withDimensions(Function<PlayerEntity, Integer> width, Function<PlayerEntity, Integer> height) {
             this.widthFunction = width;
@@ -83,6 +90,7 @@ public class ScreenRegistry {
             for (String className : screenClassNames) {
                 Class<? extends Screen> screenClass = ScreenClassResolver.resolveScreenClass(className);
                 if (screenClass != null) {
+                    if (actualGeometry) TabsMenu.useActualGeometry(screenClass);
                     if (offset > 0) {
                         TabsMenu.registerScreenWithAllTabs(screenClass, widthFunction, heightFunction, displayMode, positioning, offset);
                     } else {

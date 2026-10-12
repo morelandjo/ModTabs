@@ -315,6 +315,7 @@ public class SophisticatedBackpacksTab extends ConfigurableItemTab {
     public void initTabOnScreens() {
         ScreenRegistry.builder()
             .withStandardDimensions()
+            .withActualGeometry() // backpack GUI size varies by tier; track the real GUI box
             .registerAllTabs("net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen");
     }
 

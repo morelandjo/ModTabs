@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.ScreenEvent;
 import vodmordia.modtabs.client.screens.NextTabsButton;
@@ -364,12 +365,12 @@ public class TabsMenu {
             x1 = screen.width;
             y1 = screen.height;
         } else {
-            int[] base = computeGuiBase(screen);
             ScreenInfo info = tabsScreens.get(screen.getClass());
-            int guiW = (info != null) ? info.width.apply(Minecraft.getInstance().player) : 176;
-            int guiH = (info != null) ? info.height.apply(Minecraft.getInstance().player) : 166;
-            x0 = base[0];
-            y0 = base[1];
+            int[] gb = info != null ? guiBounds(screen, info) : new int[]{(screen.width - 176) / 2, (screen.height - 166) / 2, 176, 166};
+            int guiW = gb[2];
+            int guiH = gb[3];
+            x0 = gb[0];
+            y0 = gb[1];
             x1 = x0 + guiW;
             y1 = y0 + guiH;
         }
@@ -386,9 +387,8 @@ public class TabsMenu {
         ScreenInfo info = tabsScreens.get(screen.getClass());
         if (info == null) return new int[]{0, 0};
         try {
-            int guiW = info.width.apply(Minecraft.getInstance().player);
-            int guiH = info.height.apply(Minecraft.getInstance().player);
-            return new int[]{(screen.width - guiW) / 2, (screen.height - guiH) / 2};
+            int[] gb = guiBounds(screen, info);
+            return new int[]{gb[0], gb[1]};
         } catch (Exception ignored) {
             return new int[]{0, 0};
         }
@@ -480,9 +480,9 @@ public class TabsMenu {
                 leftScreenPos = updated.offsetX;
                 topScreenPos = updated.offsetY;
             } else {
-                Player player = Minecraft.getInstance().player;
-                int guiLeft = (screen.width - info.width.apply(player)) / 2;
-                int guiTop = (screen.height - info.height.apply(player)) / 2;
+                int[] gb = guiBounds(screen, info);
+                int guiLeft = gb[0];
+                int guiTop = gb[1];
                 leftScreenPos = guiLeft + updated.offsetX;
                 topScreenPos = guiTop + updated.offsetY;
             }
@@ -1112,12 +1112,11 @@ public class TabsMenu {
             ScreenInfo info = tabsScreens.get(screen.getClass());
             if (info != null) {
                 try {
-                    int guiW = info.width.apply(Minecraft.getInstance().player);
-                    int guiH = info.height.apply(Minecraft.getInstance().player);
-                    snapL = (screen.width - guiW) / 2;
-                    snapT = (screen.height - guiH) / 2;
-                    snapR = snapL + guiW;
-                    snapB = snapT + guiH;
+                    int[] gb = guiBounds(screen, info);
+                    snapL = gb[0];
+                    snapT = gb[1];
+                    snapR = snapL + gb[2];
+                    snapB = snapT + gb[3];
                 } catch (Exception ignored) {}
             }
         }
@@ -1372,6 +1371,28 @@ public class TabsMenu {
         return computeTuckOffsetVector()[0];
     }
 
+    /** Screens whose tab bar should follow the host GUI's real geometry instead of registered nominal sizes. */
+    private static final java.util.Set<Class<? extends Screen>> ACTUAL_GEOMETRY_SCREENS = new java.util.HashSet<>();
+
+    public static void useActualGeometry(Class<? extends Screen> screenClass) {
+        ACTUAL_GEOMETRY_SCREENS.add(screenClass);
+    }
+
+    /**
+     * GUI box as {left, top, width, height}. Opted-in container screens (e.g. Sophisticated
+     * Backpacks, whose size varies per tier) report their live leftPos/topPos/imageWidth/imageHeight;
+     * everything else uses the registered nominal size centred on the screen.
+     */
+    public static int[] guiBounds(Screen screen, ScreenInfo info) {
+        if (screen instanceof AbstractContainerScreen<?> acs && ACTUAL_GEOMETRY_SCREENS.contains(screen.getClass())) {
+            return new int[]{acs.getGuiLeft(), acs.getGuiTop(), acs.getXSize(), acs.getYSize()};
+        }
+        Player player = Minecraft.getInstance().player;
+        int w = info.width.apply(player);
+        int h = info.height.apply(player);
+        return new int[]{(screen.width - w) / 2, (screen.height - h) / 2, w, h};
+    }
+
     public static void updateButtonsPosition(Screen screen, int guiLeft, int guiTop) {
         ScreenLayout layout = ScreenLayoutStore.get(screen.getClass());
         // Anchor decides the reference frame: GUI_RELATIVE tracks the GUI's top-left
@@ -1482,8 +1503,9 @@ public class TabsMenu {
                 TabsMenu.leftScreenPos = layout.offsetX;
                 TabsMenu.topScreenPos = layout.offsetY;
             } else {
-                int guiLeft = (event.getScreen().width - screenInfo.width.apply(Minecraft.getInstance().player)) / 2;
-                int guiTop = (event.getScreen().height - screenInfo.height.apply(Minecraft.getInstance().player)) / 2;
+                int[] gb = guiBounds(event.getScreen(), screenInfo);
+                int guiLeft = gb[0];
+                int guiTop = gb[1];
                 TabsMenu.leftScreenPos = guiLeft + layout.offsetX;
                 TabsMenu.topScreenPos = guiTop + layout.offsetY;
             }

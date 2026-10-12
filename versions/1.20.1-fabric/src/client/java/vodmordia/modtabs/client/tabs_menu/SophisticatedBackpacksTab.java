@@ -153,6 +153,7 @@ public class SophisticatedBackpacksTab extends SimpleItemTab {
         vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder()
             .withStandardDimensions()
             .withPositioning(vodmordia.modtabs.api.tabs_menu.TabPositioning.GUI_RELATIVE)
+            .withActualGeometry() // backpack GUI size varies by tier; track the real GUI box
             .registerAllTabs("net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen");
     }
 

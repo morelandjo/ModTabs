@@ -73,6 +73,36 @@ public class TabsMenu {
         pendingScreenRegistrations.add(new ScreenRegistration(screen, screenWidth, screenHeight, displayMode, positioning, null, null, 0));
     }
 
+    /** Screens whose tab bar follows the host GUI's real x/y/backgroundWidth instead of nominal sizes. */
+    private static final Set<Class<? extends Screen>> ACTUAL_GEOMETRY_SCREENS = new HashSet<>();
+
+    public static void useActualGeometry(Class<? extends Screen> screenClass) {
+        ACTUAL_GEOMETRY_SCREENS.add(screenClass);
+    }
+
+    private static final java.util.Map<String, java.lang.reflect.Field> HANDLED_FIELDS = new java.util.HashMap<>();
+
+    /**
+     * Reads a protected HandledScreen int field (x, y, backgroundWidth) by intermediary name,
+     * resolved to the runtime name so it works in dev (named) and production (intermediary).
+     * The access widener is not applied to the client source set, hence reflection.
+     */
+    private static int handledField(HandledScreen<?> screen, String intermediaryName, int fallback) {
+        try {
+            java.lang.reflect.Field f = HANDLED_FIELDS.get(intermediaryName);
+            if (f == null) {
+                String runtimeName = net.fabricmc.loader.api.FabricLoader.getInstance().getMappingResolver()
+                        .mapFieldName("intermediary", "net.minecraft.class_465", intermediaryName, "I");
+                f = HandledScreen.class.getDeclaredField(runtimeName);
+                f.setAccessible(true);
+                HANDLED_FIELDS.put(intermediaryName, f);
+            }
+            return f.getInt(screen);
+        } catch (Exception e) {
+            return fallback;
+        }
+    }
+
     public static void registerScreenWithCustomPosition(Class<? extends Screen> screen, Function<PlayerEntity, Integer> screenWidth, Function<PlayerEntity, Integer> screenHeight, Function<Screen, Integer> customTabX, Function<Screen, Integer> customTabY) {
         pendingScreenRegistrations.add(new ScreenRegistration(screen, screenWidth, screenHeight, TabDisplayMode.NORMAL, TabPositioning.CUSTOM, customTabX, customTabY, 0));
     }
@@ -270,6 +300,12 @@ public class TabsMenu {
         switch (screenInfo.positioning) {
             case GUI_RELATIVE:
                 // Original behavior - position relative to GUI center
+                if (screen instanceof HandledScreen<?> hs && ACTUAL_GEOMETRY_SCREENS.contains(screen.getClass())) {
+                    // Opted-in screens (e.g. Sophisticated Backpacks) vary in size; use the live GUI box.
+                    leftScreenPos = handledField(hs, "field_2776", 0);
+                    topScreenPos = handledField(hs, "field_2800", 0);
+                    break;
+                }
                 int guiWidth = screenInfo.width.apply(MinecraftClient.getInstance().player);
                 int guiHeight = screenInfo.height.apply(MinecraftClient.getInstance().player);
                 leftScreenPos = (screen.width - guiWidth) / 2;
@@ -354,7 +390,9 @@ public class TabsMenu {
 
         int remainingWidth;
         try {
-            remainingWidth = screenInfo.width.apply(MinecraftClient.getInstance().player);
+            remainingWidth = (screen instanceof HandledScreen<?> hsw && ACTUAL_GEOMETRY_SCREENS.contains(screen.getClass()))
+                    ? handledField(hsw, "field_2792", 176)
+                    : screenInfo.width.apply(MinecraftClient.getInstance().player);
         } catch (Exception e) {
             ModTabs.LOGGER.error("Width calculation failed: " + e.getMessage());
             return;
