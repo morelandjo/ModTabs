@@ -71,6 +71,59 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean travelersBackpackTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean xaerosMapTabSticky = false;
 
+    // --- Featured tabs -------------------------------------------------------
+    // Featured tabs sort ahead of non-featured tabs (keeping their relative Order)
+    // and render larger: bar scale x featuredTabScale percent. Toggled in-game via
+    // the Global Settings "Featured" panel; the scale lives on its General tab.
+    // All off by default, so the bar renders exactly as before.
+    @Entry(category = "tabs", min = 50, max = 300) @Hidden public static int featuredTabScale = 125;
+    @Entry(category = "tabs") @Hidden public static boolean inventoryTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean advancementsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean rpgCraftingTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean arsElixirumTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean arsNouveauTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean backpackedTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean bodyDamageTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean biologyDictionaryTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean wildexTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean apothicAttributesTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean aetherTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean curiosTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean originsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean epicFightTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean epicSkillsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean completionistsIndexTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean sdmShopTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean jobsPlusTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean questLogTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean mapwrightTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean fieldGuideTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean modonomiconTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean reliableBackpacksTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean quarkBackpackTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean brassworksMissionsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean cobblemonTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean cosmeticArmorTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean draconicEvolutionTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean eccentricTomeTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean dietTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean ftbQuestsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean ftbChunksTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean ftbTeamsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean journeyMapTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean l2ArtifactsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean l2AttributesTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean l2HostilityTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean mapAtlasesTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean modularGolemsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean motpTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean passiveSkillTreeTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean pufferfishSkillsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean reskillableReimaginedTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean sophisticatedBackpacksTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean travelersBackpackTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean xaerosMapTabFeatured = false;
+
     // Modpack-maker lock. When false, all three layout-editor entry points
     // (Shift+Z, long-press on a tab, the Edit button in LayoutEditorButtons) are
     // no-ops, so packs can ship a fixed tab layout that players can't rearrange.

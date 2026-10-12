@@ -70,17 +70,30 @@ public class TabRegistry {
      * after a re-init. Tabs without a {@code @TabConfig} or without the field are never sticky.
      */
     public static boolean isTabSticky(TabBase tab) {
+        return readTabFlag(tab, "Sticky");
+    }
+
+    /**
+     * Whether a tab is featured (sorted ahead of non-featured tabs and drawn at bar scale ×
+     * {@code featuredTabScale}%), read from the live {@code <configKey>Featured} field.
+     * Tabs without a {@code @TabConfig} or without the field are never featured.
+     */
+    public static boolean isTabFeatured(TabBase tab) {
+        return readTabFlag(tab, "Featured");
+    }
+
+    private static boolean readTabFlag(TabBase tab, String suffix) {
         TabConfig annotation = tab.getClass().getAnnotation(TabConfig.class);
         if (annotation == null) {
             return false;
         }
         try {
-            var field = ModTabsConfig.class.getField(annotation.configKey() + "Sticky");
+            var field = ModTabsConfig.class.getField(annotation.configKey() + suffix);
             if (field.getType() == boolean.class) {
                 return field.getBoolean(null);
             }
         } catch (Exception e) {
-            // Field doesn't exist or can't be accessed → not sticky.
+            // Field doesn't exist or can't be accessed → flag off.
         }
         return false;
     }

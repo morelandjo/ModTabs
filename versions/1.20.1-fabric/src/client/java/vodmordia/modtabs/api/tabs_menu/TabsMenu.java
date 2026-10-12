@@ -219,6 +219,51 @@ public class TabsMenu {
         }
     }
 
+    // ---- Featured tabs --------------------------------------------------------
+    // Featured tabs render at featuredTabScale% of the normal tab size. Each featured slot is
+    // widened so following tabs shift right; tabs stay flush with the GUI edge (bottom edge
+    // for normal bars, top edge for inverted) and grow away from it.
+
+    /** Per visual slot: true when the tab currently in that slot is featured. */
+    private static boolean[] slotFeatured = new boolean[0];
+
+    /** Called by TabButton whenever its tab is (re)assigned — initial build and paging. */
+    public static void setSlotFeatured(int slot, boolean featured) {
+        if (slot >= 0 && slot < slotFeatured.length) slotFeatured[slot] = featured;
+    }
+
+    /** Featured multiplier (featuredTabScale percent, clamped 50–300). */
+    public static float featuredScaleFactor() {
+        int pct = Math.max(50, Math.min(300, vodmordia.modtabs.config.ModTabsConfig.featuredTabScale));
+        return pct / 100f;
+    }
+
+    public static int tabWidth(boolean featured) {
+        return featured ? Math.round(TAB_WIDTH * featuredScaleFactor()) : TAB_WIDTH;
+    }
+
+    public static int tabHeight(boolean featured) {
+        return featured ? Math.round(TAB_HEIGHT * featuredScaleFactor()) : TAB_HEIGHT;
+    }
+
+    /** X offset of a slot from the bar's left edge; {@code slot * (TAB_WIDTH + 1)} when nothing is featured. */
+    public static int slotOffset(int slot) {
+        int offset = slot * (TAB_WIDTH + 1);
+        int n = Math.min(slot, slotFeatured.length);
+        int extra = tabWidth(true) - TAB_WIDTH;
+        for (int i = 0; i < n; i++) {
+            if (slotFeatured[i]) offset += extra;
+        }
+        return offset;
+    }
+
+    private static int featuredExtraHeight() {
+        for (int i = 0; i < Math.min(currentTabsCount, slotFeatured.length); i++) {
+            if (slotFeatured[i]) return Math.max(0, tabHeight(true) - TAB_HEIGHT);
+        }
+        return 0;
+    }
+
     private static boolean isMouseInHoverZone(int mouseX, int mouseY, Screen screen) {
         if (!tabsScreens.containsKey(screen.getClass())) {
             return false;
@@ -228,14 +273,15 @@ public class TabsMenu {
 
         // Calculate tab area bounds with padding
         int tabAreaLeft = leftScreenPos - HOVER_PADDING;
-        int tabAreaRight = leftScreenPos + (currentTabsCount * (TAB_WIDTH + 1)) + HOVER_PADDING;
+        int tabAreaRight = leftScreenPos + slotOffset(currentTabsCount) + HOVER_PADDING;
+        int barHeight = TAB_HEIGHT + featuredExtraHeight();
 
         int tabAreaTop, tabAreaBottom;
         if (screenInfo.displayMode == TabDisplayMode.INVERTED) {
             tabAreaTop = topScreenPos - HOVER_PADDING;
-            tabAreaBottom = topScreenPos + TAB_HEIGHT + HOVER_PADDING;
+            tabAreaBottom = topScreenPos + barHeight + HOVER_PADDING;
         } else {
-            tabAreaTop = topScreenPos - TAB_HEIGHT - HOVER_PADDING;
+            tabAreaTop = topScreenPos - barHeight - HOVER_PADDING;
             tabAreaBottom = topScreenPos + HOVER_PADDING;
         }
 
@@ -359,8 +405,11 @@ public class TabsMenu {
                     .toList());
         }
 
-        // Sort tabs by override order first, then alphabetically
+        // Sort featured tabs first, then by override order, then alphabetically
         enabledTabs.sort((tab1, tab2) -> {
+            boolean featured1 = tab1.isFeatured();
+            boolean featured2 = tab2.isFeatured();
+            if (featured1 != featured2) return featured1 ? -1 : 1;
             int order1 = tab1.getOverrideOrder();
             int order2 = tab2.getOverrideOrder();
 
@@ -407,17 +456,19 @@ public class TabsMenu {
 
         // If sticky inventory tab is enabled and present, reserve space for it
         if (Config.Baked.stickyInventoryTab && inventoryTab != null) {
-            if (tempWidth > TAB_WIDTH) {
-                tempWidth -= TAB_WIDTH + 1;
+            int invW = tabWidth(inventoryTab.isFeatured());
+            if (tempWidth > invW) {
+                tempWidth -= invW + 1;
                 currentTabsCount++; // Count the inventory tab
             }
         }
 
-        // Count remaining space for non-inventory tabs
+        // Count remaining space for non-inventory tabs (featured tabs take their wider size)
         List<TabBase> tabsToCheck = Config.Baked.stickyInventoryTab ? nonInventoryTabs : enabledTabs;
         for (TabBase tabBase: tabsToCheck) {
-            if (tempWidth > TAB_WIDTH) {
-                tempWidth -= TAB_WIDTH + 1;
+            int w = tabWidth(tabBase.isFeatured());
+            if (tempWidth > w) {
+                tempWidth -= w + 1;
                 currentTabsCount++;
             } else {
                 break;
@@ -442,6 +493,8 @@ public class TabsMenu {
 
         // Second pass: create buttons for the correct range starting from startTabIndex
         int buttonPosition = 0;
+        // Fresh per-slot featured map; each TabButton records its slot via setTabBase.
+        slotFeatured = new boolean[Math.max(0, currentTabsCount)];
 
         // If sticky inventory tab is enabled and present, always render it first
         if (Config.Baked.stickyInventoryTab && inventoryTab != null && currentTabsCount > 0) {
@@ -635,6 +688,15 @@ public class TabsMenu {
                     ((TabButton) tabButtons.get(tabIndexToUpdate)).setTabBase(tabBase);
 
                 currentTabIndex++;
+            }
+        }
+
+        // Featured tabs may have moved between slots: re-lay out every button on the page.
+        for (var child : screen.children()) {
+            if (child instanceof TabButton tabButton) {
+                tabButton.updatePosition(leftScreenPos, topScreenPos);
+            } else if (child instanceof NextTabsButton nextButton) {
+                nextButton.updatePosition(leftScreenPos, topScreenPos);
             }
         }
     }

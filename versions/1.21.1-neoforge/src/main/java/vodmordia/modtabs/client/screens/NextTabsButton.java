@@ -37,7 +37,7 @@ public class NextTabsButton extends Button {
     }
 
     private static int calculateX(int leftScreenPos, int tabPositionIndex) {
-        return leftScreenPos + tabPositionIndex * TabsMenu.primaryAxisStep();
+        return leftScreenPos + TabsMenu.slotPrimaryOffset(tabPositionIndex);
     }
 
     private static int calculateY(int topScreenPos, int tabPositionIndex, TabDisplayMode displayMode) {

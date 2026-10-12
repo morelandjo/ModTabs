@@ -13,11 +13,18 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "1_modTabsSettings")
     public static boolean stickyInventoryTab = true;
 
+    // Featured tabs sort ahead of the others and render at featuredTabScale percent.
+    @Entry(category = "1_modTabsSettings", min = 50, max = 300)
+    public static int featuredTabScale = 125;
+
     @Entry(category = "1_modTabsSettings")
     public static boolean inventoryTabEnabled = true;
 
     @Entry(category = "1_modTabsSettings")
     public static int inventoryTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean inventoryTabFeatured = false;
 
     @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility inventoryTabDisplayVisibility = TabDisplayVisibility.YES;
@@ -33,6 +40,9 @@ public class ModTabsConfig extends MidnightConfig {
     public static int advancementsTabOrder = 0;
 
     @Entry(category = "1_modTabsSettings")
+    public static boolean advancementsTabFeatured = false;
+
+    @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility advancementsTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "1_modTabsSettings") public static CommentText spacer2;
@@ -44,6 +54,9 @@ public class ModTabsConfig extends MidnightConfig {
 
     @Entry(category = "1_modTabsSettings")
     public static int ftbQuestsTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean ftbQuestsTabFeatured = false;
 
     @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility ftbQuestsTabDisplayVisibility = TabDisplayVisibility.YES;
@@ -59,6 +72,9 @@ public class ModTabsConfig extends MidnightConfig {
     public static int ftbTeamsTabOrder = 0;
 
     @Entry(category = "1_modTabsSettings")
+    public static boolean ftbTeamsTabFeatured = false;
+
+    @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility ftbTeamsTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "1_modTabsSettings") public static CommentText spacer4;
@@ -70,6 +86,9 @@ public class ModTabsConfig extends MidnightConfig {
 
     @Entry(category = "1_modTabsSettings")
     public static int mapAtlasesTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean mapAtlasesTabFeatured = false;
 
     @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility mapAtlasesTabDisplayVisibility = TabDisplayVisibility.YES;
@@ -85,6 +104,9 @@ public class ModTabsConfig extends MidnightConfig {
     public static int xaerosMapTabOrder = 0;
 
     @Entry(category = "1_modTabsSettings")
+    public static boolean xaerosMapTabFeatured = false;
+
+    @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility xaerosMapTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "1_modTabsSettings") public static CommentText spacer6;
@@ -98,6 +120,9 @@ public class ModTabsConfig extends MidnightConfig {
     public static int pufferfishSkillsTabOrder = 0;
 
     @Entry(category = "1_modTabsSettings")
+    public static boolean pufferfishSkillsTabFeatured = false;
+
+    @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility pufferfishSkillsTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "1_modTabsSettings") public static CommentText spacer7;
@@ -109,6 +134,9 @@ public class ModTabsConfig extends MidnightConfig {
 
     @Entry(category = "1_modTabsSettings")
     public static int sophisticatedBackpacksTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean sophisticatedBackpacksTabFeatured = false;
 
     @Entry(category = "1_modTabsSettings")
     public static BackpackSlot sophisticatedBackpacksPreferredSlot = BackpackSlot.DEFAULT;
@@ -127,12 +155,18 @@ public class ModTabsConfig extends MidnightConfig {
     public static int travelersBackpackTabOrder = 0;
 
     @Entry(category = "1_modTabsSettings")
+    public static boolean travelersBackpackTabFeatured = false;
+
+    @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility travelersBackpackTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "1_modTabsSettings") public static CommentText spacerOrigins;
     @Comment(category = "1_modTabsSettings") public static CommentText origins;
     @Entry(category = "1_modTabsSettings") public static boolean originsTabEnabled = true;
     @Entry(category = "1_modTabsSettings") public static int originsTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean originsTabFeatured = false;
     @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility originsTabDisplayVisibility = TabDisplayVisibility.YES;
 

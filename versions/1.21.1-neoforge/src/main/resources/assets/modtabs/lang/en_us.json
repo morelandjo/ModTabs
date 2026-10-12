@@ -428,6 +428,8 @@
   "modtabs.midnightconfig.nearbyContainersTabRange.tooltip": "Radius in blocks to scan around the player for openable containers. Default 5.",
   "modtabs.midnightconfig.nearbyContainersTabRequireLineOfSight": "Require Line of Sight",
   "modtabs.midnightconfig.nearbyContainersTabRequireLineOfSight.tooltip": "If on, containers blocked behind walls won't show a tab. Off by default — the vanilla reach check is enough.",
+  "modtabs.midnightconfig.featuredTabScale": "Featured Tab Scale (%)",
+  "modtabs.midnightconfig.featuredTabScale.tooltip": "Size of featured tabs as a percent of the bar scale (50-300, default 125). Pick featured tabs in the layout editor's Global Settings > Featured panel; they appear first and larger than the other tabs.",
 
   "modtabs.midnightconfig.customTabs": "Custom Tabs",
   "modtabs.midnightconfig.customTabsEnabled": "Enable Custom Tabs",
