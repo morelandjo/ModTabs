@@ -29,6 +29,7 @@ tasks.register("chiseledBuild") {
         ":1.21.1-neoforge:build",
         ":1.20.1-forge:build",
         ":1.20.1-fabric:build",
+        ":1.18.2-forge:build",
     )
 }
 
@@ -39,5 +40,6 @@ tasks.register("integrationTest") {
         ":1.21.1-neoforge:test",
         ":1.20.1-forge:test",
         ":1.20.1-fabric:test",
+        ":1.18.2-forge:test",
     )
 }

@@ -1,0 +1,336 @@
+package vodmordia.modtabs;
+
+import com.mojang.logging.LogUtils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.network.NetworkConstants;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+import org.slf4j.Logger;
+import vodmordia.modtabs.api.tabs_menu.TabsMenu;
+import vodmordia.modtabs.client.tabs_menu.InventoryTab;
+import vodmordia.modtabs.client.tabs_menu.AdvancementsTab;
+import vodmordia.modtabs.client.tabs_menu.CustomJsonTab;
+import vodmordia.modtabs.client.keybinds.ModKeybinds;
+import vodmordia.modtabs.config.Config;
+import vodmordia.modtabs.config.ModTabsConfig;
+import vodmordia.modtabs.integration.ModIntegrationManager;
+import vodmordia.modtabs.utils.CustomTabLoader;
+import vodmordia.modtabs.config.CustomTabDefinition;
+import vodmordia.modtabs.config.lib.MidnightConfig;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Mod(ModTabs.MOD_ID)
+public class ModTabs
+{
+    public static final String MOD_ID = "modtabs";
+    public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static Path configPath = FMLPaths.CONFIGDIR.get();
+    public static Path modConfigPath = Paths.get(configPath.toAbsolutePath().toString(), "modtabs");
+
+    private static final String PROTOCOL_VERSION = "1.0";
+    // acceptMissingOr(...) so a client-only install can still connect to vanilla / mod-less servers.
+    // Without it, Forge requires the channel on both ends and rejects the handshake.
+    public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
+            .named(new ResourceLocation(MOD_ID, "main"))
+            .networkProtocolVersion(() -> PROTOCOL_VERSION)
+            .clientAcceptedVersions(NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION::equals))
+            .serverAcceptedVersions(NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION::equals))
+            .simpleChannel();
+
+    private static boolean customTabsLoaded = false;
+
+
+    public ModTabs()
+    {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+
+        // MidnightConfig.init is deferred to FMLCommonSetupEvent (enqueueWork) to avoid
+        // a ConcurrentModificationException race with MidnightLib's own constructor —
+        // Forge dispatches @Mod constructors in parallel, and MidnightConfig mutates
+        // shared static LinkedHashMaps without synchronization.
+        modEventBus.addListener((net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent event) ->
+            event.enqueueWork(() -> MidnightConfig.init(MOD_ID, ModTabsConfig.class))
+        );
+
+        // Initialize mod integration manager
+        ModIntegrationManager.detectLoadedMods();
+
+        // Client-only mod: don't require it on the server (1.18.2 has no mods.toml displayTest key).
+        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+                () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remote, isServer) -> true));
+
+        // Register network packets via SimpleChannel.
+        // TODO(1.18.2 integrations): TomeConvert (Eccentric Tome), OpenQuarkBackpack and
+        // OpenReliableBackpack packets (ids 0-2) are registered here once those integrations are ported.
+        // The CHANNEL itself is still created (static init) so the handshake advertises it.
+
+        LOGGER.info("Registered ModTabs network packets");
+    }
+
+    @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ClientModEvents
+    {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event)
+        {
+            Config.Baked.bakeClient();
+
+            // 1.18.2 has no RegisterKeyMappingsEvent; ClientRegistry is safe to call on the main thread.
+            event.enqueueWork(() -> ClientRegistry.registerKeyBinding(ModKeybinds.TAB_CYCLE));
+
+            // Initialize icons directory for custom tab icons
+            vodmordia.modtabs.utils.DynamicTextureLoader.getIconsDirectory();
+
+            // Register all tabs - each tab's isEnabled() method handles mod detection via @TabConfig
+            TabsMenu.register(new InventoryTab());
+            TabsMenu.register(new AdvancementsTab());
+            // TODO(1.18.2 integrations): integration tabs (Backpacked, Traveler's Backpack, FTB Quests/Teams/
+            // Chunks incl. their inspectors, Curios, Sophisticated Backpacks, Ars Nouveau, ...) are registered
+            // here as each integration is ported to 1.18.2.
+
+            // One transient tab per nearby container block (chests, barrels, modded
+            // inventories, …). Discovered fresh on every screen-init.
+            TabsMenu.registerDynamicProvider(new vodmordia.modtabs.client.tabs_menu.NearbyContainersProvider());
+
+            // Mount the tab row on the vanilla container screens too so the bar follows the
+            // player when they click a nearby-chest tab. Without this, ContainerScreen has no
+            // tabs registered and the bar disappears once a chest is open — defeating the
+            // point of being able to hop between nearby chests via tab clicks.
+            // ContainerScreen covers chests / barrels / ender chests / trapped chests (they
+            // all share ChestMenu); the others are separate vanilla screen classes.
+            vodmordia.modtabs.api.tabs_menu.ScreenRegistry.registerStandardScreens(
+                    net.minecraft.client.gui.screens.inventory.ContainerScreen.class,
+                    net.minecraft.client.gui.screens.inventory.ShulkerBoxScreen.class,
+                    net.minecraft.client.gui.screens.inventory.DispenserScreen.class,
+                    net.minecraft.client.gui.screens.inventory.HopperScreen.class
+            );
+
+            // TODO(1.18.2 integrations): registerItemCollectorsScreens() once Item Collectors is ported.
+
+            // Wait for Patchouli books to load, then load custom tabs
+            waitForPatchouliAndLoadCustomTabs();
+
+            // Finalize all pending screen registrations now that all tabs are registered
+            TabsMenu.finalizePendingRegistrations();
+        }
+
+        /**
+         * Wait for Patchouli books to be loaded, then load custom tabs.
+         */
+        private static void waitForPatchouliAndLoadCustomTabs() {
+            new Thread(() -> {
+                try {
+                    if (Config.Baked.customTabsDebugLogging) {
+                        LOGGER.info("Waiting for Patchouli books to be loaded...");
+                    }
+
+                    waitForPatchouliBooksLoaded();
+
+                    if (Config.Baked.customTabsDebugLogging) {
+                        LOGGER.info("Patchouli books loaded! Loading custom tabs now.");
+                    }
+
+                    customTabsLoaded = true;
+                    loadCustomTabs();
+
+                } catch (Exception e) {
+                    LOGGER.error("Error waiting for Patchouli books: " + e.getMessage());
+                    if (Config.Baked.customTabsDebugLogging) {
+                        e.printStackTrace();
+                    }
+                }
+            }, "PatchouliCustomTabsLoader").start();
+        }
+
+        /**
+         * Try Patchouli's NeoForge synchronization fields (1.21.1+); on 1.20.1 Forge those classes
+         * don't exist, so the ClassNotFoundException catch path falls through to a 2-second sleep.
+         */
+        private static void waitForPatchouliBooksLoaded() {
+            try {
+                if (!ModList.get().isLoaded("patchouli")) {
+                    if (Config.Baked.customTabsDebugLogging) {
+                        LOGGER.info("Patchouli not loaded, proceeding without waiting");
+                    }
+                    return;
+                }
+
+                Class<?> clientInitClass = Class.forName("vazkii.patchouli.neoforge.client.NeoForgeClientInitializer");
+
+                java.lang.reflect.Field lockField = clientInitClass.getDeclaredField("BOOK_LOAD_LOCK");
+                lockField.setAccessible(true);
+                java.util.concurrent.locks.Lock bookLoadLock = (java.util.concurrent.locks.Lock) lockField.get(null);
+
+                java.lang.reflect.Field conditionField = clientInitClass.getDeclaredField("BOOK_LOAD_CONDITION");
+                conditionField.setAccessible(true);
+                java.util.concurrent.locks.Condition bookLoadCondition = (java.util.concurrent.locks.Condition) conditionField.get(null);
+
+                java.lang.reflect.Field booksLoadedField = clientInitClass.getDeclaredField("booksLoaded");
+                booksLoadedField.setAccessible(true);
+
+                final long timeoutNanos = java.util.concurrent.TimeUnit.SECONDS.toNanos(30);
+                long remaining = timeoutNanos;
+                bookLoadLock.lock();
+                try {
+                    while (!(Boolean) booksLoadedField.get(null)) {
+                        if (remaining <= 0) {
+                            LOGGER.warn("Timed out after 30s waiting for Patchouli books to load; proceeding anyway");
+                            break;
+                        }
+                        if (Config.Baked.customTabsDebugLogging) {
+                            LOGGER.info("Books not yet loaded, waiting...");
+                        }
+                        remaining = bookLoadCondition.awaitNanos(remaining);
+                    }
+                    if (Config.Baked.customTabsDebugLogging) {
+                        LOGGER.info("Patchouli signaled that books are loaded!");
+                    }
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    LOGGER.warn("Interrupted while waiting for Patchouli books; proceeding anyway");
+                } finally {
+                    bookLoadLock.unlock();
+                }
+
+            } catch (ClassNotFoundException e) {
+                // Expected on 1.20.1 Forge — Patchouli's synchronization machinery is NeoForge-only.
+                LOGGER.info("Patchouli synchronization class not present (probably 1.20.1 Forge); falling back to short sleep");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Failed to wait for Patchouli books using synchronization mechanism: " + e.getMessage());
+                if (Config.Baked.customTabsDebugLogging) {
+                    e.printStackTrace();
+                }
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+
+        public static void forceLoadCustomTabs() {
+            if (!customTabsLoaded) {
+                LOGGER.info("Manually forcing custom tabs loading");
+                customTabsLoaded = true;
+                loadCustomTabs();
+            } else {
+                LOGGER.info("Custom tabs already loaded");
+            }
+        }
+
+
+        private static void loadCustomTabs() {
+            if (Config.Baked.customTabsDebugLogging) {
+                LOGGER.info("loadCustomTabs() called - customTabsEnabled: " + Config.Baked.customTabsEnabled);
+            }
+
+            if (!Config.Baked.customTabsEnabled) {
+                LOGGER.info("Custom tabs are disabled in configuration");
+                return;
+            }
+
+            try {
+                if (Config.Baked.customTabsDebugLogging) {
+                    LOGGER.info("Loading custom tab definitions from JSON files...");
+                }
+
+                java.util.List<CustomTabDefinition> customTabDefinitions = CustomTabLoader.loadCustomTabs();
+
+                if (Config.Baked.customTabsDebugLogging) {
+                    LOGGER.info("Found " + customTabDefinitions.size() + " custom tab definitions");
+                }
+
+                // TabsMenu state is not thread-safe and is read by the render thread / client setup:
+                // register + finalize on the client thread. File loading above stays off-thread.
+                net.minecraft.client.Minecraft.getInstance().execute(() -> {
+                try {
+                for (CustomTabDefinition definition : customTabDefinitions) {
+                    try {
+                        if (Config.Baked.customTabsDebugLogging) {
+                            LOGGER.info("Processing custom tab: " + definition.tabId +
+                                      " (enabled: " + definition.enabled +
+                                      ", action type: " + (definition.action != null ? definition.action.type : "null") + ")");
+                        }
+
+                        CustomJsonTab customTab = new CustomJsonTab(definition);
+                        TabsMenu.register(customTab);
+
+                        if (Config.Baked.customTabsDebugLogging) {
+                            LOGGER.info("Successfully registered custom tab: " + definition.tabId + " (order: " + definition.order + ")");
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error("Failed to register custom tab " + definition.tabId + ": " + e.getMessage());
+                        if (Config.Baked.customTabsDebugLogging) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                LOGGER.info("Loaded " + customTabDefinitions.size() + " custom tab(s)");
+
+                if (Config.Baked.customTabsDebugLogging) {
+                    LOGGER.info("Re-finalizing tab registrations for custom tabs");
+                }
+                TabsMenu.finalizePendingRegistrations();
+
+                refreshCurrentScreenForNewTabs();
+                } catch (Exception e) {
+                    LOGGER.error("Error registering custom tabs: " + e.getMessage());
+                }
+                });
+
+            } catch (Exception e) {
+                LOGGER.error("Error loading custom tabs: " + e.getMessage());
+                if (Config.Baked.customTabsDebugLogging) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private static void refreshCurrentScreenForNewTabs() {
+            net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+            minecraft.execute(() -> {
+                try {
+                    net.minecraft.client.gui.screens.Screen currentScreen = minecraft.screen;
+                    if (currentScreen == null) {
+                        return;
+                    }
+                    if (!vodmordia.modtabs.api.tabs_menu.TabsMenu.hasTabsForScreen(currentScreen)) {
+                        return;
+                    }
+                    if (Config.Baked.customTabsDebugLogging) {
+                        LOGGER.info("Refreshing screen " + currentScreen.getClass().getSimpleName() + " to show new custom tabs");
+                    }
+                    minecraft.setScreen(null);
+                    minecraft.setScreen(currentScreen);
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to refresh current screen for new custom tabs: " + e.getMessage());
+                    if (Config.Baked.customTabsDebugLogging) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+}

@@ -1,0 +1,524 @@
+package vodmordia.modtabs.utils;
+
+/**
+ * Central registry of fully-qualified class names for screens (and a few items) from every
+ * integrated mod. When a mod renames or restructures a class, this file is the only place
+ * that needs to change — instead of grepping across 35 tab classes plus the TabsMenu switch.
+ *
+ * Constants are grouped by mod and named so the call site reads naturally:
+ * {@code ScreenClasses.FTB_LIBRARY_WRAPPER} rather than a raw string literal.
+ *
+ * All values are {@code public static final String} so they remain valid as
+ * {@code switch} case labels and as compile-time constants.
+ */
+public final class ScreenClasses {
+    private ScreenClasses() {}
+
+    // -- Vanilla ----------------------------------------------------------
+    public static final String VANILLA_INVENTORY =
+            "net.minecraft.client.gui.screens.inventory.InventoryScreen";
+    public static final String VANILLA_ADVANCEMENTS =
+            "net.minecraft.client.gui.screens.advancements.AdvancementsScreen";
+    public static final String VANILLA_CONTAINER =
+            "net.minecraft.client.gui.screens.inventory.AbstractContainerScreen";
+
+    // -- AppleSkin --------------------------------------------------------
+    public static final String APPLESKIN_FOOD_STATS =
+            "squeek.appleskin.client.gui.screen.FoodStatsScreen";
+
+    // -- Ars Nouveau ------------------------------------------------------
+    public static final String ARS_NOUVEAU_SPELLBOOK_GUI =
+            "com.hollingsworth.arsnouveau.client.gui.book.GuiSpellBook";
+    public static final String ARS_NOUVEAU_SPELLBOOK_ITEM =
+            "com.hollingsworth.arsnouveau.common.items.SpellBook";
+    // Legacy / alternate names also present in TabsMenu switch
+    public static final String ARS_NOUVEAU_SPELLBOOK_GUI_LEGACY1 =
+            "com.dhanantry.arsnouveau.client.gui.SpellBookGUI";
+    public static final String ARS_NOUVEAU_SPELLBOOK_GUI_LEGACY2 =
+            "com.dhanantry.arsnouveau.client.gui.SpellBookScreen";
+
+    // -- Ars Zero (staffs / circlet; extends the Ars Nouveau caster tools) --
+    public static final String ARS_ZERO_DEVICE_ITEM =
+            "com.github.ars_zero.common.item.multi.AbstractMultiPhaseCastDevice";
+    public static final String ARS_ZERO_STAFF_GUI =
+            "com.github.ars_zero.client.gui.ArsZeroStaffGUI";
+    public static final String ARS_ZERO_STATIC_STAFF_SCREEN =
+            "com.github.ars_zero.client.gui.StaticStaffScreen";
+    public static final String ARS_ZERO_CIRCLET_GUI =
+            "com.github.ars_zero.client.gui.SpellcastingCircletGUI";
+
+    // -- Backpacked (mrcrayfish) ------------------------------------------
+    public static final String BACKPACKED_SCREEN =
+            "com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen";
+    public static final String BACKPACKED_ITEM =
+            "com.mrcrayfish.backpacked.item.BackpackItem";
+    public static final String BACKPACKED_SCREEN_ALT =
+            "net.backpacked.client.screen.BackpackScreen";
+    public static final String BACKPACKED_FLYWHEEL_TRANSFORM =
+            "com.jozufozu.flywheel.util.transform.TransformStack";
+
+    // -- Quark Backpack (Quark "Oddities" addon, mod id "quark") -----------
+    /** Chest-slot {@code ArmorItem} that is itself a {@code MenuProvider}. */
+    public static final String QUARK_BACKPACK_ITEM =
+            "org.violetmoon.quark.addons.oddities.item.BackpackItem";
+    public static final String QUARK_BACKPACK_SCREEN =
+            "org.violetmoon.quark.addons.oddities.client.screen.BackpackInventoryScreen";
+
+    // -- Better Advancements ----------------------------------------------
+    public static final String BETTER_ADVANCEMENTS =
+            "betteradvancements.common.gui.BetterAdvancementsScreen";
+
+    // -- Body Damage (Legendary Survival Overhaul) ------------------------
+    public static final String LSO_BODY_HEALTH =
+            "sfiomn.legendarysurvivaloverhaul.client.gui.BodyHealthScreen";
+
+    // -- Brassworks Missions ----------------------------------------------
+    public static final String BRASSWORKS_MISSIONS_UI =
+            "net.swzo.brassworksmissions.client.gui.UiScreen";
+
+    // -- Cobblemon --------------------------------------------------------
+    public static final String COBBLEMON_PARTY =
+            "com.cobblemon.mod.common.client.gui.party.PartyGUI";
+    public static final String COBBLEMON_PARTY_LEGACY =
+            "com.cobblemon.mod.common.client.gui.PartyGUI";
+
+    // -- Cosmetic Armor Reworked ------------------------------------------
+    public static final String COSMETIC_ARMOR_GUI =
+            "lain.mods.cos.impl.client.gui.GuiCosArmorInventory";
+
+    // -- Draconic Evolution / SCGuns ---------------------------------------
+    public static final String DRACONIC_EVOLUTION_GUI =
+            "com.brandon3055.draconicevolution.client.gui.GuiDraconicEvolution";
+    public static final String SCGUNS_ATTACHMENT =
+            "com.dhanantry.scguns.client.screen.AttachmentScreen";
+    public static final String SCGUNS_PASSIVE_SKILL =
+            "com.dhanantry.scguns.client.screen.PassiveSkillScreen";
+
+    // -- Eccentric Tome ---------------------------------------------------
+    public static final String ECCENTRIC_TOME_SCREEN =
+            "website.eccentric.tome.client.TomeScreen";
+    public static final String ECCENTRIC_TOME_ITEM =
+            "website.eccentric.tome.TomeItem";
+
+    // -- FTB Library / Quests / Teams -------------------------------------
+    public static final String FTB_LIBRARY_WRAPPER =
+            "dev.ftb.mods.ftblibrary.ui.ScreenWrapper";
+    public static final String FTB_QUESTS_QUEST_SCREEN =
+            "dev.ftb.mods.ftbquests.client.gui.quests.QuestScreen";
+    public static final String FTB_QUESTS_QUESTION_SCREEN =
+            "dev.ftb.mods.ftbquests.client.gui.QuestionScreen";
+    public static final String FTB_QUESTS_QUESTS_SCREEN =
+            "dev.ftb.mods.ftbquests.client.gui.QuestsScreen";
+    public static final String FTB_QUESTS_QUEST_SCREEN_ALT1 =
+            "dev.ftb.mods.ftbquests.client.screens.QuestScreen";
+    public static final String FTB_QUESTS_QUEST_SCREEN_ALT2 =
+            "dev.ftb.mods.ftbquests.client.QuestScreen";
+    public static final String FTB_TEAMS_SCREEN =
+            "dev.ftb.mods.ftbteams.client.gui.TeamsScreen";
+    public static final String FTB_TEAMS_SCREEN_ALT1 =
+            "dev.ftb.mods.ftbteams.client.screens.TeamsScreen";
+    public static final String FTB_TEAMS_SCREEN_ALT2 =
+            "dev.ftb.mods.ftbteams.client.TeamsScreen";
+
+    // -- JourneyMap -------------------------------------------------------
+    public static final String JOURNEYMAP_FULLSCREEN =
+            "journeymap.client.ui.fullscreen.Fullscreen";
+
+    // -- Map Atlases ------------------------------------------------------
+    public static final String MAP_ATLASES_OVERVIEW =
+            "pepjebs.mapatlases.client.screen.AtlasOverviewScreen";
+    public static final String MAP_ATLASES_ACCESS_UTILS =
+            "pepjebs.mapatlases.client.ui.MapAtlasesAccessUtils";
+    public static final String MAP_ATLASES_ITEM =
+            "pepjebs.mapatlases.item.MapAtlasItem";
+
+    // -- Pufferfish Skills ------------------------------------------------
+    public static final String PUFFERFISH_SKILLS =
+            "net.puffish.skillsmod.client.gui.SkillsScreen";
+    public static final String PUFFERFISH_SKILLS_ALT1 =
+            "puffish.skillsmod.client.screen.SkillScreen";
+    public static final String PUFFERFISH_SKILLS_ALT2 =
+            "net.puffish.skillsmod.client.screen.SkillScreen";
+
+    // -- Xaero's World Map ------------------------------------------------
+    public static final String XAEROS_MAP =
+            "xaero.map.gui.GuiMap";
+
+    // -- Cobblemon (additional screens for tab registration) --------------
+    public static final String COBBLEMON_SUMMARY =
+            "com.cobblemon.mod.common.client.gui.summary.Summary";
+    public static final String COBBLEMON_STARTER_SELECTION =
+            "com.cobblemon.mod.common.client.gui.startselection.StarterSelectionScreen";
+
+    // -- FTB Chunks -------------------------------------------------------
+    public static final String FTB_CHUNKS_MAP =
+            "dev.ftb.mods.ftbchunks.client.map.MapScreen";
+    public static final String FTB_CHUNKS_MAP_ALT1 =
+            "dev.ftb.mods.ftbchunks.client.gui.MapScreen";
+    public static final String FTB_CHUNKS_MAP_ALT2 =
+            "dev.ftb.mods.ftbchunks.client.screens.MapScreen";
+
+    // -- Memory of the Past (MOTP) ----------------------------------------
+    public static final String MOTP_PLAYER_STATS =
+            "tn.mbs.memory.client.gui.PlayerStatsGUIScreen";
+
+    // -- Passive Skill Tree (daripher) ------------------------------------
+    public static final String PASSIVE_SKILL_TREE =
+            "daripher.skilltree.client.screen.SkillTreeScreen";
+
+    // -- L2 family --------------------------------------------------------
+    public static final String L2_ARTIFACTS_SET_EFFECT =
+            "dev.xkmc.l2artifacts.content.client.tab.SetEffectScreen";
+    public static final String L2_HOSTILITY_DIFFICULTY =
+            "dev.xkmc.l2hostility.content.menu.tab.DifficultyScreen";
+
+    // -- Modular Golems ---------------------------------------------------
+    public static final String MODULAR_GOLEMS_INFO =
+            "dev.xkmc.modulargolems.content.client.tracker.GolemInfoScreen";
+
+    // -- RPG Crafting -----------------------------------------------------
+    public static final String RPG_CRAFTING_HAND =
+            "com.github.theredbrain.rpgcrafting.gui.screen.ingame.HandCraftingScreen";
+
+    // -- Body Damage / LSO (modern path) ----------------------------------
+    public static final String LSO_BODY_HEALTH_SCREENS =
+            "sfiomn.legendarysurvivaloverhaul.client.screens.BodyHealthScreen";
+
+    // -- Draconic Evolution (configurable item GUI) -----------------------
+    public static final String DRACONIC_EVOLUTION_CONFIGURABLE_ITEM =
+            "com.brandon3055.draconicevolution.client.gui.modular.itemconfig.ConfigurableItemGui$Screen";
+
+    // -- Travelers Backpack -----------------------------------------------
+    public static final String TRAVELERS_BACKPACK_SCREEN =
+            "com.tiviacz.travelersbackpack.client.screens.BackpackScreen";
+
+    // -- Biology Dictionary -----------------------------------------------
+    public static final String BIOLOGY_DICTIONARY_HOME_SCREEN =
+            "io.github.xienaoban.biologydictionary.gui.screen.BdHomeScreen";
+    public static final String BIOLOGY_DICTIONARY_ABOUT_SCREEN =
+            "io.github.xienaoban.biologydictionary.gui.screen.BdAboutScreen";
+    public static final String BIOLOGY_DICTIONARY_CONFIG_SCREEN =
+            "io.github.xienaoban.biologydictionary.gui.screen.BdConfigScreen";
+    public static final String BIOLOGY_DICTIONARY_ENTITY_OVERVIEW_SCREEN =
+            "io.github.xienaoban.biologydictionary.gui.screen.BdEntityOverviewScreen";
+    public static final String BIOLOGY_DICTIONARY_ENTITY_DETAIL_SCREEN =
+            "io.github.xienaoban.biologydictionary.gui.screen.BdEntityDetailScreen";
+    /** {@code BiologyDictionaryItem.createBook()} / {@code isBook(ItemStack)}. */
+    public static final String BIOLOGY_DICTIONARY_ITEM =
+            "io.github.xienaoban.biologydictionary.core.BiologyDictionaryItem";
+    /** Static {@code openBookScreen(Minecraft)} entry point used by the keybind and right-click. */
+    public static final String BIOLOGY_DICTIONARY_EVENT =
+            "io.github.xienaoban.biologydictionary.client.BiologyDictionaryEvent";
+    /** {@code ConfigsManager.getServer().isBookItemRequired()}. */
+    public static final String BIOLOGY_DICTIONARY_CONFIGS_MANAGER =
+            "io.github.xienaoban.biologydictionary.config.ConfigsManager";
+
+    // -- Reliable Backpacks -----------------------------------------------
+    public static final String RELIABLE_BACKPACKS_ITEM =
+            "com.evandev.reliable_backpacks.common.items.BackpackItem";
+    public static final String RELIABLE_BACKPACKS_CONTAINER =
+            "com.evandev.reliable_backpacks.common.items.BackpackItemContainer";
+
+    // -- Runic Skills -----------------------------------------------------
+    public static final String RUNIC_SKILLS_SCREEN =
+            "com.otectus.runicskills.client.screen.RunicSkillsScreen";
+
+    // -- Advanced Team (clefal) -------------------------------------------
+    /** Abstract parent of HasTeamScreen / NoTeamScreen — used for tab attachment. */
+    public static final String ADVANCED_TEAM_SCREEN =
+            "com.clefal.teams.client.gui.screens.TeamsScreen";
+    public static final String ADVANCED_TEAM_HAS_TEAM_SCREEN =
+            "com.clefal.teams.client.gui.screens.hasteam.HasTeamScreen";
+    public static final String ADVANCED_TEAM_NO_TEAM_SCREEN =
+            "com.clefal.teams.client.gui.screens.noteam.NoTeamScreen";
+    /** Static {@code INSTANCE} field; {@code isInTeam()} picks which screen to open. */
+    public static final String ADVANCED_TEAM_CLIENT_TEAM =
+            "com.clefal.teams.client.core.ClientTeam";
+
+    // -- Villager Recruits ------------------------------------------------
+    /** Faction landing screen opened by the U keybind. Constructor takes a {@link net.minecraft.world.entity.player.Player}. */
+    public static final String VILLAGER_RECRUITS_FACTION_MAIN_SCREEN =
+            "com.talhanation.recruits.client.gui.faction.FactionMainScreen";
+    /** Claim / world-map screen opened by the M keybind. No-arg constructor; the keybind
+     *  handler in {@code KeyEvents.onKeyInput} additionally gates on
+     *  {@code level.dimension() == Level.OVERWORLD}, so the tab replicates that check. */
+    public static final String VILLAGER_RECRUITS_WORLD_MAP_SCREEN =
+            "com.talhanation.recruits.client.gui.worldmap.WorldMapScreen";
+
+    // -- Diet / Bulking ---------------------------------------------------
+    /** Diet's main player UI screen. Constructor: {@code DietScreen(boolean fromInventory)}.
+     *  Note: extends {@code Screen} (NOT {@code AbstractContainerScreen}) and its ySize is
+     *  computed dynamically in init() as {@code groups.size() * 20 + 60}, so 248x166 is just
+     *  a sane default for tab-bar positioning. */
+    public static final String DIET_SCREEN =
+            "com.illusivesoulworks.diet.client.screen.DietScreen";
+    /** Bulking's replacement screen. Same {@code (boolean fromInventory)} constructor as Diet's.
+     *  Bulking ships mixins on {@code DietClientEvents.tick} / {@code .getButton} that swap
+     *  any {@code new DietScreen(...)} call for {@code new BulkingScreen(...)}; since we
+     *  bypass those call sites, we have to pick the class ourselves. */
+    public static final String BULKING_SCREEN =
+            "dev.neire.mc.bulking.client.gui.BulkingScreen";
+
+    // -- Curios -----------------------------------------------------------
+    /** Legacy curios inventory (V1). Used when {@code CuriosConfig.SERVER.enableLegacyMenu = true}. */
+    public static final String CURIOS_SCREEN =
+            "top.theillusivec4.curios.client.gui.CuriosScreen";
+    /** Revamped curios inventory (V2). Default on modern Curios — {@code CuriosContainerProvider}
+     *  picks V2 unless the legacy-menu config flag is on, so this is what most players see. */
+    public static final String CURIOS_SCREEN_V2 =
+            "top.theillusivec4.curios.client.gui.CuriosScreenV2";
+    /** Plain-message class for Forge SimpleChannel with a single {@code ItemStack carried} field;
+     *  the server's handler opens the curios menu for the player. */
+    public static final String CURIOS_OPEN_PACKET =
+            "top.theillusivec4.curios.common.network.client.CPacketOpenCurios";
+    /** Holds {@code INSTANCE} — the {@link net.minecraftforge.network.simple.SimpleChannel}
+     *  used to send packets to the server. */
+    public static final String CURIOS_NETWORK_HANDLER =
+            "top.theillusivec4.curios.common.network.NetworkHandler";
+
+    // -- Apothic Attributes (modid attributeslib on 1.20.1) ---------------
+    /** Renderable overlay attached to {@code InventoryScreen} via the mod's own ScreenEvent.Init.Post listener.
+     *  Holds the static {@code wasOpen} flag we flip before opening the inventory. */
+    public static final String APOTHIC_ATTRIBUTES_GUI =
+            "dev.shadowsoffire.attributeslib.client.AttributesGui";
+    /** Static {@code enableAttributesGui} field — server admins can disable the panel entirely. */
+    public static final String APOTHIC_ATTRIBUTES_CONFIG =
+            "dev.shadowsoffire.attributeslib.ALConfig";
+
+    // -- The Aether ------------------------------------------------------
+    /** {@code EffectRenderingInventoryScreen<AccessoriesMenu>} — the accessory inventory.
+     *  Note: on 1.20.1 the class is {@code AccessoriesScreen} (no "Aether" prefix). */
+    public static final String AETHER_ACCESSORIES_SCREEN =
+            "com.aetherteam.aether.client.gui.screen.inventory.AccessoriesScreen";
+    /** Serverbound packet with a single {@code ItemStack carryStack} field; the server's handler
+     *  opens an {@code AccessoriesMenu} on the player. Same path the mod's own "I" keybind
+     *  uses in {@code GuiHooks.openAccessoryMenu()}. */
+    public static final String AETHER_OPEN_ACCESSORIES_PACKET =
+            "com.aetherteam.aether.network.packet.serverbound.OpenAccessoriesPacket";
+    /** Holds {@code INSTANCE} — the {@link net.minecraftforge.network.simple.SimpleChannel}
+     *  the Aether uses for all of its serverbound traffic. */
+    public static final String AETHER_PACKET_HANDLER =
+            "com.aetherteam.aether.network.AetherPacketHandler";
+
+    // -- Epic Fight ------------------------------------------------------
+    /** {@code Screen} (not a container screen) opened by Epic Fight's "K" keybind via
+     *  {@code ControlEngine.openSkillEditor()}. Constructor takes ({@link net.minecraft.world.entity.player.Player},
+     *  {@code CapabilitySkill}) on 1.20.1 (Forge). */
+    public static final String EPIC_FIGHT_SKILL_EDIT_SCREEN =
+            "yesman.epicfight.client.gui.screen.SkillEditScreen";
+    /** Static helpers: {@code getLocalPlayerPatch(LocalPlayer)} returns the patch attached
+     *  via Forge capabilities; the patch's {@code getSkillCapability()} supplies the second
+     *  {@link #EPIC_FIGHT_SKILL_EDIT_SCREEN} constructor argument. */
+    public static final String EPIC_FIGHT_CAPABILITIES =
+            "yesman.epicfight.world.capabilities.EpicFightCapabilities";
+
+    // -- Epic Fight Skill Tree (epicskills addon) ------------------------
+    /** {@code Screen} (not a container screen) opened by epicskills' keybind. Constructor
+     *  takes a single {@code LocalPlayerPatch}. Overrides {@code render()} without calling
+     *  {@code super.render()} → same plain-Screen-override quirk as
+     *  {@link #EPIC_FIGHT_SKILL_EDIT_SCREEN}; add this FQN to the manual-renderables
+     *  list in {@code ClientNeoForgeEvents.onScreenRenderPost} or tabs won't draw. */
+    public static final String EPIC_SKILLS_SKILL_TREE_SCREEN =
+            "com.yesman.epicskills.client.gui.screen.SkillTreeScreen";
+    /** Epic Fight's local-player patch class — second {@link #EPIC_SKILLS_SKILL_TREE_SCREEN}
+     *  constructor argument type. Note the {@code capabilites} typo (sic) in the package. */
+    public static final String EPIC_FIGHT_LOCAL_PLAYER_PATCH =
+            "yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch";
+
+    // -- Mine and Slash Rework (mmorpg) ----------------------------------
+    /** No-arg constructor — extends {@code SkillTreeScreen} with {@code SchoolType.TALENTS}.
+     *  Same path the mod uses internally in {@code MainHubScreen}'s right-button list.
+     *  Plain {@code Screen} subclass (not a container screen); render() applies a zoom
+     *  pose transform that wraps {@code super.render()}, so tabs added as children render
+     *  scaled. Add this FQN to the manual-renderables list in
+     *  {@code ClientNeoForgeEvents.onScreenRenderPost} so tabs draw at the correct scale. */
+    public static final String MINE_AND_SLASH_TALENTS_SCREEN =
+            "com.robertx22.mine_and_slash.gui.screens.skill_tree.TalentsScreen";
+
+    // -- Blue Skies ------------------------------------------------------
+    /** {@code EffectRenderingInventoryScreen<ArcsMenu>} — opened server-side after the
+     *  client sends {@link #BLUE_SKIES_OPEN_ARCS_PACKET}. Normal container screen, so the
+     *  shared {@code AbstractContainerScreenMixin} handles tab rendering. */
+    public static final String BLUE_SKIES_ARCS_SCREEN =
+            "com.legacy.blue_skies.client.gui.screen.ArcsScreen";
+    /** Abstract parent of {@code BlueJournalStartScreen} / section / entry screens.
+     *  Plain {@code Screen} subclass; {@code render()} iterates {@code f_169369_} manually
+     *  (so tabs added as children DO draw), but does not call {@code super.render()}. The
+     *  static {@link #BLUE_SKIES_JOURNAL_SCREEN}{@code .open(boolean)} method picks
+     *  {@code BlueJournalStartScreen} when no previous page is saved. */
+    public static final String BLUE_SKIES_JOURNAL_SCREEN =
+            "com.legacy.blue_skies.client.gui.screen.journal.BlueJournalScreen";
+    public static final String BLUE_SKIES_JOURNAL_START_SCREEN =
+            "com.legacy.blue_skies.client.gui.screen.journal.BlueJournalStartScreen";
+    public static final String BLUE_SKIES_JOURNAL_SECTION_SCREEN =
+            "com.legacy.blue_skies.client.gui.screen.journal.BlueJournalSectionScreen";
+    public static final String BLUE_SKIES_JOURNAL_ENTRY_SCREEN =
+            "com.legacy.blue_skies.client.gui.screen.journal.BlueJournalEntryScreen";
+    public static final String BLUE_SKIES_JOURNAL_SEARCH_SCREEN =
+            "com.legacy.blue_skies.client.gui.screen.journal.BlueJournalSearchScreen";
+    /** Serverbound no-arg packet; server's handler opens the {@code ArcsMenu} on the player.
+     *  Same path as Blue Skies' own Arcs inventory button in {@code SkiesClientEvents}. */
+    public static final String BLUE_SKIES_OPEN_ARCS_PACKET =
+            "com.legacy.blue_skies.network.c_to_s.OpenInventoryPacket$Arcs";
+    /** Holds {@code INSTANCE} — Blue Skies' {@link net.minecraftforge.network.simple.SimpleChannel}
+     *  used for all serverbound traffic. {@code sendToServer(Object)} is the static helper. */
+    public static final String BLUE_SKIES_PACKET_HANDLER =
+            "com.legacy.blue_skies.network.PacketHandler";
+
+    // -- Completionist's Index (Fuzs) ------------------------------------
+    /** Abstract parent of {@code ModsIndexViewScreen} / {@code ItemsIndexViewScreen}.
+     *  Plain {@code Screen} subclass (not a container screen); its {@code render()}
+     *  draws the book background then calls {@code super.render()} so tabs added as
+     *  children DO draw without needing the manual-renderables list in
+     *  {@code ClientNeoForgeEvents.onScreenRenderPost}. */
+    public static final String COMPLETIONISTS_INDEX_VIEW_SCREEN =
+            "fuzs.completionistsindex.client.gui.screens.inventory.IndexViewScreen";
+    /** Top-level index screen — same constructor the mod uses from the inventory button:
+     *  {@code new ModsIndexViewScreen(Screen lastScreen)}. */
+    public static final String COMPLETIONISTS_INDEX_MODS_SCREEN =
+            "fuzs.completionistsindex.client.gui.screens.inventory.ModsIndexViewScreen";
+    /** Drill-down screen (per-mod item list). {@code (Screen, List<ItemStack>)} constructor;
+     *  we never open it directly but track it for the "currently used" check so cycling skips
+     *  the tab when the player is browsing a mod's items. */
+    public static final String COMPLETIONISTS_INDEX_ITEMS_SCREEN =
+            "fuzs.completionistsindex.client.gui.screens.inventory.ItemsIndexViewScreen";
+    /** Static handler that adds the inventory + pause-menu buttons. {@code onScreenInit$Post$1}
+     *  is the inventory variant we suppress via {@code IndexButtonHandlerMixin}. */
+    public static final String COMPLETIONISTS_INDEX_BUTTON_HANDLER =
+            "fuzs.completionistsindex.client.handler.IndexButtonHandler";
+
+    // -- SDM Shop (sdmshop, DeusSixik / Architectury, 7.x rebrand) ---------
+    // The mod was rebranded around v7.0 — old modid `sdmshoprework` and package
+    // `net.sixik.sdmshoprework.*` are gone; everything is now `sdmshop` /
+    // `net.sixik.sdmshop.*` and the open-screen API changed shape entirely.
+    /** Client entry point. The relevant overload is {@code openGui(ResourceLocation shopId)};
+     *  passing {@link #SDM_SHOP_AUTO_OPEN} matches what the in-game keybind does. The
+     *  call goes through an async server round-trip ({@code AsyncClientTasks.openShop})
+     *  which then dispatches to the configured style screen. */
+    public static final String SDM_SHOP_CLIENT =
+            "net.sixik.sdmshop.client.SDMShopClient";
+    /** Constants holder. {@code AUTO_SHOP_OPEN = new ResourceLocation("server", "auto_shop_open")}
+     *  is the sentinel the server treats as "open the default shop for this player". */
+    public static final String SDM_SHOP_CONSTANTS =
+            "net.sixik.sdmshop.SDMShopConstants";
+    /** Resource location namespace/path of the sentinel above — used to construct the
+     *  argument reflectively when the constants class isn't on the classpath. */
+    public static final String SDM_SHOP_AUTO_OPEN_NAMESPACE = "server";
+    public static final String SDM_SHOP_AUTO_OPEN_PATH = "auto_shop_open";
+    /** "Modern" style shop. Backed by FTB Library's {@code BaseScreen} → the actual
+     *  {@link net.minecraft.client.gui.screens.Screen} the player sees is
+     *  {@link #FTB_LIBRARY_WRAPPER} with this as the {@code wrappedGui} field. */
+    public static final String SDM_SHOP_MODERN_SCREEN =
+            "net.sixik.sdmshop.client.screen.modern.ModernShopScreen";
+    /** "Blocky modern" style — the rewritten screen tree under {@code screen_new}.
+     *  Same wrapping (BaseScreen → ScreenWrapper) as ModernShopScreen. */
+    public static final String SDM_SHOP_MAIN_SCREEN =
+            "net.sixik.sdmshop.client.screen_new.MainShopScreen";
+
+    // -- Jobs+ (DAQEM, Forge 1.20.1) ------------------------------------
+    // JobsScreen needs server-supplied data (jobs + coins) to construct, so we can't
+    // open it directly client-side. Instead we mirror the mod's own keybind path in
+    // {@code EventKeyPressed}: send an empty {@code PacketOpenMenuC2S} and the server
+    // replies with {@code PacketOpenMenuS2C} that constructs and opens the screen with
+    // proper data.
+    /** {@code AbstractScreen} subclass (uilib library) — not a container screen.
+     *  Its {@code render()} ends with {@code super.render()}, which iterates vanilla
+     *  renderables, so tabs added as children DO draw without needing the manual-
+     *  renderables list in {@code ClientNeoForgeEvents.onScreenRenderPost}. Note the
+     *  package is {@code client.screen} on 1.20.1 — the 1.21.1 NeoForge build moved it
+     *  to {@code client.screen.job.JobsScreen}. */
+    public static final String JOBS_PLUS_SCREEN =
+            "com.daqem.jobsplus.client.screen.JobsScreen";
+    /** Architectury {@code BaseC2SMessage} — instance method {@code sendToServer()}
+     *  dispatches it; no-arg constructor sets all options to defaults (the server-side
+     *  handler ignores them on a fresh open). */
+    public static final String JOBS_PLUS_OPEN_PACKET =
+            "com.daqem.jobsplus.networking.c2s.PacketOpenMenuC2S";
+
+    // -- Quest Log (Infernal Studios, Forge 1.20.1) ---------------------
+    // Plain {@link net.minecraft.client.gui.screens.Screen} subclass (NOT a container screen)
+    // opened by the mod's own keybind via {@code Minecraft.setScreen(new QuestlogScreen(prev))}.
+    // QuestlogScreen.render() calls super.render() so tabs added as children draw without
+    // needing the manual-renderables list. The mod adds its own QuestlogOpenButton to the
+    // inventory via InventoryScreenMixin; we suppress that mixin so the tab is the only
+    // entry point.
+    /** {@code Screen} (single-arg {@code Screen previousScreen} constructor). */
+    public static final String QUEST_LOG_SCREEN =
+            "org.infernalstudios.questlog.client.gui.screen.QuestlogScreen";
+    /** Static {@code mostRecentNotificationQuest} field — populated when a quest is triggered
+     *  or completed, cleared by {@code QuestlogScreen.init()}. The badge ("!" icon) on the
+     *  native button is shown when this is non-null, OR when any quest is completed-but-
+     *  not-rewarded. We mirror both checks on the tab. */
+    public static final String QUEST_LOG_CLIENT_EVENTS =
+            "org.infernalstudios.questlog.QuestlogClientEvents";
+    /** Static {@code getLocal()} returns the per-player {@code QuestManager}; we use it to
+     *  scan for completed-but-unrewarded quests when there's no recent notification. */
+    public static final String QUEST_LOG_CLIENT =
+            "org.infernalstudios.questlog.QuestlogClient";
+
+    // -- Field Guide (evanbones, Forge 1.20.1) ----------------------------
+    // Plain {@link net.minecraft.client.gui.screens.Screen} subclasses (NOT container
+    // screens). All three extend {@code BookScreen}; their {@code render()} blits the
+    // 300x200 book texture and then calls {@code super.render()} so tabs added as
+    // children render naturally. The mod adds its own ImageButton to the inventory via
+    // {@code InventoryScreenMixin}; we suppress that via
+    // {@link vodmordia.modtabs.mixin.FieldGuideInventoryScreenMixin}.
+    /** Category landing page — opened by the no-arg constructor, same path the mod's
+     *  inventory button uses when {@code defaultScreen != "last_opened_screen"} or no
+     *  prior book screen exists. */
+    public static final String FIELD_GUIDE_CATEGORY_SCREEN =
+            "com.evandev.fieldguide.client.gui.screens.FieldGuideCategoryScreen";
+    /** Per-entry detail page. Player navigates here from the category screen; we register
+     *  it so cycling skips the tab when the player is reading an entry. */
+    public static final String FIELD_GUIDE_ENTRY_SCREEN =
+            "com.evandev.fieldguide.client.gui.screens.FieldGuideEntryScreen";
+    /** Intro "journal" page shown for the {@code intro} category. {@code init()} on
+     *  FieldGuideCategoryScreen redirects here when the selected category's path is
+     *  "intro", so the player can end up here on first open. */
+    public static final String FIELD_GUIDE_JOURNAL_SCREEN =
+            "com.evandev.fieldguide.client.gui.screens.FieldGuideJournalScreen";
+    /** {@code BookScreen.lastOpenedScreen} — public static field set whenever any
+     *  BookScreen's {@code init()} runs. When {@code ClientConfig.defaultScreen ==
+     *  "last_opened_screen"} the inventory button opens this instead of constructing a
+     *  fresh category screen; the tab mirrors that branch. */
+    public static final String FIELD_GUIDE_BOOK_SCREEN =
+            "com.evandev.fieldguide.client.gui.screens.BookScreen";
+    /** Mod's ClientConfig holder — {@code defaultScreen} field is a String key
+     *  ("last_opened_screen" / "current_biome" / category id / ""). We read it via the
+     *  no-arg {@code get()} static so a player who configured the mod to remember the
+     *  last screen gets the same behavior from the tab as from the native button. */
+    public static final String FIELD_GUIDE_CLIENT_CONFIG =
+            "com.evandev.fieldguide.config.ClientConfig";
+
+    // -- Modonomicon (klikli-dev, Forge 1.20.1) ---------------------------
+    // Patchouli-style guidebook framework. Each book registers its own ModonomiconItem
+    // subclass and stores the book id in NBT; right-click on the item opens the book via
+    // {@code BookGuiManager.openBook(ResourceLocation)} — different from the 1.21.1
+    // {@code BookAddress.defaultFor(Book)} path (1.20.1 doesn't have BookAddress).
+    // The mod doesn't add an inventory button so no suppression mixin is needed.
+    /** Base item class for any Modonomicon book. Has public static
+     *  {@code getBook(ItemStack)} returning {@code Book}. {@code getBookId} is private
+     *  here (unlike 1.21.1), so we go through {@code getBook(...).getId()} instead. */
+    public static final String MODONOMICON_ITEM =
+            "com.klikli_dev.modonomicon.item.ModonomiconItem";
+    /** {@code BookGuiManager} — public static {@code get()} returns the singleton;
+     *  {@code openBook(ResourceLocation)} is the entry point used by both the keybind
+     *  and {@link #MODONOMICON_ITEM}'s right-click. */
+    public static final String MODONOMICON_BOOK_GUI_MANAGER =
+            "com.klikli_dev.modonomicon.client.gui.BookGuiManager";
+    /** {@code Book} interface — has {@code getId()} returning the {@code ResourceLocation}
+     *  we need to pass to {@link #MODONOMICON_BOOK_GUI_MANAGER}'s openBook. */
+    public static final String MODONOMICON_BOOK =
+            "com.klikli_dev.modonomicon.book.Book";
+    /** Active screen for an opened Modonomicon book — set as {@code Minecraft.screen} by
+     *  {@code BookGuiManager.openBook}. Category / content / search screens push as GUI
+     *  layers via {@code ClientServices.GUI.pushGuiLayer}, so the active screen stays
+     *  this. Its {@code render()} calls {@code super.render()}, so tabs added as children
+     *  draw naturally. */
+    public static final String MODONOMICON_BOOK_OVERVIEW_SCREEN =
+            "com.klikli_dev.modonomicon.client.gui.book.BookOverviewScreen";
+    /** Shown when {@code BookDataManager.get().getBook(id)} returns null. We register it
+     *  so the tab follows the player into the error state. */
+    public static final String MODONOMICON_BOOK_ERROR_SCREEN =
+            "com.klikli_dev.modonomicon.client.gui.book.BookErrorScreen";
+}

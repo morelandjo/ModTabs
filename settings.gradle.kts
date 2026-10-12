@@ -21,6 +21,7 @@ stonecutter {
         version("1.21.1-neoforge", "1.21.1").buildscript = "build.1.21.1-neoforge.gradle"
         version("1.20.1-forge", "1.20.1").buildscript = "build.1.20.1-forge.gradle"
         version("1.20.1-fabric", "1.20.1").buildscript = "build.1.20.1-fabric.gradle"
+        version("1.18.2-forge", "1.18.2").buildscript = "build.1.18.2-forge.gradle"
 
         vcsVersion = "1.21.1-neoforge"
     }
