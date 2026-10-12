@@ -196,6 +196,10 @@ public class ModTabsClient implements ClientModInitializer {
             List<CustomTabDefinition> customTabDefinitions = CustomTabLoader.loadCustomTabs();
 
 
+            // TabsMenu state is not thread-safe: register + finalize on the client thread.
+            // File loading above stays off-thread.
+            net.minecraft.client.MinecraftClient.getInstance().execute(() -> {
+            try {
             for (CustomTabDefinition definition : customTabDefinitions) {
                 try {
                     CustomJsonTab customTab = new CustomJsonTab(definition);
@@ -214,6 +218,10 @@ public class ModTabsClient implements ClientModInitializer {
 
             // Refresh the current screen to show newly loaded custom tabs
             refreshCurrentScreenForNewTabs();
+            } catch (Exception e) {
+                ModTabs.LOGGER.error("Error registering custom tabs: " + e.getMessage());
+            }
+            });
 
         } catch (Exception e) {
             ModTabs.LOGGER.error("Error loading custom tabs: " + e.getMessage());

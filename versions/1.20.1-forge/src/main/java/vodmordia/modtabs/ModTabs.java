@@ -331,6 +331,10 @@ public class ModTabs
                     LOGGER.info("Found " + customTabDefinitions.size() + " custom tab definitions");
                 }
 
+                // TabsMenu state is not thread-safe and is read by the render thread / client setup:
+                // register + finalize on the client thread. File loading above stays off-thread.
+                net.minecraft.client.Minecraft.getInstance().execute(() -> {
+                try {
                 for (CustomTabDefinition definition : customTabDefinitions) {
                     try {
                         if (Config.Baked.customTabsDebugLogging) {
@@ -361,6 +365,10 @@ public class ModTabs
                 TabsMenu.finalizePendingRegistrations();
 
                 refreshCurrentScreenForNewTabs();
+                } catch (Exception e) {
+                    LOGGER.error("Error registering custom tabs: " + e.getMessage());
+                }
+                });
 
             } catch (Exception e) {
                 LOGGER.error("Error loading custom tabs: " + e.getMessage());

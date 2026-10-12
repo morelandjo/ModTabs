@@ -21,8 +21,8 @@ import static vodmordia.modtabs.api.tabs_menu.TabBase.TAB_WIDTH;
 
 public class TabsMenu {
     private static final Map<Class<? extends Screen>, ScreenInfo> tabsScreens = new HashMap<>();
-    private static final List<TabBase> allRegisteredTabs = new ArrayList<>();
-    private static final List<ScreenRegistration> pendingScreenRegistrations = new ArrayList<>();
+    private static final List<TabBase> allRegisteredTabs = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final List<ScreenRegistration> pendingScreenRegistrations = new java.util.concurrent.CopyOnWriteArrayList<>();
     private static int leftScreenPos;
     private static int topScreenPos;
     private static int startTabIndex;
@@ -81,8 +81,10 @@ public class TabsMenu {
         pendingScreenRegistrations.add(new ScreenRegistration(screen, screenWidth, screenHeight, displayMode, TabPositioning.CUSTOM, customTabX, customTabY, 0));
     }
 
-    public static void finalizePendingRegistrations() {
-        for (ScreenRegistration registration : pendingScreenRegistrations) {
+    public static synchronized void finalizePendingRegistrations() {
+        List<ScreenRegistration> pendingSnapshot = new ArrayList<>(pendingScreenRegistrations);
+        List<TabBase> tabsSnapshot = new ArrayList<>(allRegisteredTabs);
+        for (ScreenRegistration registration : pendingSnapshot) {
             if (!tabsScreens.containsKey(registration.screenClass)) {
                 ScreenInfo screenInfo = new ScreenInfo(registration.screenWidth, registration.screenHeight, registration.displayMode);
                 screenInfo.positioning = registration.positioning;
@@ -93,11 +95,12 @@ public class TabsMenu {
             }
 
             ScreenInfo screenInfo = tabsScreens.get(registration.screenClass);
-            for (TabBase tab : allRegisteredTabs) {
+            for (TabBase tab : tabsSnapshot) {
                 screenInfo.addTab(10, tab);
             }
         }
-        pendingScreenRegistrations.clear();
+        // Only drop what was processed; a late registration must survive for the next finalize
+        pendingScreenRegistrations.removeAll(pendingSnapshot);
     }
 
     public static void register(TabBase tabBase) {

@@ -30,8 +30,7 @@ public class CuriosTab extends IntegrationIconTab {
 
     // Curios' own inventory button texture, pulled straight from the mod's assets so the tab
     // matches the icon players already associate with Curios. It's a 10x10 image; the tab
-    // renderer stretches the full texture to fill the 16x16 icon slot (width == textureWidth in
-    // ConfigurableIconTab, so the blit samples the whole texture).
+    // renderer draws it at native size, centred in the 16x16 slot (custom user icons stay 16x16).
     private static final ResourceLocation CURIOS_ICON =
             ResourceLocation.fromNamespaceAndPath("curios", "textures/gui/curios/button_highlighted.png");
 
@@ -55,7 +54,8 @@ public class CuriosTab extends IntegrationIconTab {
     );
 
     public CuriosTab() {
-        super(SPEC, CURIOS_ICON, Config.Baked.curiosTabCustomIcon);
+        // Standalone 10x10 texture: blit it whole at native size (centred in the 16x16 slot).
+        super(SPEC, CURIOS_ICON, Config.Baked.curiosTabCustomIcon, 0, 0, 10, 10, 10, 10);
     }
 
     @Override

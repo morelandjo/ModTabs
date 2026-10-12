@@ -24,8 +24,8 @@ import static vodmordia.modtabs.api.tabs_menu.TabBase.TAB_WIDTH;
 
 public class TabsMenu {
     private static final Map<Class<? extends Screen>, ScreenInfo> tabsScreens = new HashMap<>();
-    private static final List<TabBase> allRegisteredTabs = new ArrayList<>();
-    private static final List<ScreenRegistration> pendingScreenRegistrations = new ArrayList<>();
+    private static final List<TabBase> allRegisteredTabs = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final List<ScreenRegistration> pendingScreenRegistrations = new java.util.concurrent.CopyOnWriteArrayList<>();
     private static final List<DynamicTabProvider> dynamicTabProviders = new ArrayList<>();
     private static int leftScreenPos;
     private static int topScreenPos;
@@ -1551,9 +1551,11 @@ public class TabsMenu {
         pendingScreenRegistrations.add(new ScreenRegistration(screen, screenWidth, screenHeight, displayMode));
     }
 
-    public static void finalizePendingRegistrations() {
+    public static synchronized void finalizePendingRegistrations() {
         // Process all pending screen registrations now that all tabs are registered
-        for (ScreenRegistration registration : pendingScreenRegistrations) {
+        List<ScreenRegistration> pendingSnapshot = new ArrayList<>(pendingScreenRegistrations);
+        List<TabBase> tabsSnapshot = new ArrayList<>(allRegisteredTabs);
+        for (ScreenRegistration registration : pendingSnapshot) {
             if (!tabsScreens.containsKey(registration.screenClass)) {
                 ScreenInfo screenInfo = new ScreenInfo(registration.screenWidth, registration.screenHeight, registration.displayMode);
                 tabsScreens.put(registration.screenClass, screenInfo);
@@ -1561,11 +1563,12 @@ public class TabsMenu {
 
             // Add all registered tabs to this screen with default priority 10
             ScreenInfo screenInfo = tabsScreens.get(registration.screenClass);
-            for (TabBase tab : allRegisteredTabs) {
+            for (TabBase tab : tabsSnapshot) {
                 screenInfo.addTab(10, tab);
             }
         }
-        pendingScreenRegistrations.clear();
+        // Only drop what was processed; a late registration survives to the next finalize
+        pendingScreenRegistrations.removeAll(pendingSnapshot);
     }
 
     public static void initScreenButtons(ScreenEvent.Init.Post event) {
