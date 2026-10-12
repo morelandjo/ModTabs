@@ -48,7 +48,9 @@ public class ArsNouveauTab extends ConfigurableItemTab {
             // Find any spellbook in player's inventory
             ItemStack spellbookStack = findSpellbookInInventory(player);
             if (spellbookStack.isEmpty()) {
-                return; // No spellbook found
+                // No spellbook: fall back to an Ars Zero staff/circlet held in a hand
+                openArsZeroDevice(player);
+                return;
             }
 
             // Temporarily put spellbook in hand for constructor, then restore
@@ -85,7 +87,32 @@ public class ArsNouveauTab extends ConfigurableItemTab {
 
     @Override
     public boolean isEnabled(Player player) {
-        return Config.Baked.arsNouveauTabEnabled && ModIntegrationManager.isModLoaded(ModIntegration.ARS_NOUVEAU) && hasSpellbook(player);
+        if (!Config.Baked.arsNouveauTabEnabled) return false;
+        if (ModIntegrationManager.isModLoaded(ModIntegration.ARS_NOUVEAU) && hasSpellbook(player)) return true;
+        return ModIntegrationManager.isModLoaded(ModIntegration.ARS_ZERO) && getArsZeroDeviceInHand(player) != null;
+    }
+
+    private static boolean isArsZeroDevice(ItemStack stack) {
+        return !stack.isEmpty() && vodmordia.modtabs.utils.ClassCache.isInstance(
+                vodmordia.modtabs.utils.ScreenClasses.ARS_ZERO_DEVICE_ITEM, stack.getItem());
+    }
+
+    /** Ars Zero screens are bound to an InteractionHand, so only devices held in a hand are usable. */
+    private static ItemStack getArsZeroDeviceInHand(Player player) {
+        if (isArsZeroDevice(player.getMainHandItem())) return player.getMainHandItem();
+        if (isArsZeroDevice(player.getOffhandItem())) return player.getOffhandItem();
+        return null;
+    }
+
+    private static void openArsZeroDevice(Player player) {
+        ItemStack device = getArsZeroDeviceInHand(player);
+        if (device == null) return;
+        try {
+            Method open = device.getItem().getClass().getMethod("onOpenBookMenuKeyPressed", ItemStack.class, Player.class);
+            open.invoke(device.getItem(), device, player);
+        } catch (Exception e) {
+            // Silently ignore errors - Ars Zero API may have changed
+        }
     }
 
     private boolean hasSpellbook(Player player) {
@@ -202,7 +229,13 @@ public class ArsNouveauTab extends ConfigurableItemTab {
     @Override
     public boolean isCurrentlyUsed(Screen currentScreen) {
         return vodmordia.modtabs.utils.ClassCache.isInstance(
-                vodmordia.modtabs.utils.ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI, currentScreen);
+                vodmordia.modtabs.utils.ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI, currentScreen)
+            || vodmordia.modtabs.utils.ClassCache.isInstance(
+                vodmordia.modtabs.utils.ScreenClasses.ARS_ZERO_STAFF_GUI, currentScreen)
+            || vodmordia.modtabs.utils.ClassCache.isInstance(
+                vodmordia.modtabs.utils.ScreenClasses.ARS_ZERO_STATIC_STAFF_SCREEN, currentScreen)
+            || vodmordia.modtabs.utils.ClassCache.isInstance(
+                vodmordia.modtabs.utils.ScreenClasses.ARS_ZERO_CIRCLET_GUI, currentScreen);
     }
 
     @Override
@@ -215,6 +248,10 @@ public class ArsNouveauTab extends ConfigurableItemTab {
         ScreenRegistry.builder()
             .withStandardDimensions()
             .inverted()
-            .registerAllTabs(vodmordia.modtabs.utils.ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI);
+            .registerAllTabs(
+                vodmordia.modtabs.utils.ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI,
+                vodmordia.modtabs.utils.ScreenClasses.ARS_ZERO_STAFF_GUI,
+                vodmordia.modtabs.utils.ScreenClasses.ARS_ZERO_STATIC_STAFF_SCREEN,
+                vodmordia.modtabs.utils.ScreenClasses.ARS_ZERO_CIRCLET_GUI);
     }
 }

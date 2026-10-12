@@ -1331,6 +1331,9 @@ public class TabsMenu {
             case ScreenClasses.VANILLA_INVENTORY: return "inventory";
             case ScreenClasses.VANILLA_ADVANCEMENTS:
             case ScreenClasses.BETTER_ADVANCEMENTS: return "advancements";
+            case ScreenClasses.ARS_ZERO_STAFF_GUI:
+            case ScreenClasses.ARS_ZERO_STATIC_STAFF_SCREEN:
+            case ScreenClasses.ARS_ZERO_CIRCLET_GUI:
             case ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI_LEGACY1:
             case ScreenClasses.ARS_NOUVEAU_SPELLBOOK_GUI_LEGACY2: return "arsNouveau";
             case ScreenClasses.BACKPACKED_FLYWHEEL_TRANSFORM:

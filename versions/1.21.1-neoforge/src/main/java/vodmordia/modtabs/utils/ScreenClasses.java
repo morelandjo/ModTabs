@@ -37,6 +37,16 @@ public final class ScreenClasses {
     public static final String ARS_NOUVEAU_SPELLBOOK_GUI_LEGACY2 =
             "com.dhanantry.arsnouveau.client.gui.SpellBookScreen";
 
+    // -- Ars Zero (staffs / circlet; extends the Ars Nouveau caster tools) --
+    public static final String ARS_ZERO_DEVICE_ITEM =
+            "com.github.ars_zero.common.item.multi.AbstractMultiPhaseCastDevice";
+    public static final String ARS_ZERO_STAFF_GUI =
+            "com.github.ars_zero.client.gui.ArsZeroStaffGUI";
+    public static final String ARS_ZERO_STATIC_STAFF_SCREEN =
+            "com.github.ars_zero.client.gui.StaticStaffScreen";
+    public static final String ARS_ZERO_CIRCLET_GUI =
+            "com.github.ars_zero.client.gui.SpellcastingCircletGUI";
+
     // -- Backpacked (mrcrayfish) ------------------------------------------
     public static final String BACKPACKED_SCREEN =
             "com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen";
