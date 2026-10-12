@@ -32,6 +32,7 @@ public enum ModIntegration {
     MODULAR_GOLEMS("modulargolems", "Modular Golems"),
     ARS_ELIXIRUM("elixirum", "Ars Elixirum"),
     ARS_NOUVEAU("ars_nouveau", "Ars Nouveau"),
+    ARS_ZERO("ars_zero", "Ars Zero"),
     DRACONIC_EVOLUTION("draconicevolution", "Draconic Evolution"),
     BRASSWORKS_MISSIONS("brassworksmissions", "Create: Brassworks Missions"),
     ECCENTRIC_TOME("eccentrictome", "Eccentric Tome"),

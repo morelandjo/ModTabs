@@ -1,4 +1,8 @@
 # MODE|mod id|class|member|descriptor|note
+REQUIRED|ars_zero|com.github.ars_zero.common.item.multi.AbstractMultiPhaseCastDevice|onOpenBookMenuKeyPressed|(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)V|Opens staff/circlet screen for hand stack
+REQUIRED|ars_zero|com.github.ars_zero.client.gui.ArsZeroStaffGUI|||Target screen
+REQUIRED|ars_zero|com.github.ars_zero.client.gui.StaticStaffScreen|||Target screen
+REQUIRED|ars_zero|com.github.ars_zero.client.gui.SpellcastingCircletGUI|||Target screen
 REQUIRED|ftbquests|dev.ftb.mods.ftbquests.client.gui.quests.QuestScreen|||Target screen
 REQUIRED|origins|io.github.apace100.origins.screen.ViewOriginScreen|<init>|()V|O-key screen constructor
 REQUIRED|journeymap|journeymap.client.ui.fullscreen.Fullscreen|||Target screen
