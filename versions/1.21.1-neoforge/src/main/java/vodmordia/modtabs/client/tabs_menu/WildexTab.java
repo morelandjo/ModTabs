@@ -18,13 +18,8 @@ import vodmordia.modtabs.utils.ScreenClasses;
 import java.lang.reflect.Method;
 
 /**
- * Tab for the Wildex Bestiary mod. Mirrors the same permission rule the mod's own
- * keybind uses ({@code WildexKeybinds#onClientTick}): when the synced/local
- * {@code requireBookForKeybind} config is on, the wildex_book must be in the player's
- * inventory; when it's off, the tab shows unconditionally so admins can disable the
- * book gate server-side and still expose the bestiary screen.
- *
- * The book item is {@code wildex:wildex_book}; opening goes through
+ * Tab for the Wildex Bestiary mod. Shown only while the player has the
+ * {@code wildex:wildex_book} item in their inventory; opening goes through
  * {@code WildexScreenOpener.open()} so we share the mod's sound/setScreen flow.
  */
 @TabConfig(configKey = "wildexTab", defaultEnabled = true, defaultOrder = 0)
@@ -57,42 +52,24 @@ public class WildexTab extends IntegrationItemTab {
 
     @Override
     public boolean isEnabled(Player player) {
-        return super.isEnabled(player) && canOpenBook(player);
+        return super.isEnabled(player) && hasBook(player);
     }
 
     /**
-     * Mirrors Wildex's keybind gate exactly: when the synced server config has
-     * {@code requireBookForKeybind=false}, the tab shows for everyone; otherwise the
-     * {@code wildex:wildex_book} item must be present in the player's inventory.
-     * Wildex does not grant creative players a bypass.
+     * The tab is shown only when the player actually carries a {@code wildex:wildex_book},
+     * regardless of Wildex's {@code requireBookForKeybind} setting (a tab with no book
+     * to open is just clutter). Matches on item type only so books with custom
+     * components still count.
      */
-    private static boolean canOpenBook(Player player) {
-        if (!requireBookForKeybind()) return true;
-        return hasBook(player);
-    }
-
-    /**
-     * Reads {@code WildexClientConfigView.requireBookForKeybind()} via reflection. That
-     * helper picks up the synced server value when connected to a server, so the tab
-     * respects multiplayer config. Defaults to {@code true} (require book) on any
-     * failure so we don't accidentally show the tab to players who shouldn't see it.
-     */
-    private static boolean requireBookForKeybind() {
-        try {
-            Class<?> viewClass = ClassCache.resolve(ScreenClasses.WILDEX_CLIENT_CONFIG_VIEW);
-            if (viewClass == null) return true;
-            Object result = viewClass.getMethod("requireBookForKeybind").invoke(null);
-            return !(result instanceof Boolean b) || b;
-        } catch (Exception ignored) {
-            return true;
-        }
-    }
-
     private static boolean hasBook(Player player) {
         Item book = BuiltInRegistries.ITEM.get(WILDEX_BOOK_ID);
         if (book == null || book == Items.AIR) return false;
 
-        return player.getInventory().contains(new ItemStack(book));
+        var inv = player.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            if (inv.getItem(i).is(book)) return true;
+        }
+        return false;
     }
 
     @Override
