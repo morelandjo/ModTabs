@@ -782,7 +782,7 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static int kindredTabIconNudgeRight = 0;
     @Entry(category = "tabs") @Hidden public static int kindredTabOrder = 0;
     @Entry(category = "tabs") @Hidden
-    public static TabDisplayVisibility kindredTabDisplayVisibility = TabDisplayVisibility.YES;
+    public static TabDisplayVisibility kindredTabDisplayVisibility = TabDisplayVisibility.TUCK;
 
     @Comment(category = "tabs") public static CommentText spacer_epic_fight;
 

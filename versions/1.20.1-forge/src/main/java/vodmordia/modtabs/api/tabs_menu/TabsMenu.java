@@ -1274,7 +1274,7 @@ public class TabsMenu {
         for (ScreenInfo info : tabsScreens.values()) {
             for (List<TabBase> list : info.tabs.values()) {
                 for (TabBase tab : list) {
-                    if (tab.isCurrentlyUsed(screen)) {
+                    if (tab.isHomeTab(screen)) {
                         TabConfig tc = tab.getClass().getAnnotation(TabConfig.class);
                         if (tc != null) {
                             String key = tc.configKey();
