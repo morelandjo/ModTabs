@@ -32,6 +32,7 @@ public enum ModIntegration {
     // Equipment and inventory mods
     SOPHISTICATED_BACKPACKS("sophisticatedbackpacks"),
     COSMETIC_ARMOR("cosmeticarmor"),
+    YTTR("yttr"),
 
     // Utility mods
     REI("roughlyenoughitems"),

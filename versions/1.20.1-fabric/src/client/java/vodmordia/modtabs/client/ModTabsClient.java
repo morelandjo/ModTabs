@@ -101,12 +101,33 @@ public class ModTabsClient implements ClientModInitializer {
         TabsMenu.register(new AdvancementsTab());
         TabsMenu.register(new OriginsTab());
 
+        // Yttr: screen-only support (tab bar shown on its inventory-style handled screens).
+        registerYttrScreens();
+
         // Wait for Patchouli books to load, then load custom tabs
         waitForPatchouliAndLoadCustomTabs();
 
         // Finalize all pending screen registrations now that all tabs are registered
         TabsMenu.finalizePendingRegistrations();
 
+    }
+
+    /** Yttr (fabric): tab bar on its handled (inventory-style) screens; classes resolved by name, no compile dependency. */
+    private static void registerYttrScreens() {
+        String pkg = "diy.y2k.yttr.client.screen.handled.";
+        Object[][] screens = {
+                {"AmmoPackScreen", 176, 163}, {"BoxeScreen", 176, 148}, {"CanFillerScreen", 176, 136},
+                {"CentrifugeScreen", 176, 201}, {"DSUScreen", 176, 186}, {"IndexScreen", 176, 222},
+                {"MagtankScreen", 176, 194}, {"RafterScreen", 201, 194}, {"SSDScreen", 176, 117},
+                {"SuitStationScreen", 199, 175}, {"VoidFilterScreen", 176, 166}
+        };
+        for (Object[] e : screens) {
+            int w = (Integer) e[1];
+            int h = (Integer) e[2];
+            vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder()
+                    .withDimensions(p -> w, p -> h)
+                    .registerAllTabs(pkg + e[0]);
+        }
     }
 
     /**

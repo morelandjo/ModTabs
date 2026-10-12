@@ -24,3 +24,4 @@ REQUIRED|origins|io.github.apace100.origins.screen.ViewOriginScreen|<init>|()V|O
 DEFERRED|roughlyenoughitems||||Registration-only integration
 DEFERRED|trinkets||||Presence-only integration
 DEFERRED|xaerominimap||||Presence-only integration
+DEFERRED|yttr||||Screen-only (ScreenRegistry by FQN); real classes are jar-in-jar, no compile dependency
