@@ -96,6 +96,8 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean cosmeticArmorTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean curiosTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean originsTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean modularBackpacksTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean kindredTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean dietTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean draconicEvolutionTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean eccentricTomeTabFeatured = false;
