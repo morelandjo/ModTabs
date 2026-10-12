@@ -1764,6 +1764,23 @@ public class TabsMenu {
     /**
      * Check if a screen class has tabs registered for it
      */
+    /**
+     * True when one of the tab buttons currently on {@code screen} is that screen's home tab.
+     * Chests / shulkers / hoppers / dispensers (mounted via registerStandardScreens) and
+     * similar hosts have no home tab, since every tab opens some other screen, so the
+     * home-tab-only long-press gesture could never arm there. TabButton falls back to
+     * arming the gesture on any tab when this returns false.
+     */
+    public static boolean screenHasVisibleHomeTab(Screen screen) {
+        if (screen == null) return false;
+        for (GuiEventListener child : screen.children()) {
+            if (child instanceof TabButton tb && tb.tabBase != null && tb.tabBase.isHomeTab(screen)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean hasTabsForScreen(Class<? extends Screen> screenClass) {
         return tabsScreens.containsKey(screenClass);
     }

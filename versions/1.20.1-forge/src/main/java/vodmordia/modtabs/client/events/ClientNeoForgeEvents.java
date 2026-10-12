@@ -1,6 +1,7 @@
 package vodmordia.modtabs.client.events;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -24,6 +25,12 @@ import vodmordia.modtabs.utils.ScreenClasses;
 
 @Mod.EventBusSubscriber(modid = ModTabs.MOD_ID, value = Dist.CLIENT)
 public class ClientNeoForgeEvents {
+
+    /** Z offset for tab bars drawn in the Render.Post pass on overlay-style host screens. */
+    private static final float TAB_OVERLAY_Z = 100.0f;
+
+    private static final String MAP_ATLASES_OVERVIEW_SCREEN =
+            "pepjebs.mapatlases.client.screen.AtlasOverviewScreen";
 
     @SubscribeEvent
     public static void preRenderScreen(ScreenEvent.Render.Pre event) {
@@ -295,6 +302,17 @@ public class ClientNeoForgeEvents {
         event.getScreen();
         TabsMenu.initScreenButtons(event);
 
+        // Map Atlases' AtlasOverviewScreen calls super.render() (which iterates renderables)
+        // inside a PoseStack translated to the screen centre and scaled by globalScale, with
+        // the mouse transformed into that space. Our tabs were therefore drawn twice: once as
+        // a scaled, offset ghost (hover/tooltip computed from the transformed mouse) and once
+        // correctly by onScreenRenderPost. Strip them from renderables so only the post-render
+        // pass draws them; clicks still reach them through children().
+        if (event.getScreen().getClass().getName().equals(MAP_ATLASES_OVERVIEW_SCREEN)) {
+            event.getScreen().renderables.removeIf(r ->
+                r instanceof TabButton || r instanceof NextTabsButton);
+        }
+
         // Hide L2 tabs after screen initialization
         if (ModIntegrationManager.isModLoaded(ModIntegration.L2_LIBRARY) ||
             ModIntegrationManager.isModLoaded(ModIntegration.L2_HOSTILITY) ||
@@ -492,17 +510,35 @@ public class ClientNeoForgeEvents {
             screenClassName.equals(ScreenClasses.MINE_AND_SLASH_TALENTS_SCREEN)) {
 
             // These screens don't iterate renderables in their render method, so we
-            // manually render TabButton/NextTabsButton at Z=0. Editor widgets are
+            // manually render TabButton/NextTabsButton at TAB_OVERLAY_Z. Editor widgets are
             // handled by renderEditModeOverlay's Z=400/Z=700 passes — rendering them
-            // here at Z=0 would put them BEHIND the panel BG drawn at Z=600.
+            // here at TAB_OVERLAY_Z would put them BEHIND the panel BG drawn at Z=600.
+            // Flush GuiGraphics' batched fills first, then draw the bar at a raised Z.
+            // These screens draw things like FTB Chunks' map grid (GuiGraphics.hLine/vLine)
+            // into the batched buffer, which only reaches the GPU at the next flush, i.e.
+            // AFTER our immediately-drawn tab blits, so the grid painted over the tabs.
+            // Map Atlases' book is drawn at Z>0, which depth-tested our Z=0 tabs away where
+            // they overlap the book edge. TAB_OVERLAY_Z puts the bar above host content but
+            // below vanilla tooltips (Z=400, drawn earlier in renderWithTooltip so they still
+            // win the depth test), FTB tooltips (Z=600) and the editor overlay (Z=400..700).
+            GuiGraphics gui = event.getGuiGraphics();
+            gui.flush();
+            gui.pose().pushPose();
+            gui.pose().translate(0, 0, TAB_OVERLAY_Z);
             for (var child : event.getScreen().children()) {
                 if (child instanceof TabButton tabButton) {
-                    tabButton.renderWidget(event.getGuiGraphics(), event.getMouseX(), event.getMouseY(), event.getPartialTick());
+                    // Full render() (not renderWidget) so the tab's tooltip is registered via
+                    // setTooltipForNextRenderPass. These hosts never call our widget's
+                    // render() themselves (or call it with a transformed mouse), so tab
+                    // tooltips were missing or attached to the wrong tab.
+                    tabButton.render(gui, event.getMouseX(), event.getMouseY(), event.getPartialTick());
                 }
                 if (child instanceof NextTabsButton nextTabsButton) {
-                    nextTabsButton.renderWidget(event.getGuiGraphics(), event.getMouseX(), event.getMouseY(), event.getPartialTick());
+                    nextTabsButton.renderWidget(gui, event.getMouseX(), event.getMouseY(), event.getPartialTick());
                 }
             }
+            gui.flush();
+            gui.pose().popPose();
         }
     }
 
