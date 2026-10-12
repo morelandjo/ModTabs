@@ -178,6 +178,8 @@ dependencies {
     compileOnly("curse.maven:architectury-api-419699:5786327")
     compileOnly("curse.maven:ftb-quests-forge-289412:6721642")
     compileOnly("curse.maven:ftb-chunks-forge-314906:6295696")
+    compileOnly("curse.maven:modular-backpacks-1528260:8798417")
+    compileOnly("curse.maven:kindred-1526429:8841874")
     compileOnly("curse.maven:backpacked-352835:6918854")
     compileOnly("curse.maven:framework-549225:6531439")
     compileOnly("curse.maven:map-atlases-forge-519759:6782726")

@@ -3,6 +3,11 @@ REQUIRED|ars_zero|com.github.ars_zero.common.item.multi.AbstractMultiPhaseCastDe
 REQUIRED|ars_zero|com.github.ars_zero.client.gui.ArsZeroStaffGUI|||Target screen
 REQUIRED|ars_zero|com.github.ars_zero.client.gui.StaticStaffScreen|||Target screen
 REQUIRED|ars_zero|com.github.ars_zero.client.gui.SpellcastingCircletGUI|||Target screen
+REQUIRED|modular_backpacks|it.mralxart.modular_backpacks.compat.EquippedBackpackHelper|has|(Lnet/minecraft/world/entity/player/Player;)Z|Equipped backpack detection
+REQUIRED|modular_backpacks|it.mralxart.modular_backpacks.network.packets.ToggleBackpackPacket|<init>|(Z)V|Open-backpack packet constructor
+REQUIRED|modular_backpacks|it.mralxart.modular_backpacks.network.Networking|sendToServer|(Ljava/lang/Object;)V|Packet send entrypoint
+REQUIRED|modular_backpacks|it.mralxart.modular_backpacks.client.gui.BackpackScreen|||Target screen
+REQUIRED|kindred|net.silvertide.kindred.client.screen.RosterScreen|<init>|()V|Target screen constructor
 REQUIRED|ftbquests|dev.ftb.mods.ftbquests.client.gui.quests.QuestScreen|||Target screen
 REQUIRED|origins|io.github.apace100.origins.screen.ViewOriginScreen|<init>|()V|O-key screen constructor
 REQUIRED|journeymap|journeymap.client.ui.fullscreen.Fullscreen|||Target screen

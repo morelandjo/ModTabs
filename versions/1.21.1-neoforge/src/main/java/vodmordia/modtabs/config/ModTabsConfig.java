@@ -37,6 +37,8 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean aetherTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean curiosTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean originsTabSticky = false;
+    @Entry(category = "tabs") @Hidden public static boolean modularBackpacksTabSticky = false;
+    @Entry(category = "tabs") @Hidden public static boolean kindredTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean epicFightTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean epicSkillsTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean completionistsIndexTabSticky = false;
@@ -386,6 +388,32 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static int originsTabOrder = 0;
     @Entry(category = "tabs") @Hidden
     public static TabDisplayVisibility originsTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "tabs") public static CommentText spacer_modular_backpacks;
+    @Comment(category = "tabs") public static CommentText modularBackpacks;
+    @Entry(category = "tabs") @Hidden public static boolean modularBackpacksTabEnabled = true;
+    @Entry(category = "tabs") @Hidden public static String modularBackpacksTabCustomIcon = "";
+    @Entry(category = "tabs") @Hidden public static int modularBackpacksTabIconScale = 100;
+    @Entry(category = "tabs") @Hidden public static int modularBackpacksTabIconNudgeUp = 0;
+    @Entry(category = "tabs") @Hidden public static int modularBackpacksTabIconNudgeDown = 0;
+    @Entry(category = "tabs") @Hidden public static int modularBackpacksTabIconNudgeLeft = 0;
+    @Entry(category = "tabs") @Hidden public static int modularBackpacksTabIconNudgeRight = 0;
+    @Entry(category = "tabs") @Hidden public static int modularBackpacksTabOrder = 0;
+    @Entry(category = "tabs") @Hidden
+    public static TabDisplayVisibility modularBackpacksTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "tabs") public static CommentText spacer_kindred;
+    @Comment(category = "tabs") public static CommentText kindred;
+    @Entry(category = "tabs") @Hidden public static boolean kindredTabEnabled = true;
+    @Entry(category = "tabs") @Hidden public static String kindredTabCustomIcon = "";
+    @Entry(category = "tabs") @Hidden public static int kindredTabIconScale = 100;
+    @Entry(category = "tabs") @Hidden public static int kindredTabIconNudgeUp = 0;
+    @Entry(category = "tabs") @Hidden public static int kindredTabIconNudgeDown = 0;
+    @Entry(category = "tabs") @Hidden public static int kindredTabIconNudgeLeft = 0;
+    @Entry(category = "tabs") @Hidden public static int kindredTabIconNudgeRight = 0;
+    @Entry(category = "tabs") @Hidden public static int kindredTabOrder = 0;
+    @Entry(category = "tabs") @Hidden
+    public static TabDisplayVisibility kindredTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "tabs") public static CommentText spacer_epic_fight;
 
