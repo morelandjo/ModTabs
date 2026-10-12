@@ -36,6 +36,8 @@
   "tooltip.modtabs.tab.l2_artifacts.description": "Set Effects",
   "tooltip.modtabs.tab.sophisticated_backpacks.description": "Backpack",
   "tooltip.modtabs.tab.quark_backpack.description": "Backpack",
+  "tooltip.modtabs.tab.biology_dictionary.description": "Biology Dictionary",
+  "tooltip.modtabs.tab.reliable_backpacks.description": "Backpack",
   "tooltip.modtabs.tab.cobblemon.description": "Party Summary",
   "tooltip.modtabs.tab.draconic_evolution.description": "Tool Config",
   "tooltip.modtabs.tab.modular_golems.description": "Golems in World",

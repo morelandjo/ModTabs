@@ -86,6 +86,13 @@ public class ModTabs
                 vodmordia.modtabs.network.OpenQuarkBackpackPayload::decode,
                 vodmordia.modtabs.network.OpenQuarkBackpackHandler::handle
         );
+        CHANNEL.registerMessage(
+                2,
+                vodmordia.modtabs.network.OpenReliableBackpackPayload.class,
+                vodmordia.modtabs.network.OpenReliableBackpackPayload::encode,
+                vodmordia.modtabs.network.OpenReliableBackpackPayload::decode,
+                vodmordia.modtabs.network.OpenReliableBackpackHandler::handle
+        );
 
         LOGGER.info("Registered ModTabs network packets");
     }
@@ -177,6 +184,8 @@ public class ModTabs
             TabsMenu.register(new QuestLogTab());
             TabsMenu.register(new FieldGuideTab());
             TabsMenu.register(new ModonomiconTab());
+            TabsMenu.register(new BiologyDictionaryTab());
+            TabsMenu.register(new ReliableBackpackTab());
 
             // One transient tab per nearby container block (chests, barrels, modded
             // inventories, …). Discovered fresh on every screen-init.

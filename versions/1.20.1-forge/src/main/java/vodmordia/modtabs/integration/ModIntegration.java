@@ -56,6 +56,8 @@ public enum ModIntegration {
     FIELD_GUIDE("fieldguide", "Field Guide"),
     MODONOMICON("modonomicon", "Modonomicon"),
     QUARK("quark", "Quark"),
+    BIOLOGY_DICTIONARY("biologydictionary", "Biology Dictionary"),
+    RELIABLE_BACKPACKS("reliable_backpacks", "Reliable Backpacks"),
     ITEM_COLLECTORS("itemcollectors", "Item Collectors");
 
     private final String modId;

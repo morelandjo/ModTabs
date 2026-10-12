@@ -209,6 +209,9 @@ public final class ScreenClasses {
     /** Static {@code openBookScreen(Minecraft)} entry point used by the keybind and right-click. */
     public static final String BIOLOGY_DICTIONARY_EVENT =
             "io.github.xienaoban.biologydictionary.client.BiologyDictionaryEvent";
+    /** {@code ConfigsManager.getServer().isBookItemRequired()}. */
+    public static final String BIOLOGY_DICTIONARY_CONFIGS_MANAGER =
+            "io.github.xienaoban.biologydictionary.config.ConfigsManager";
 
     // -- Reliable Backpacks -----------------------------------------------
     public static final String RELIABLE_BACKPACKS_ITEM =

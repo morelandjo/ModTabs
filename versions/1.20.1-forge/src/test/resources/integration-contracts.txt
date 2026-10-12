@@ -10,6 +10,16 @@ REQUIRED|modular_backpacks|it.mralxart.modular_backpacks.client.gui.BackpackScre
 REQUIRED|kindred|net.silvertide.kindred.client.screen.RosterScreen|<init>|()V|Target screen constructor
 REQUIRED|ftbquests|dev.ftb.mods.ftbquests.client.gui.quests.QuestScreen|||Target screen
 REQUIRED|origins|io.github.apace100.origins.screen.ViewOriginScreen|<init>|()V|O-key screen constructor
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.core.BiologyDictionaryItem|createBook|()Lnet/minecraft/world/item/ItemStack;|Tab icon book
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.core.BiologyDictionaryItem|isBook|(Lnet/minecraft/world/item/ItemStack;)Z|Book-in-inventory detection
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.client.BiologyDictionaryEvent|openBookScreen|(Lnet/minecraft/client/Minecraft;)V|Opens dictionary screen
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.config.ConfigsManager|getServer|()Lio/github/xienaoban/biologydictionary/config/Configs$ServerConfigs;|Server config accessor
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.gui.screen.BdHomeScreen|||Target screen
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.gui.screen.BdAboutScreen|||Target screen
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.gui.screen.BdConfigScreen|||Target screen
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.gui.screen.BdEntityOverviewScreen|||Target screen
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.gui.screen.BdEntityDetailScreen|||Target screen
+DEFERRED|reliable_backpacks||||Network integration needs a loaded game
 REQUIRED|journeymap|journeymap.client.ui.fullscreen.Fullscreen|||Target screen
 REQUIRED|map_atlases|pepjebs.mapatlases.item.MapAtlasItem|||Atlas item detection
 REQUIRED|puffish_skills|net.puffish.skillsmod.client.SkillsClientMod|getInstance||Client API

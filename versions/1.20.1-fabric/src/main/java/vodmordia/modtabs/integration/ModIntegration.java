@@ -34,6 +34,18 @@ public enum ModIntegration {
     COSMETIC_ARMOR("cosmeticarmor"),
     YTTR("yttr"),
     ITEM_COLLECTORS("itemcollectors"),
+    BIOLOGY_DICTIONARY("biologydictionary"),
+    RELIABLE_BACKPACKS("reliable_backpacks"),
+    BULKING("bulking"),
+    BETTER_ADVANCEMENTS("betteradvancements"),
+    COBBLEMON("cobblemon"),
+    AETHER("aether"),
+    COMPLETIONISTS_INDEX("completionistsindex"),
+    FIELD_GUIDE("fieldguide"),
+    SDM_SHOP("sdmshop"),
+    JOBS_PLUS("jobsplus"),
+    QUEST_LOG("questlog"),
+    MODONOMICON("modonomicon"),
 
     // Utility mods
     REI("roughlyenoughitems"),

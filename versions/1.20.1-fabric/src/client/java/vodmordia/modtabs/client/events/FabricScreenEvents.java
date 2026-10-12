@@ -55,7 +55,18 @@ public class FabricScreenEvents {
             screenClassName.contains("ftblibrary") ||
             screenClassName.contains("xaero.map") ||
             isAdvancementsScreen ||
+            screenClassName.contains("betteradvancements") ||
             screenClassName.contains("mapatlases");
+
+        // Jobs+ screens (com.daqem.jobsplus.client.screen.*) rewrite mouseX/mouseY to
+        // GUI-relative coordinates (x - startX, y - startY) before calling super.mouseClicked,
+        // so vanilla child dispatch never hits our tab buttons. Give the tabs first dibs with
+        // real screen coordinates and cancel the click when it lands on one.
+        boolean needsEarlyClickDispatch = screenClassName.startsWith("com.daqem.jobsplus.client.screen.");
+        if (needsEarlyClickDispatch && TabsMenu.hasTabsForScreen(screen)) {
+            net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents.allowMouseClick(screen).register(
+                (screen1, mouseX, mouseY, button) -> !dispatchClickToTabs(screen1, mouseX, mouseY, button));
+        }
 
         if (needsLateRendering && TabsMenu.hasTabsForScreen(screen)) {
             net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.afterRender(screen).register((screen1, drawContext, mouseX, mouseY, tickDelta) -> {
@@ -108,6 +119,28 @@ public class FabricScreenEvents {
                 hideL2Tabs(screen);
             }
         }
+    }
+
+    /**
+     * Press the tab/next button under the cursor (using the animated hit box). Returns true if
+     * one was pressed, so the caller can cancel the screen's own click handling.
+     */
+    private static boolean dispatchClickToTabs(Screen screen, double mouseX, double mouseY, int button) {
+        if (button != 0) return false;
+        // Snapshot: onPress may open another screen and mutate the children list.
+        for (var child : new java.util.ArrayList<>(screen.children())) {
+            if (child instanceof TabButton tabButton && tabButton.visible && tabButton.isMouseOver(mouseX, mouseY)) {
+                tabButton.playDownSound(MinecraftClient.getInstance().getSoundManager());
+                tabButton.onPress();
+                return true;
+            }
+            if (child instanceof NextTabsButton nextTabsButton && nextTabsButton.visible && nextTabsButton.isMouseOver(mouseX, mouseY)) {
+                nextTabsButton.playDownSound(MinecraftClient.getInstance().getSoundManager());
+                nextTabsButton.onPress();
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

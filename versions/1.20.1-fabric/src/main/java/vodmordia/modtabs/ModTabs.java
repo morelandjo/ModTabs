@@ -36,6 +36,8 @@ public class ModTabs implements ModInitializer
         // Initialize mod integration manager
         ModIntegrationManager.detectLoadedMods();
 
+        vodmordia.modtabs.network.OpenReliableBackpackHandler.register();
+
         LOGGER.info("Mod Tabs initialized successfully");
     }
 

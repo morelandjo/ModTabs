@@ -11,10 +11,14 @@ import vodmordia.modtabs.ModTabs;
 import vodmordia.modtabs.api.tabs_menu.ScreenRegistry;
 import vodmordia.modtabs.api.tabs_menu.SimpleTextureTab;
 import vodmordia.modtabs.config.Config;
+import vodmordia.modtabs.integration.ModIntegration;
+import vodmordia.modtabs.integration.ModIntegrationManager;
 
 public class AdvancementsTab extends SimpleTextureTab {
     // Use the advancements widgets texture sprite sheet
     private static final Identifier ADVANCEMENTS_ICON = new Identifier("minecraft", "textures/gui/advancements/widgets.png");
+
+    private static final String BETTER_ADVANCEMENTS_SCREEN = "betteradvancements.common.gui.BetterAdvancementsScreen";
 
     public AdvancementsTab() {
         super(ADVANCEMENTS_ICON);
@@ -42,6 +46,19 @@ public class AdvancementsTab extends SimpleTextureTab {
     @Override
     public void openTargetScreen(PlayerEntity player) {
         MinecraftClient minecraft = MinecraftClient.getInstance();
+        if (ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)) {
+            // Use the Better Advancements screen if the mod is loaded
+            try {
+                Class<?> betterScreenClass = Class.forName(BETTER_ADVANCEMENTS_SCREEN);
+                Screen betterScreen = (Screen) betterScreenClass
+                        .getConstructor(net.minecraft.client.network.ClientAdvancementManager.class)
+                        .newInstance(minecraft.getNetworkHandler().getAdvancementHandler());
+                minecraft.setScreen(betterScreen);
+                return;
+            } catch (Exception e) {
+                // Fall back to vanilla if Better Advancements fails to load
+            }
+        }
         AdvancementsScreen newGui = new AdvancementsScreen(minecraft.getNetworkHandler().getAdvancementHandler());
         minecraft.setScreen(newGui);
     }
@@ -53,7 +70,9 @@ public class AdvancementsTab extends SimpleTextureTab {
 
     @Override
     public boolean isCurrentlyUsed(Screen currentScreen) {
-        return currentScreen instanceof AdvancementsScreen;
+        if (currentScreen instanceof AdvancementsScreen) return true;
+        return currentScreen != null && ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)
+                && currentScreen.getClass().getName().equals(BETTER_ADVANCEMENTS_SCREEN);
     }
 
     @Override
@@ -65,5 +84,10 @@ public class AdvancementsTab extends SimpleTextureTab {
     public void initTabOnScreens() {
         // Register the advancements screen with tabs displayed inverted at the top
         ScreenRegistry.registerInvertedScreens(AdvancementsScreen.class);
+
+        // Also register Better Advancements' screen (string-based to avoid class loading)
+        if (ModIntegrationManager.isModLoaded(ModIntegration.BETTER_ADVANCEMENTS)) {
+            ScreenRegistry.registerInvertedScreens(BETTER_ADVANCEMENTS_SCREEN);
+        }
     }
 }

@@ -196,7 +196,13 @@ public class TabsMenu {
         } else if (screenClassName.contains("BodyHealthScreen")) {
             return TabDisplayVisibility.YES; // Mod not available in Fabric
         } else if (screenClassName.contains("cobblemon")) {
-            return TabDisplayVisibility.YES; // Mod not available in Fabric
+            return ModTabsConfig.cobblemonTabDisplayVisibility;
+        } else if (screenClassName.contains("aetherteam")) {
+            return ModTabsConfig.aetherTabDisplayVisibility;
+        } else if (screenClassName.contains("completionistsindex")) {
+            return ModTabsConfig.completionistsIndexTabDisplayVisibility;
+        } else if (screenClassName.contains("fieldguide")) {
+            return ModTabsConfig.fieldGuideTabDisplayVisibility;
         } else if (screenClassName.contains("FoodStatsScreen") || screenClassName.contains("diet")) {
             return TabDisplayVisibility.YES; // Mod not available in Fabric
         } else if (screenClassName.contains("ftbquests")) {
@@ -219,6 +225,12 @@ public class TabsMenu {
             return ModTabsConfig.sophisticatedBackpacksTabDisplayVisibility;
         } else if (screenClassName.contains("travelersbackpack")) {
             return ModTabsConfig.travelersBackpackTabDisplayVisibility;
+        } else if (screenClassName.contains("jobsplus")) {
+            return ModTabsConfig.jobsPlusTabDisplayVisibility;
+        } else if (screenClassName.contains("questlog")) {
+            return ModTabsConfig.questLogTabDisplayVisibility;
+        } else if (screenClassName.contains("modonomicon")) {
+            return ModTabsConfig.modonomiconTabDisplayVisibility;
         }
 
         // For unknown screens, default to showing the tab bar

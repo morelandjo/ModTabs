@@ -170,6 +170,101 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility originsTabDisplayVisibility = TabDisplayVisibility.YES;
 
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerBiologyDictionary;
+    @Comment(category = "1_modTabsSettings") public static CommentText biologyDictionary;
+    @Entry(category = "1_modTabsSettings") public static boolean biologyDictionaryTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int biologyDictionaryTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean biologyDictionaryTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility biologyDictionaryTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerReliableBackpacks;
+    @Comment(category = "1_modTabsSettings") public static CommentText reliableBackpacks;
+    @Entry(category = "1_modTabsSettings") public static boolean reliableBackpacksTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int reliableBackpacksTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean reliableBackpacksTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility reliableBackpacksTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerBulking;
+    @Comment(category = "1_modTabsSettings") public static CommentText bulking;
+    @Entry(category = "1_modTabsSettings") public static boolean bulkingTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int bulkingTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean bulkingTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility bulkingTabDisplayVisibility = TabDisplayVisibility.YES;
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerCobblemon;
+    @Comment(category = "1_modTabsSettings") public static CommentText cobblemon;
+    @Entry(category = "1_modTabsSettings") public static boolean cobblemonTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int cobblemonTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean cobblemonTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility cobblemonTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerAether;
+    @Comment(category = "1_modTabsSettings") public static CommentText aether;
+    @Entry(category = "1_modTabsSettings") public static boolean aetherTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int aetherTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean aetherTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility aetherTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerCompletionistsIndex;
+    @Comment(category = "1_modTabsSettings") public static CommentText completionistsIndex;
+    @Entry(category = "1_modTabsSettings") public static boolean completionistsIndexTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int completionistsIndexTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean completionistsIndexTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility completionistsIndexTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerFieldGuide;
+    @Comment(category = "1_modTabsSettings") public static CommentText fieldGuide;
+    @Entry(category = "1_modTabsSettings") public static boolean fieldGuideTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int fieldGuideTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean fieldGuideTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility fieldGuideTabDisplayVisibility = TabDisplayVisibility.YES;
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerSdmShop;
+    @Comment(category = "1_modTabsSettings") public static CommentText sdmShop;
+    @Entry(category = "1_modTabsSettings") public static boolean sdmShopTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int sdmShopTabOrder = 0;
+    @Entry(category = "1_modTabsSettings") public static boolean sdmShopTabFeatured = false;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerJobsPlus;
+    @Comment(category = "1_modTabsSettings") public static CommentText jobsPlus;
+    @Entry(category = "1_modTabsSettings") public static boolean jobsPlusTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int jobsPlusTabOrder = 0;
+    @Entry(category = "1_modTabsSettings") public static boolean jobsPlusTabFeatured = false;
+    @Entry(category = "1_modTabsSettings") public static TabDisplayVisibility jobsPlusTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerQuestLog;
+    @Comment(category = "1_modTabsSettings") public static CommentText questLog;
+    @Entry(category = "1_modTabsSettings") public static boolean questLogTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int questLogTabOrder = 0;
+    @Entry(category = "1_modTabsSettings") public static boolean questLogTabFeatured = false;
+    @Entry(category = "1_modTabsSettings") public static TabDisplayVisibility questLogTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerModonomicon;
+    @Comment(category = "1_modTabsSettings") public static CommentText modonomicon;
+    @Entry(category = "1_modTabsSettings") public static boolean modonomiconTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int modonomiconTabOrder = 0;
+    @Entry(category = "1_modTabsSettings") public static boolean modonomiconTabFeatured = false;
+    @Entry(category = "1_modTabsSettings") public static TabDisplayVisibility modonomiconTabDisplayVisibility = TabDisplayVisibility.YES;
+
     // ========== CUSTOM TAB ==========
 
     @Comment(category = "2_customTab") public static CommentText spacer9;

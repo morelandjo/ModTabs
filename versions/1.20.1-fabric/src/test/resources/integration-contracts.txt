@@ -25,4 +25,32 @@ DEFERRED|roughlyenoughitems||||Registration-only integration
 DEFERRED|trinkets||||Presence-only integration
 DEFERRED|xaerominimap||||Presence-only integration
 DEFERRED|yttr||||Screen-only (ScreenRegistry by FQN); real classes are jar-in-jar, no compile dependency
+REQUIRED|betteradvancements|betteradvancements.common.gui.BetterAdvancementsScreen|||Replacement advancements screen
+REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.client.BiologyDictionaryEvent|openBookScreen||Book screen entrypoint
+REQUIRED|reliable_backpacks|com.evandev.reliable_backpacks.common.items.BackpackItem|||Backpack item detection
+REQUIRED|reliable_backpacks|com.evandev.reliable_backpacks.client.gui.BackpackScreen|||Target screen
+REQUIRED|reliable_backpacks|com.evandev.reliable_backpacks.common.items.BackpackItemContainer|<init>|(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/player/PlayerEntity;)V|Container constructor (reflected)
+REQUIRED|reliable_backpacks|com.evandev.reliable_backpacks.common.menus.BackpackMenu|<init>|(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/inventory/Inventory;)V|Menu constructor (reflected)
+REQUIRED|bulking|dev.neire.mc.bulking.client.gui.BulkingScreen|<init>|(Z)V|Diet replacement screen
 DEFERRED|itemcollectors||||Screen-only (ScreenRegistry by corelib wrapper FQN + predicate); no compile dependency
+REQUIRED|cobblemon|com.cobblemon.mod.common.client.CobblemonClient|storage||Client storage field
+REQUIRED|cobblemon|com.cobblemon.mod.common.client.gui.summary.Summary|Companion||Summary companion
+REQUIRED|cobblemon|com.cobblemon.mod.common.client.gui.startselection.StarterSelectionScreen|||Starter screen
+REQUIRED|cobblemon|com.cobblemon.mod.common.CobblemonNetwork|sendToServer||Network send
+REQUIRED|cobblemon|com.cobblemon.mod.common.api.net.NetworkPacket|||Packet interface
+REQUIRED|cobblemon|com.cobblemon.mod.common.net.messages.server.starter.RequestStarterScreenPacket|<init>|()V|Request starter packet
+REQUIRED|aether|com.aetherteam.aether.client.gui.screen.inventory.AccessoriesScreen|||Accessories screen
+REQUIRED|aether|com.aetherteam.aether.network.packet.serverbound.OpenAccessoriesPacket|<init>|(Lnet/minecraft/item/ItemStack;)V|Open-accessories packet
+REQUIRED|aether|com.aetherteam.aether.network.AetherPacketHandler|INSTANCE||Packet channel
+# aether: PacketRelay.sendToServer(SimpleChannel,BasePacket) lives in a jar-in-jar (nitrogen_internals), not on classpath; verified manually with javap
+REQUIRED|completionistsindex|fuzs.completionistsindex.client.gui.screens.inventory.ModsIndexViewScreen|<init>|(Lnet/minecraft/client/gui/screen/Screen;)V|Mods index screen
+REQUIRED|completionistsindex|fuzs.completionistsindex.client.gui.screens.inventory.ItemsIndexViewScreen|||Items index screen
+REQUIRED|fieldguide|com.evandev.fieldguide.client.gui.screens.FieldGuideCategoryScreen|<init>|()V|Category screen
+REQUIRED|fieldguide|com.evandev.fieldguide.client.gui.screens.FieldGuideEntryScreen|||Entry screen
+REQUIRED|fieldguide|com.evandev.fieldguide.client.gui.screens.FieldGuideJournalScreen|||Journal screen
+REQUIRED|fieldguide|com.evandev.fieldguide.client.gui.screens.BookScreen|lastOpenedScreen||Last-opened field
+REQUIRED|fieldguide|com.evandev.fieldguide.config.ClientConfig|get||Config accessor
+REQUIRED|sdmshop|net.sixik.sdmshop.client.SDMShopClient|openGui||Open-shop entrypoint (keybind path)
+REQUIRED|jobsplus|com.daqem.jobsplus.networking.c2s.PacketOpenMenuC2S|<init>|()V|Open-menu packet
+REQUIRED|questlog|org.infernalstudios.questlog.client.gui.screen.QuestlogScreen|||Target screen
+REQUIRED|modonomicon|com.klikli_dev.modonomicon.client.gui.BookGuiManager|openBook||Book open entrypoint

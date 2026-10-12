@@ -100,6 +100,16 @@ public class ModTabsClient implements ClientModInitializer {
         TabsMenu.register(new ArsNouveauTab());
         TabsMenu.register(new AdvancementsTab());
         TabsMenu.register(new OriginsTab());
+        TabsMenu.register(new BiologyDictionaryTab());
+        TabsMenu.register(new ReliableBackpackTab());
+        TabsMenu.register(new BulkingTab());
+        TabsMenu.register(new AetherTab());
+        TabsMenu.register(new CompletionistsIndexTab());
+        TabsMenu.register(new FieldGuideTab());
+        TabsMenu.register(new SdmShopTab());
+        TabsMenu.register(new JobsPlusTab());
+        TabsMenu.register(new QuestLogTab());
+        TabsMenu.register(new ModonomiconTab());
 
         // Yttr: screen-only support (tab bar shown on its inventory-style handled screens).
         registerYttrScreens();

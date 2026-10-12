@@ -2,7 +2,7 @@
 
 plugins {
     id("dev.kikugie.stonecutter")
-    id("fabric-loom") version "1.13.6" apply false
+    id("fabric-loom") version "1.15.5" apply false
     id("net.minecraftforge.gradle") version "[6.0,6.2)" apply false
     id("org.spongepowered.mixin") version "0.7.+" apply false
     id("net.neoforged.moddev") version "2.0.141" apply false

@@ -70,9 +70,7 @@ repositories {
 // page (filtered to 1.20.1 + Forge) is the source of truth.
 //
 // DROPPED on 1.20.1 (no Forge build exists):
-//   - Reliable Backpacks (1484454) — NeoForge-era only
 //   - Create: Brassworks Missions (1348982) — NeoForge 1.21.1 only
-//   - Biology Dictionary (1426515) — no 1.20.1 build
 //   - Sinytra Connector + Forgified Fabric API + RPG Crafting (Fabric)
 //
 // 1.20.1-only (no NeoForge 1.21.1 build):
@@ -82,6 +80,9 @@ repositories {
 dependencies {
     compileOnly "curse.maven:origins-391943:7149659"
     compileOnly "curse.maven:ars-zero-1377482:8721552"
+    // Biology Dictionary 1.3.2 and Reliable Backpacks 1.8.3 (1.20.1 Forge); reflection-only integrations.
+    compileOnly "maven.modrinth:biology-dictionary:sUQbenNf"
+    compileOnly "maven.modrinth:reliable-backpacks:jyyQGzvi"
     // MixinGradle's `mixin { add ... }` block registers the source set with the plugin but does
     // not add the Mixin annotation-processor jar to the `annotationProcessor` configuration. The
     // AP is what writes the refmap (Mojang → SRG name translations) that production Forge needs
