@@ -4,6 +4,8 @@ package vodmordia.modtabs.integration;
  * Enum for all mod integrations with their mod IDs and human-readable names
  */
 public enum ModIntegration {
+    MODULAR_BACKPACKS("modular_backpacks", "Modular Backpacks"),
+    KINDRED("kindred", "Kindred"),
     ORIGINS("origins", "Origins"),
     BACKPACKED("backpacked", "Backpacked"),
     TRAVELERS_BACKPACK("travelersbackpack", "Traveler's Backpack"),

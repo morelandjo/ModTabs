@@ -145,6 +145,8 @@ dependencies {
     // implementation "curse.maven:yacl-667299:6336646"
 
     // Other backpack mods (compile-only — not part of this test pass).
+    compileOnly "curse.maven:modular-backpacks-1528260:8544080"
+    compileOnly "curse.maven:kindred-1526429:8842048"
     compileOnly "curse.maven:backpacked-352835:7866682"
     compileOnly "curse.maven:cosmetic-armor-reworked-237307:4600191"
 

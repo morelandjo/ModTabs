@@ -45,6 +45,8 @@
   "tooltip.modtabs.tab.modonomicon.description": "Modonomicon",
   "tooltip.modtabs.tab.cosmetic_armor.description": "Cosmetic Armor",
   "tooltip.modtabs.tab.origins.description": "Origins",
+  "tooltip.modtabs.tab.modular_backpacks.description": "Modular Backpack",
+  "tooltip.modtabs.tab.kindred.description": "Companions",
 
   "modtabs.midnightconfig.category.tabs": "Mod Tabs Settings",
   "modtabs.midnightconfig.category.customTabs": "Custom Tabs Settings",
