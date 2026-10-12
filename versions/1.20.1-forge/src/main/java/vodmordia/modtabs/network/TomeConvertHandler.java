@@ -6,6 +6,7 @@ import net.minecraftforge.network.NetworkEvent;
 import vodmordia.modtabs.ModTabs;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class TomeConvertHandler {
@@ -42,7 +43,9 @@ public class TomeConvertHandler {
                     return;
                 }
 
-                Class<?> tomeUtilsClass = Class.forName("website.eccentric.tome.TomeUtils");
+                // Forge 1.20.1 Eccentric Tome exposes its logic on website.eccentric.tome.Tome
+                // (getItems / convert(ItemStack, int)); TomeUtils only exists in the NeoForge port.
+                Class<?> tomeClass = Class.forName("website.eccentric.tome.Tome");
 
                 // Confirm the slot actually holds a TomeItem before invoking convert —
                 // otherwise a malicious client could swap any inventory stack for the selectedBook.
@@ -53,8 +56,21 @@ public class TomeConvertHandler {
                     return;
                 }
 
-                Method convertMethod = tomeUtilsClass.getMethod("convert", ItemStack.class, ItemStack.class);
-                ItemStack convertedBook = (ItemStack) convertMethod.invoke(null, tomeStack, selectedBook);
+                // Resolve the requested book to its index in the tome's own item list, so only
+                // books the tome actually contains can be produced.
+                int bookIndex = findBookIndex(tomeClass, tomeStack, selectedBook);
+                if (bookIndex < 0) {
+                    ModTabs.LOGGER.warn("Rejecting TomeConvertPayload from {}: tome in slot {} does not contain {}",
+                            serverPlayer.getName().getString(), tomeSlot, selectedBook);
+                    return;
+                }
+
+                Method convertMethod = tomeClass.getMethod("convert", ItemStack.class, int.class);
+                ItemStack convertedBook = (ItemStack) convertMethod.invoke(null, tomeStack, bookIndex);
+                if (convertedBook == null || convertedBook.isEmpty() || convertedBook == tomeStack) {
+                    ModTabs.LOGGER.warn("Tome convert produced no book for slot {} index {}", tomeSlot, bookIndex);
+                    return;
+                }
 
                 ModTabs.LOGGER.info("Server converted tome to: {}", convertedBook);
 
@@ -68,5 +84,25 @@ public class TomeConvertHandler {
             }
         });
         ctx.setPacketHandled(true);
+    }
+
+    /** Index of the stored book matching {@code requested} in Tome.getItems(tome), or -1. */
+    private static int findBookIndex(Class<?> tomeClass, ItemStack tomeStack, ItemStack requested) throws Exception {
+        Object items = tomeClass.getMethod("getItems", ItemStack.class).invoke(null, tomeStack);
+        if (!(items instanceof List<?> list)) {
+            return -1;
+        }
+
+        int sameItem = -1;
+        for (int i = 0; i < list.size(); i++) {
+            if (!(list.get(i) instanceof ItemStack stored) || stored.isEmpty()) continue;
+            if (ItemStack.isSameItemSameTags(stored, requested)) {
+                return i;
+            }
+            if (sameItem == -1 && ItemStack.isSameItem(stored, requested)) {
+                sameItem = i;
+            }
+        }
+        return sameItem;
     }
 }

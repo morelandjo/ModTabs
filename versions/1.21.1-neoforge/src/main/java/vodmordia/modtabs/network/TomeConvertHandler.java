@@ -6,6 +6,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import vodmordia.modtabs.ModTabs;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 public class TomeConvertHandler {
 
@@ -53,8 +55,17 @@ public class TomeConvertHandler {
                         return;
                     }
 
+                    // Only convert into a book the tome actually contains; use the tome's own copy
+                    // rather than the client-supplied stack.
+                    ItemStack storedBook = findStoredBook(tomeUtilsClass, tomeStack, selectedBook);
+                    if (storedBook.isEmpty()) {
+                        ModTabs.LOGGER.warn("Rejecting TomeConvertPayload from {}: tome in slot {} does not contain {}",
+                                serverPlayer.getName().getString(), tomeSlot, selectedBook);
+                        return;
+                    }
+
                     Method convertMethod = tomeUtilsClass.getMethod("convert", ItemStack.class, ItemStack.class);
-                    ItemStack convertedBook = (ItemStack) convertMethod.invoke(null, tomeStack, selectedBook);
+                    ItemStack convertedBook = (ItemStack) convertMethod.invoke(null, tomeStack, storedBook);
 
                     ModTabs.LOGGER.info("Server converted tome to: {}", convertedBook);
 
@@ -71,5 +82,32 @@ public class TomeConvertHandler {
                 }
             }
         });
+    }
+
+    /** Returns a copy of the book stored in the tome matching {@code requested}, or EMPTY. */
+    private static ItemStack findStoredBook(Class<?> tomeUtilsClass, ItemStack tomeStack, ItemStack requested) throws Exception {
+        Object modsBooks = tomeUtilsClass.getMethod("getModsBooks", ItemStack.class).invoke(null, tomeStack);
+        if (modsBooks == null) {
+            return ItemStack.EMPTY;
+        }
+        Object modList = modsBooks.getClass().getMethod("modList").invoke(modsBooks);
+        if (!(modList instanceof Map<?, ?> map)) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack sameItem = ItemStack.EMPTY;
+        for (Object books : map.values()) {
+            if (!(books instanceof List<?> list)) continue;
+            for (Object o : list) {
+                if (!(o instanceof ItemStack stored) || stored.isEmpty()) continue;
+                if (ItemStack.isSameItemSameComponents(stored, requested)) {
+                    return stored.copy();
+                }
+                if (sameItem.isEmpty() && ItemStack.isSameItem(stored, requested)) {
+                    sameItem = stored;
+                }
+            }
+        }
+        return sameItem.isEmpty() ? ItemStack.EMPTY : sameItem.copy();
     }
 }

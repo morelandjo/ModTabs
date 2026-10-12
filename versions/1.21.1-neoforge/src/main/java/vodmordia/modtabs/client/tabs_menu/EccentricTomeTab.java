@@ -322,182 +322,112 @@ public class EccentricTomeTab extends ConfigurableItemTab {
         public boolean mouseClicked(double x, double y, int button) {
             if (button == 0) { // LEFT_CLICK
                 try {
-                    ModTabs.LOGGER.info("Left click detected at x={}, y={}", x, y);
-
-                    // Get the selected book by calling mouseClicked and checking state
-                    boolean originalResult = originalTomeScreen.mouseClicked(x, y, button);
-                    ModTabs.LOGGER.info("Original mouseClicked result: {}", originalResult);
-
+                    // TomeScreen.render() stores the hovered book in its private "book" field.
+                    // Read it BEFORE delegating: the original mouseClicked sends Eccentric Tome's
+                    // own ConvertPayload and closes the screen.
                     Field bookField = originalTomeScreen.getClass().getDeclaredField("book");
                     bookField.setAccessible(true);
                     ItemStack selectedBook = (ItemStack) bookField.get(originalTomeScreen);
 
-                    ModTabs.LOGGER.info("Selected book: {} (isEmpty: {})", selectedBook, selectedBook == null ? "null" : selectedBook.isEmpty());
-
-                    if (selectedBook != null && !selectedBook.isEmpty()) {
-                        ModTabs.LOGGER.info("Converting tome to selected book: {}", selectedBook.getItem());
-                        // Convert the tome to the selected book
-                        sendConvertMessage(selectedBook);
-                        // Screen is closed inside sendConvertMessage
+                    if (selectedBook != null && !selectedBook.isEmpty()
+                            && convertTomeNotInHand(selectedBook, x, y, button)) {
                         return true;
                     }
-
-                    return originalResult;
                 } catch (Exception e) {
                     ModTabs.LOGGER.error("Error in custom mouseClicked", e);
                 }
             }
 
+            // Tome is held (or nothing was selected): Eccentric Tome's own ConvertPayload
+            // converts the tome in the player's hand, so let the original screen handle it.
             return originalTomeScreen.mouseClicked(x, y, button);
         }
 
-        private void sendConvertMessage(ItemStack selectedBook) {
-            try {
-                ModTabs.LOGGER.info("sendConvertMessage called with selectedBook: {}", selectedBook);
-
-                // Find the tome in the player's inventory
-                EccentricTomeTab tab = new EccentricTomeTab();
-                int tomeSlot = findTomeSlot(player);
-
-                if (tomeSlot == -1) {
-                    ModTabs.LOGGER.warn("Tome not found in inventory");
-                    return;
-                }
-
-                ModTabs.LOGGER.info("Found tome in slot: {}", tomeSlot);
-
-                // Try to create a custom network packet to send to server
-                // First, try to find network-related classes
-                try {
-                    // Try to find what networking system they use
-                    String[] networkClasses = {
-                        "website.eccentric.tome.network.ConvertMessage",
-                        "website.eccentric.tome.network.ConvertPayload",
-                        "website.eccentric.tome.ConvertMessage",
-                        "website.eccentric.tome.ConvertPayload",
-                        "website.eccentric.tome.network.TomeConvertPacket",
-                        "website.eccentric.tome.packet.ConvertPacket"
-                    };
-
-                    Class<?> convertMessageClass = null;
-                    for (String className : networkClasses) {
-                        try {
-                            convertMessageClass = Class.forName(className);
-                            ModTabs.LOGGER.info("Found network class: {}", className);
-                            break;
-                        } catch (ClassNotFoundException e) {
-                            // Continue
-                        }
-                    }
-
-                    if (convertMessageClass == null) {
-                        ModTabs.LOGGER.info("No network message class found, NeoForge version must use different approach");
-
-                        // Since there's no network packet, Eccentric Tome NeoForge must handle conversion differently
-                        // Let's check TomeItem for use() method that might trigger conversion
-                        ItemStack tomeStack = tab.findTomeInInventory(player);
-                        Class<?> tomeItemClass = tomeStack.getItem().getClass();
-
-                        ModTabs.LOGGER.info("Checking TomeItem for interaction methods:");
-                        for (Method m : tomeItemClass.getDeclaredMethods()) {
-                            if (m.getName().contains("use") || m.getName().contains("interact") ||
-                                m.getName().contains("click") || m.getName().contains("convert")) {
-                                ModTabs.LOGGER.info("  - {} (params: {})", m.getName(), java.util.Arrays.toString(m.getParameterTypes()));
-                            }
-                        }
-
-                        // They might be using item right-click to open screen then converting internally
-                        // Let's just use TomeUtils directly but send the result to server properly
-                        Class<?> tomeUtilsClass = Class.forName("website.eccentric.tome.TomeUtils");
-                        Method convertMethod = tomeUtilsClass.getMethod("convert", ItemStack.class, ItemStack.class);
-                        ItemStack convertedBook = (ItemStack) convertMethod.invoke(null, tomeStack, selectedBook);
-
-                        ModTabs.LOGGER.info("Converted tome to: {}", convertedBook);
-
-                        // Replace in inventory and let Minecraft's sync handle it
-                        replaceTomeInInventory(tab, convertedBook);
-                        ModTabs.LOGGER.info("Replaced tome in inventory with converted book");
-
-                    } else {
-                        // Use ModTabs custom packet to handle conversion
-                        ModTabs.LOGGER.info("Sending ModTabs TomeConvertPayload to server...");
-
-                        vodmordia.modtabs.network.TomeConvertPayload payload =
-                            new vodmordia.modtabs.network.TomeConvertPayload(tomeSlot, selectedBook);
-
-                        net.neoforged.neoforge.network.PacketDistributor.sendToServer(payload);
-
-                        ModTabs.LOGGER.info("Sent TomeConvertPayload: slot={}, book={}", tomeSlot, selectedBook);
-                    }
-
-                } catch (Exception e) {
-                    ModTabs.LOGGER.error("Failed to convert tome", e);
-                }
-
-                // Close screen
-                Minecraft.getInstance().setScreen(null);
-                ModTabs.LOGGER.info("Closed TomeScreen");
-
-            } catch (Exception e) {
-                ModTabs.LOGGER.error("Failed to convert tome", e);
+        /**
+         * Eccentric Tome's ConvertPayload only converts a tome held in the main/off hand
+         * (TomeUtils.inHand). When the tab opened a tome from elsewhere in the inventory,
+         * convert that slot instead. Returns false to fall back to the mod's own handling.
+         */
+        private boolean convertTomeNotInHand(ItemStack selectedBook, double x, double y, int button) {
+            if (isTome(player.getMainHandItem()) || isTome(player.getOffhandItem())) {
+                return false; // Held: the mod's own packet handles it.
             }
+
+            int tomeSlot = findTomeSlot(player);
+            if (tomeSlot == -1) {
+                ModTabs.LOGGER.warn("Eccentric Tome not found in player inventory; cannot convert");
+                return false;
+            }
+
+            Minecraft minecraft = Minecraft.getInstance();
+            var connection = minecraft.getConnection();
+            if (connection != null && connection.hasChannel(vodmordia.modtabs.network.TomeConvertPayload.TYPE)) {
+                // Server has ModTabs: it validates the slot and converts it in place.
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(
+                    new vodmordia.modtabs.network.TomeConvertPayload(tomeSlot, selectedBook.copy()));
+                minecraft.setScreen(null);
+                return true;
+            }
+
+            // Server without ModTabs (client-only install): temporarily swap the tome into the
+            // main hand with vanilla inventory clicks, let the mod's own ConvertPayload convert
+            // it, then swap back so the converted book ends up in the tome's original slot.
+            return convertViaHandSwap(tomeSlot, x, y, button);
+        }
+
+        private boolean convertViaHandSwap(int tomeSlot, double x, double y, int button) {
+            Minecraft minecraft = Minecraft.getInstance();
+            int menuSlot = toInventoryMenuSlot(tomeSlot);
+            if (minecraft.gameMode == null || menuSlot == -1 || player.containerMenu != player.inventoryMenu) {
+                ModTabs.LOGGER.warn("Cannot convert Eccentric Tome in slot {} without server-side ModTabs", tomeSlot);
+                return false;
+            }
+
+            int containerId = player.inventoryMenu.containerId;
+            int hotbarSlot = player.getInventory().selected;
+            minecraft.gameMode.handleInventoryMouseClick(containerId, menuSlot, hotbarSlot,
+                net.minecraft.world.inventory.ClickType.SWAP, player);
+            // Sends Eccentric Tome's ConvertPayload (converts the main hand) and closes the screen.
+            originalTomeScreen.mouseClicked(x, y, button);
+            minecraft.gameMode.handleInventoryMouseClick(containerId, menuSlot, hotbarSlot,
+                net.minecraft.world.inventory.ClickType.SWAP, player);
+            if (minecraft.screen == this) {
+                minecraft.setScreen(null);
+            }
+            return true;
+        }
+
+        /** Maps a player Inventory index to its InventoryMenu slot index, or -1 if unsupported. */
+        private static int toInventoryMenuSlot(int inventorySlot) {
+            if (inventorySlot >= 0 && inventorySlot < 9) {
+                return 36 + inventorySlot; // Hotbar
+            }
+            if (inventorySlot >= 9 && inventorySlot < 36) {
+                return inventorySlot; // Main inventory
+            }
+            return -1; // Armor/offhand (offhand is handled as "held")
         }
 
         private int findTomeSlot(Player player) {
-            EccentricTomeTab tab = new EccentricTomeTab();
-
             // Check main hand (slot depends on selected hotbar slot)
-            if (tab.isTome(player.getMainHandItem())) {
+            if (isTome(player.getMainHandItem())) {
                 return player.getInventory().selected; // Hotbar slot
             }
 
             // Check offhand
-            if (tab.isTome(player.getOffhandItem())) {
+            if (isTome(player.getOffhandItem())) {
                 return 40; // Offhand slot
             }
 
             // Check inventory
             for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                 ItemStack stack = player.getInventory().getItem(i);
-                if (!stack.isEmpty() && tab.isTome(stack)) {
+                if (!stack.isEmpty() && isTome(stack)) {
                     return i;
                 }
             }
 
             return -1; // Not found
-        }
-
-        private void replaceTomeInInventory(EccentricTomeTab tab, ItemStack convertedBook) {
-            boolean replaced = false;
-
-            // Check main hand
-            if (tab.isTome(player.getMainHandItem())) {
-                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, convertedBook);
-                replaced = true;
-                ModTabs.LOGGER.info("Replaced tome in main hand");
-            }
-            // Check offhand
-            else if (tab.isTome(player.getOffhandItem())) {
-                player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, convertedBook);
-                replaced = true;
-                ModTabs.LOGGER.info("Replaced tome in offhand");
-            }
-            // Check inventory
-            else {
-                for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-                    ItemStack slotStack = player.getInventory().getItem(i);
-                    if (!slotStack.isEmpty() && tab.isTome(slotStack)) {
-                        player.getInventory().setItem(i, convertedBook);
-                        replaced = true;
-                        ModTabs.LOGGER.info("Replaced tome in slot {}", i);
-                        break;
-                    }
-                }
-            }
-
-            if (!replaced) {
-                ModTabs.LOGGER.warn("Could not find tome to replace in inventory");
-            }
         }
 
         // Delegate all other methods to the original screen
