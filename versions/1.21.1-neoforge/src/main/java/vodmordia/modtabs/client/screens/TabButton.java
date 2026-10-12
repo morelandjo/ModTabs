@@ -211,7 +211,8 @@ public class TabButton extends Button {
         // from isCurrentlyUsed because some tabs (Inventory, FTB Quests, etc.) deliberately
         // return false from isCurrentlyUsed to keep the click action available — but they're
         // still the "home" tab for their screen as far as the long-press gesture is concerned.
-        if (pressStartMs > 0L && this.tabBase.isHomeTab(this.screen) && !TabsMenu.isEditing(this.screen)) {
+        if (pressStartMs > 0L && !TabsMenu.isEditing(this.screen)
+                && (this.tabBase.isHomeTab(this.screen) || !TabsMenu.screenHasVisibleHomeTab(this.screen))) {
             long elapsed = System.currentTimeMillis() - pressStartMs;
             if (elapsed >= LONG_PRESS_MS) {
                 pressStartMs = 0L;
