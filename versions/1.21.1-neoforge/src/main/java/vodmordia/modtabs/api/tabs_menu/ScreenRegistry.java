@@ -25,6 +25,13 @@ public class ScreenRegistry {
         private Function<Player, Integer> widthFunction = STANDARD_WIDTH;
         private Function<Player, Integer> heightFunction = STANDARD_HEIGHT;
         private TabDisplayMode displayMode = TabDisplayMode.NORMAL;
+        private boolean actualGeometry = false;
+
+        /** Anchor the tab bar to the host container screen's real leftPos/topPos/imageWidth/imageHeight. */
+        public ScreenRegistrationBuilder withActualGeometry() {
+            this.actualGeometry = true;
+            return this;
+        }
 
         public ScreenRegistrationBuilder withDimensions(Function<Player, Integer> width, Function<Player, Integer> height) {
             this.widthFunction = width;
@@ -58,6 +65,7 @@ public class ScreenRegistry {
                 Class<? extends Screen> screenClass = ScreenClassResolver.resolveScreenClass(className);
                 if (screenClass != null) {
                     TabsMenu.registerScreenWithAllTabs(screenClass, widthFunction, heightFunction, displayMode);
+                    if (actualGeometry) TabsMenu.useActualGeometry(screenClass);
                 }
             }
         }
