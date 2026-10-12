@@ -57,3 +57,4 @@ DEFERRED|runicskills||||Vendored dependency is compile coverage only
 DEFERRED|sdmshop||||Directly compiled integration; covered by compileJava
 DEFERRED|skilltree||||Directly compiled integration; covered by compileJava
 DEFERRED|teams||||Presence-only integration
+DEFERRED|itemcollectors||||Screen-only (ScreenRegistry by corelib wrapper FQN + predicate); no compile dependency

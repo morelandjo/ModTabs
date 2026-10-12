@@ -25,3 +25,4 @@ DEFERRED|roughlyenoughitems||||Registration-only integration
 DEFERRED|trinkets||||Presence-only integration
 DEFERRED|xaerominimap||||Presence-only integration
 DEFERRED|yttr||||Screen-only (ScreenRegistry by FQN); real classes are jar-in-jar, no compile dependency
+DEFERRED|itemcollectors||||Screen-only (ScreenRegistry by corelib wrapper FQN + predicate); no compile dependency

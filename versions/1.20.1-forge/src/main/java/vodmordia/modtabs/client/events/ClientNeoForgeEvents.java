@@ -291,7 +291,7 @@ public class ClientNeoForgeEvents {
         // Re-init would clobber drag-in-progress state in the layout editor.
         if (TabsMenu.isEditing(screen)) return;
         // Only refresh on screens that actually host the tab bar.
-        if (!TabsMenu.hasTabsForScreen(screen.getClass())) return;
+        if (!TabsMenu.hasTabsForScreen(screen)) return;
         if (NearbyContainersProvider.hasContainerSetChanged(mc.player)) {
             TabsMenu.reinitCurrentScreen();
         }
@@ -383,7 +383,7 @@ public class ClientNeoForgeEvents {
         // Shift+Z to enter the layout editor on the current screen.
         if (event.getKeyCode() == org.lwjgl.glfw.GLFW.GLFW_KEY_Z && Screen.hasShiftDown()) {
             Screen currentScreen = event.getScreen();
-            if (currentScreen != null && TabsMenu.hasTabsForScreen(currentScreen.getClass())
+            if (currentScreen != null && TabsMenu.hasTabsForScreen(currentScreen)
                     && !TabsMenu.isEditing(currentScreen)) {
                 TabsMenu.enterEditMode(currentScreen);
                 event.setCanceled(true);
@@ -394,7 +394,7 @@ public class ClientNeoForgeEvents {
         // Handle tab cycling keybind
         if (ModKeybinds.TAB_CYCLE.matches(event.getKeyCode(), event.getScanCode()) && Screen.hasShiftDown()) {
             Screen currentScreen = event.getScreen();
-            if (currentScreen != null && TabsMenu.hasTabsForScreen(currentScreen.getClass())) {
+            if (currentScreen != null && TabsMenu.hasTabsForScreen(currentScreen)) {
                 TabsMenu.cycleToNextTab(currentScreen);
                 event.setCanceled(true);
                 return;
@@ -402,7 +402,7 @@ public class ClientNeoForgeEvents {
         }
 
         // Only handle inventory keybind if screen was opened via tab AND current screen has tab integration
-        if (TabsMenu.wasScreenOpenedViaTab() && TabsMenu.hasTabsForScreen(event.getScreen().getClass())) {
+        if (TabsMenu.wasScreenOpenedViaTab() && TabsMenu.hasTabsForScreen(event.getScreen())) {
             if (minecraft.options.keyInventory.matches(event.getKeyCode(), event.getScanCode())) {
                 if (minecraft.player != null && minecraft.gameMode != null) {
                     // Before switching to inventory, properly close any open container (like backpack)

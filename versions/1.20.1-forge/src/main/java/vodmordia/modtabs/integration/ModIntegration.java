@@ -55,7 +55,8 @@ public enum ModIntegration {
     QUEST_LOG("questlog", "Quest Log"),
     FIELD_GUIDE("fieldguide", "Field Guide"),
     MODONOMICON("modonomicon", "Modonomicon"),
-    QUARK("quark", "Quark");
+    QUARK("quark", "Quark"),
+    ITEM_COLLECTORS("itemcollectors", "Item Collectors");
 
     private final String modId;
     private final String displayName;

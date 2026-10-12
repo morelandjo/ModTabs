@@ -26,6 +26,13 @@ public class ScreenRegistry {
         private Function<Player, Integer> heightFunction = STANDARD_HEIGHT;
         private TabDisplayMode displayMode = TabDisplayMode.NORMAL;
         private boolean actualGeometry = false;
+        private java.util.function.Predicate<Screen> predicate = null;
+
+        /** Only show tabs on screens of the registered class(es) that pass this predicate. */
+        public ScreenRegistrationBuilder withPredicate(java.util.function.Predicate<Screen> predicate) {
+            this.predicate = predicate;
+            return this;
+        }
 
         /** Anchor the tab bar to the host container screen's real leftPos/topPos/imageWidth/imageHeight. */
         public ScreenRegistrationBuilder withActualGeometry() {
@@ -66,6 +73,7 @@ public class ScreenRegistry {
                 if (screenClass != null) {
                     TabsMenu.registerScreenWithAllTabs(screenClass, widthFunction, heightFunction, displayMode);
                     if (actualGeometry) TabsMenu.useActualGeometry(screenClass);
+                    TabsMenu.setScreenPredicate(screenClass, predicate);
                 }
             }
         }

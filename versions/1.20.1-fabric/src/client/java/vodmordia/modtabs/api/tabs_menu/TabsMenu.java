@@ -142,6 +142,25 @@ public class TabsMenu {
         return tabsScreens.containsKey(screenClass);
     }
 
+    /** Optional per-class gate: a registered class with a predicate only shows tabs when it passes (e.g. generic wrapper screens). */
+    private static final java.util.Map<Class<? extends Screen>, java.util.function.Predicate<Screen>> SCREEN_PREDICATES = new java.util.HashMap<>();
+
+    public static void setScreenPredicate(Class<? extends Screen> screenClass, java.util.function.Predicate<Screen> predicate) {
+        if (predicate != null) SCREEN_PREDICATES.put(screenClass, predicate);
+    }
+
+    /** Instance-level check: registered for the screen's class AND its predicate (if any) passes. */
+    public static boolean hasTabsForScreen(Screen screen) {
+        if (screen == null || !tabsScreens.containsKey(screen.getClass())) return false;
+        java.util.function.Predicate<Screen> p = SCREEN_PREDICATES.get(screen.getClass());
+        if (p == null) return true;
+        try {
+            return p.test(screen);
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     public static void markScreenOpenedViaTab(Screen sourceScreen) {
         TabsMenu.screenOpenedViaTab = true;
         TabsMenu.sourceScreen = sourceScreen;
@@ -220,7 +239,7 @@ public class TabsMenu {
     }
 
     private static boolean isMouseInHoverZone(int mouseX, int mouseY, Screen screen) {
-        if (!tabsScreens.containsKey(screen.getClass())) {
+        if (!hasTabsForScreen(screen)) {
             return false;
         }
 
@@ -281,7 +300,7 @@ public class TabsMenu {
     public static void initScreenButtons(Screen screen) {
         ModTabs.LOGGER.info("initScreenButtons called for screen: {}", screen.getClass().getSimpleName());
 
-        if (!tabsScreens.containsKey(screen.getClass())) {
+        if (!hasTabsForScreen(screen)) {
             // Screen doesn't have tabs registered, return silently
             ModTabs.LOGGER.info("Screen {} not registered for tabs, returning", screen.getClass().getSimpleName());
             return;
@@ -647,7 +666,7 @@ public class TabsMenu {
             return;
         }
 
-        if (!tabsScreens.containsKey(currentScreen.getClass())) {
+        if (!hasTabsForScreen(currentScreen)) {
             return; // No tabs registered for this screen
         }
 

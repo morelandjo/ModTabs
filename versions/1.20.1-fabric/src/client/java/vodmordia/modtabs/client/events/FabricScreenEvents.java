@@ -57,7 +57,7 @@ public class FabricScreenEvents {
             isAdvancementsScreen ||
             screenClassName.contains("mapatlases");
 
-        if (needsLateRendering && TabsMenu.hasTabsForScreen(screen.getClass())) {
+        if (needsLateRendering && TabsMenu.hasTabsForScreen(screen)) {
             net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.afterRender(screen).register((screen1, drawContext, mouseX, mouseY, tickDelta) -> {
                 // Render tabs at the very end, after all screen content including backgrounds
                 renderTabsAfterScreen(screen1, drawContext, mouseX, mouseY, tickDelta);
@@ -181,7 +181,7 @@ public class FabricScreenEvents {
         String screenClassName = screen.getClass().getName();
 
         // Check if this screen has tabs registered
-        boolean hasTabs = TabsMenu.hasTabsForScreen(screen.getClass());
+        boolean hasTabs = TabsMenu.hasTabsForScreen(screen);
         if (!hasTabs) {
             return;
         }
