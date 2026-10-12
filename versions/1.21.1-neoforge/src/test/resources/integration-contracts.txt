@@ -52,3 +52,4 @@ DEFERRED|rpgcrafting||||Optional Fabric-through-Connector integration
 DEFERRED|sdmshop||||Directly compiled integration; covered by compileJava
 DEFERRED|skilltree||||Optional screen integration
 DEFERRED|wildex||||Dependency intentionally disabled in build script
+DEFERRED|itemcollectors||||Screen-only (ScreenRegistry by corelib wrapper FQN + predicate); no compile dependency

@@ -31,6 +31,13 @@ public class ScreenRegistry {
         private TabPositioning positioning = TabPositioning.SCREEN_BOTTOM;
         private int offset = 0;
         private boolean actualGeometry = false;
+        private java.util.function.Predicate<Screen> predicate = null;
+
+        /** Only show tabs on screens of the registered class(es) that pass this predicate. */
+        public ScreenRegistrationBuilder withPredicate(java.util.function.Predicate<Screen> predicate) {
+            this.predicate = predicate;
+            return this;
+        }
 
         /** Use the host HandledScreen's real x/y/backgroundWidth (GUI_RELATIVE positioning only). */
         public ScreenRegistrationBuilder withActualGeometry() {
@@ -91,6 +98,7 @@ public class ScreenRegistry {
                 Class<? extends Screen> screenClass = ScreenClassResolver.resolveScreenClass(className);
                 if (screenClass != null) {
                     if (actualGeometry) TabsMenu.useActualGeometry(screenClass);
+                    TabsMenu.setScreenPredicate(screenClass, predicate);
                     if (offset > 0) {
                         TabsMenu.registerScreenWithAllTabs(screenClass, widthFunction, heightFunction, displayMode, positioning, offset);
                     } else {

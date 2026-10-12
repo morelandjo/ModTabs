@@ -201,11 +201,35 @@ public class ModTabs
                     net.minecraft.client.gui.screens.inventory.HopperScreen.class
             );
 
+            registerItemCollectorsScreens();
+
             // Wait for Patchouli books to load, then load custom tabs
             waitForPatchouliAndLoadCustomTabs();
 
             // Finalize all pending screen registrations now that all tabs are registered
             TabsMenu.finalizePendingRegistrations();
+        }
+
+        /**
+         * Item Collectors: its GUIs are generic SuperMartijn642 corelib wrapper screens, so the wrapper
+         * classes are registered with a predicate that only passes when the wrapped widget belongs to
+         * itemcollectors. The layout is keyed by wrapper class (shared with other corelib screens' key,
+         * which never show tabs).
+         */
+        private static void registerItemCollectorsScreens() {
+            if (!vodmordia.modtabs.integration.ModIntegrationManager.isModLoaded(vodmordia.modtabs.integration.ModIntegration.ITEM_COLLECTORS)) return;
+            java.util.function.Predicate<net.minecraft.client.gui.screens.Screen> isIc = screen -> {
+                try {
+                    Object w = screen.getClass().getMethod("getWidget").invoke(screen);
+                    return w != null && w.getClass().getName().startsWith("com.supermartijn642.itemcollectors.");
+                } catch (ReflectiveOperationException e) {
+                    return false;
+                }
+            };
+            vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder().withDimensions(p -> 202, p -> 82).withPredicate(isIc)
+                    .registerAllTabs("com.supermartijn642.core.gui.WidgetScreen");
+            vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder().withDimensions(p -> 224, p -> 206).withPredicate(isIc)
+                    .registerAllTabs("com.supermartijn642.core.gui.WidgetContainerScreen");
         }
 
         /**
@@ -412,7 +436,7 @@ public class ModTabs
                     if (currentScreen == null) {
                         return;
                     }
-                    if (!vodmordia.modtabs.api.tabs_menu.TabsMenu.hasTabsForScreen(currentScreen.getClass())) {
+                    if (!vodmordia.modtabs.api.tabs_menu.TabsMenu.hasTabsForScreen(currentScreen)) {
                         return;
                     }
                     if (Config.Baked.customTabsDebugLogging) {

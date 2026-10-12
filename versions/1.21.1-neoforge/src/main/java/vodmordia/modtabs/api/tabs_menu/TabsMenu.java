@@ -70,7 +70,7 @@ public class TabsMenu {
      */
     public static void renderTabsBehindPanel(Screen screen, GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         if (isEditing(screen)) return;
-        if (!tabsScreens.containsKey(screen.getClass())) return;
+        if (!hasTabsForScreen(screen)) return;
         renderingBehindPanel = true;
         try {
             for (var r : screen.renderables) {
@@ -1226,7 +1226,7 @@ public class TabsMenu {
         //   SCREEN mode → inside-aligned to the screen edges, same as horizontal.
         int snapY = 0;
         boolean guiMode = layout.anchor != vodmordia.modtabs.layout.Anchor.SCREEN_ABSOLUTE
-                && tabsScreens.containsKey(screen.getClass());
+                && hasTabsForScreen(screen);
         if (guiMode) {
             if (Math.abs(maxY - snapT) < EDGE_SNAP_DIST) snapY = (int) Math.round(snapT - maxY);
             else if (Math.abs(minY - snapB) < EDGE_SNAP_DIST) snapY = (int) Math.round(snapB - minY);
@@ -1428,7 +1428,7 @@ public class TabsMenu {
     }
 
     private static boolean isMouseInHoverZone(int mouseX, int mouseY, Screen screen) {
-        if (!tabsScreens.containsKey(screen.getClass())) {
+        if (!hasTabsForScreen(screen)) {
             return false;
         }
         int[] b = computeTabBarBounds();
@@ -1596,7 +1596,7 @@ public class TabsMenu {
     }
 
     public static void initScreenButtons(ScreenEvent.Init.Post event) {
-        if (tabsScreens.containsKey(event.getScreen().getClass())) {
+        if (hasTabsForScreen(event.getScreen())) {
 
             // Check tab display visibility for this screen type. NO hides tabs from the
             // bar but we still register the editor widgets so the user can enter the
@@ -1923,6 +1923,25 @@ public class TabsMenu {
         return tabsScreens.containsKey(screenClass);
     }
 
+    /** Optional per-class gate: a registered class with a predicate only shows tabs when it passes (e.g. generic wrapper screens). */
+    private static final java.util.Map<Class<? extends Screen>, java.util.function.Predicate<Screen>> SCREEN_PREDICATES = new java.util.HashMap<>();
+
+    public static void setScreenPredicate(Class<? extends Screen> screenClass, java.util.function.Predicate<Screen> predicate) {
+        if (predicate != null) SCREEN_PREDICATES.put(screenClass, predicate);
+    }
+
+    /** Instance-level check: registered for the screen's class AND its predicate (if any) passes. */
+    public static boolean hasTabsForScreen(Screen screen) {
+        if (screen == null || !tabsScreens.containsKey(screen.getClass())) return false;
+        java.util.function.Predicate<Screen> p = SCREEN_PREDICATES.get(screen.getClass());
+        if (p == null) return true;
+        try {
+            return p.test(screen);
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     /** Package-private view of the screen registry for {@link GlobalSettingsPanel}. */
     static java.util.Collection<ScreenInfo> screenInfos() {
         return tabsScreens.values();
@@ -1936,7 +1955,7 @@ public class TabsMenu {
             return;
         }
 
-        if (!tabsScreens.containsKey(currentScreen.getClass())) {
+        if (!hasTabsForScreen(currentScreen)) {
             return; // No tabs registered for this screen
         }
 

@@ -103,6 +103,7 @@ public class ModTabsClient implements ClientModInitializer {
 
         // Yttr: screen-only support (tab bar shown on its inventory-style handled screens).
         registerYttrScreens();
+        registerItemCollectorsScreens();
 
         // Wait for Patchouli books to load, then load custom tabs
         waitForPatchouliAndLoadCustomTabs();
@@ -110,6 +111,28 @@ public class ModTabsClient implements ClientModInitializer {
         // Finalize all pending screen registrations now that all tabs are registered
         TabsMenu.finalizePendingRegistrations();
 
+    }
+
+    /**
+     * Item Collectors: its GUIs are generic SuperMartijn642 corelib wrapper screens, so the wrapper
+     * classes are registered with a predicate that only passes when the wrapped widget belongs to
+     * itemcollectors. The layout is keyed by wrapper class (shared with other corelib screens' key,
+     * which never show tabs).
+     */
+    private static void registerItemCollectorsScreens() {
+        if (!vodmordia.modtabs.integration.ModIntegrationManager.isModLoaded(vodmordia.modtabs.integration.ModIntegration.ITEM_COLLECTORS)) return;
+        java.util.function.Predicate<net.minecraft.client.gui.screen.Screen> isIc = screen -> {
+            try {
+                Object w = screen.getClass().getMethod("getWidget").invoke(screen);
+                return w != null && w.getClass().getName().startsWith("com.supermartijn642.itemcollectors.");
+            } catch (ReflectiveOperationException e) {
+                return false;
+            }
+        };
+        vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder().withDimensions(p -> 202, p -> 82).withPredicate(isIc)
+                .registerAllTabs("com.supermartijn642.core.gui.WidgetScreen");
+        vodmordia.modtabs.api.tabs_menu.ScreenRegistry.builder().withDimensions(p -> 224, p -> 206).withPredicate(isIc)
+                .registerAllTabs("com.supermartijn642.core.gui.WidgetContainerScreen");
     }
 
     /** Yttr (fabric): tab bar on its handled (inventory-style) screens; classes resolved by name, no compile dependency. */
@@ -263,7 +286,7 @@ public class ModTabsClient implements ClientModInitializer {
                 net.minecraft.client.gui.screen.Screen currentScreen = minecraft.currentScreen;
 
                 // Check if this screen supports tabs
-                if (TabsMenu.hasTabsForScreen(currentScreen.getClass())) {
+                if (TabsMenu.hasTabsForScreen(currentScreen)) {
 
                     // Force a refresh by closing and reopening the screen
                     // This will trigger the tab building process again
