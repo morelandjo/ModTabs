@@ -161,6 +161,33 @@ public class TabsMenu {
         }
     }
 
+    /**
+     * Vertical space (px) the tab bar occupies above the GUI's top edge on this screen, or 0
+     * when nothing would be drawn there (bar hidden, no enabled tabs, inverted or non
+     * GUI-relative placement). Hosts that size themselves to the window height
+     * (Sophisticated Backpacks) use this to leave room.
+     */
+    public static int tabBarHeadroom(Screen screen) {
+        if (!hasTabsForScreen(screen)) return 0;
+        if (getTabDisplayVisibilityForScreen(screen) == TabDisplayVisibility.NO) return 0;
+        ScreenInfo info = tabsScreens.get(screen.getClass());
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (info == null || player == null) return 0;
+        if (info.positioning != TabPositioning.GUI_RELATIVE || info.displayMode == TabDisplayMode.INVERTED) return 0;
+        boolean anyEnabled = false;
+        boolean anyFeatured = false;
+        for (List<TabBase> list : info.tabs.values()) {
+            for (TabBase tab : list) {
+                if (tab.isEnabled(player)) {
+                    anyEnabled = true;
+                    if (tab.isFeatured()) anyFeatured = true;
+                }
+            }
+        }
+        if (!anyEnabled) return 0;
+        return anyFeatured ? Math.round(TAB_HEIGHT * featuredScaleFactor()) : TAB_HEIGHT;
+    }
+
     public static void markScreenOpenedViaTab(Screen sourceScreen) {
         TabsMenu.screenOpenedViaTab = true;
         TabsMenu.sourceScreen = sourceScreen;
@@ -201,6 +228,8 @@ public class TabsMenu {
             return ModTabsConfig.aetherTabDisplayVisibility;
         } else if (screenClassName.contains("completionistsindex")) {
             return ModTabsConfig.completionistsIndexTabDisplayVisibility;
+        } else if (screenClassName.startsWith("skatric.itemcollector.")) {
+            return ModTabsConfig.collectionBookTabDisplayVisibility;
         } else if (screenClassName.contains("fieldguide")) {
             return ModTabsConfig.fieldGuideTabDisplayVisibility;
         } else if (screenClassName.contains("FoodStatsScreen") || screenClassName.contains("diet")) {
@@ -225,6 +254,8 @@ public class TabsMenu {
             return ModTabsConfig.sophisticatedBackpacksTabDisplayVisibility;
         } else if (screenClassName.contains("travelersbackpack")) {
             return ModTabsConfig.travelersBackpackTabDisplayVisibility;
+        } else if (screenClassName.contains("trulybestfriends")) {
+            return ModTabsConfig.trulyBestFriendsTabDisplayVisibility;
         } else if (screenClassName.contains("jobsplus")) {
             return ModTabsConfig.jobsPlusTabDisplayVisibility;
         } else if (screenClassName.contains("questlog")) {

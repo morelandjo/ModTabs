@@ -53,10 +53,13 @@ public enum ModIntegration {
     JOBS_PLUS("jobsplus", "Jobs+"),
     QUEST_LOG("questlog", "Quest Log"),
     MAPWRIGHT("mapwright", "Mapwright"),
+    TRULY_BEST_FRIENDS("trulybestfriends", "Truly Best Friends Forever"),
     FIELD_GUIDE("fieldguide", "Field Guide"),
     MODONOMICON("modonomicon", "Modonomicon"),
     QUARK("quark", "Quark"),
-    ITEM_COLLECTORS("itemcollectors", "Item Collectors");
+    ITEM_COLLECTORS("itemcollectors", "Item Collectors"),
+    EMERALD_POUCH("emeraldpouch", "Emerald Pouch"),
+    ITEM_COLLECTOR("itemcollector", "Item Collector");
 
     private final String modId;
     private final String displayName;

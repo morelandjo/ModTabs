@@ -304,6 +304,54 @@ public class SophisticatedBackpacksTab extends ConfigurableItemTab {
         return new net.minecraft.network.chat.TranslatableComponent("tooltip." + ModTabs.MOD_ID + ".tab.sophisticated_backpacks.description");
     }
 
+    private static final String BACKPACK_SCREEN = "net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen";
+    private static final String STORAGE_SCREEN_BASE = "net.p3pp3rf1y.sophisticatedcore.client.gui.StorageScreenBase";
+    /** SB's StorageScreenBase.HEIGHT_WITHOUT_STORAGE_SLOTS (title + player inventory) and slot pitch. */
+    private static final int SB_HEIGHT_WITHOUT_STORAGE_SLOTS = 114;
+    private static final int SB_SLOT_SIZE = 18;
+    /** Never trade away more storage rows than this to make room for the bar. */
+    private static final int MIN_VISIBLE_STORAGE_ROWS = 3;
+    private static Method updateDimensionsMethod;
+    private static boolean updateDimensionsLookupFailed;
+
+    /**
+     * SB sizes the backpack GUI to the window: {@code StorageScreenBase.updateDimensionsAndSlotPositions(h)}
+     * shows {@code min(rows, (h - 114) / 18)} storage rows, so imageHeight can reach the full
+     * scaled window height and topPos drops to 0-8px. Our bar hangs above topPos, so on tall
+     * tiers (gold/diamond/netherite at GUI scale 4 on 1080p) it was pushed off the top of
+     * the screen. Called before SB's init() (after its constructor/resize already sized it),
+     * this re-runs SB's own sizing with the bar's headroom taken off both ends (the GUI is
+     * vertically centred), so topPos >= headroom. SB then shows a few fewer rows and
+     * scrolls; when the GUI already fits, min() leaves it unchanged.
+     */
+    public static void reserveTabBarHeadroom(Screen screen) {
+        if (screen == null || !BACKPACK_SCREEN.equals(screen.getClass().getName())) return;
+        int headroom = vodmordia.modtabs.api.tabs_menu.TabsMenu.tabBarHeadroom(screen);
+        if (headroom <= 0) return;
+        Method m = updateDimensionsMethod();
+        if (m == null) return;
+        int minHeight = SB_HEIGHT_WITHOUT_STORAGE_SLOTS + MIN_VISIBLE_STORAGE_ROWS * SB_SLOT_SIZE;
+        int availableHeight = Math.max(minHeight, screen.height - 2 * headroom);
+        try {
+            m.invoke(screen, availableHeight);
+        } catch (Exception e) {
+            updateDimensionsLookupFailed = true;
+            updateDimensionsMethod = null;
+        }
+    }
+
+    private static Method updateDimensionsMethod() {
+        if (updateDimensionsMethod != null || updateDimensionsLookupFailed) return updateDimensionsMethod;
+        try {
+            Method m = Class.forName(STORAGE_SCREEN_BASE).getDeclaredMethod("updateDimensionsAndSlotPositions", int.class);
+            m.setAccessible(true);
+            updateDimensionsMethod = m;
+        } catch (Exception e) {
+            updateDimensionsLookupFailed = true;
+        }
+        return updateDimensionsMethod;
+    }
+
     @Override
     public void initTabOnScreens() {
         ScreenRegistry.builder()

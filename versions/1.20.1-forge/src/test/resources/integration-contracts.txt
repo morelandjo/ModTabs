@@ -9,6 +9,7 @@ REQUIRED|modular_backpacks|it.mralxart.modular_backpacks.network.Networking|send
 REQUIRED|modular_backpacks|it.mralxart.modular_backpacks.client.gui.BackpackScreen|||Target screen
 REQUIRED|kindred|net.silvertide.kindred.client.screen.RosterScreen|<init>|()V|Target screen constructor
 REQUIRED|ftbquests|dev.ftb.mods.ftbquests.client.gui.quests.QuestScreen|||Target screen
+REQUIRED|ftbquestsvisualoverhaul|dev.ftb.mods.ftbquestsvisualoverhaul.client.screen.OverhaulQuestScreen|||Replacement quests screen (plain Screen, 392x217 centred; swapped in via ScreenEvent.Opening)
 REQUIRED|origins|io.github.apace100.origins.screen.ViewOriginScreen|<init>|()V|O-key screen constructor
 REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.core.BiologyDictionaryItem|createBook|()Lnet/minecraft/world/item/ItemStack;|Tab icon book
 REQUIRED|biologydictionary|io.github.xienaoban.biologydictionary.core.BiologyDictionaryItem|isBook|(Lnet/minecraft/world/item/ItemStack;)Z|Book-in-inventory detection
@@ -24,6 +25,7 @@ REQUIRED|journeymap|journeymap.client.ui.fullscreen.Fullscreen|||Target screen
 REQUIRED|map_atlases|pepjebs.mapatlases.item.MapAtlasItem|||Atlas item detection
 REQUIRED|puffish_skills|net.puffish.skillsmod.client.SkillsClientMod|getInstance||Client API
 REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen|||Target screen
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedcore.client.gui.StorageScreenBase|updateDimensionsAndSlotPositions|(I)V|GUI sizing re-run to leave tab bar headroom
 REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.capability.CapabilityUtils|||Backpack capability API
 REQUIRED|xaeroworldmap|xaero.map.WorldMapSession|getCurrentSession||Map session API
 DEFERRED|aether||||Directly compiled integration; covered by compileJava
@@ -68,3 +70,10 @@ DEFERRED|sdmshop||||Directly compiled integration; covered by compileJava
 DEFERRED|skilltree||||Directly compiled integration; covered by compileJava
 DEFERRED|teams||||Presence-only integration
 DEFERRED|itemcollectors||||Screen-only (ScreenRegistry by corelib wrapper FQN + predicate); no compile dependency
+REQUIRED|emeraldpouch|com.jvn.emeraldpouch.screen.PouchScreen|||Target screen
+REQUIRED|emeraldpouch|com.jvn.emeraldpouch.network.ModNetwork|||Holds CHANNEL SimpleChannel used to send the open packet
+REQUIRED|emeraldpouch|com.jvn.emeraldpouch.network.OpenFirstPouchPayload|<init>|()V|Open-first-pouch packet (same as N keybind)
+REQUIRED|emeraldpouch|com.jvn.emeraldpouch.pouch.PouchInventoryAccess|findFirstPouch|(Lnet/minecraft/world/entity/player/Inventory;)Ljava/util/Optional;|Pouch presence check
+REQUIRED|itemcollector|skatric.itemcollector.client.CollectionBookScreen|<init>|()V|Collection Book screen constructor (tab opens it; keybind B / /collection)
+REQUIRED|trulybestfriends|com.whidte.trulybestfriends.tab.TrulyScreen|||Target screen
+REQUIRED|trulybestfriends|com.whidte.trulybestfriends.client.ClientEvents|openPetTab|()V|Open-pet-screen entrypoint

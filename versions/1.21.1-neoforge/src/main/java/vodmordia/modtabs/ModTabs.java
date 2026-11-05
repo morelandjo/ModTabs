@@ -168,6 +168,7 @@ public class ModTabs
             TabsMenu.register(new MotpTab());
             TabsMenu.register(new BiologyDictionaryTab());
             TabsMenu.register(new ReliableBackpackTab());
+            TabsMenu.register(new EmeraldPouchTab());
             TabsMenu.register(new QuarkBackpackTab());
             TabsMenu.register(new WildexTab());
             TabsMenu.register(new ApothicAttributesTab());
@@ -179,10 +180,12 @@ public class ModTabs
             TabsMenu.register(new EpicFightTab());
             TabsMenu.register(new EpicSkillsTab());
             TabsMenu.register(new CompletionistsIndexTab());
+            TabsMenu.register(new CollectionBookTab());
             TabsMenu.register(new SdmShopTab());
             TabsMenu.register(new JobsPlusTab());
             TabsMenu.register(new QuestLogTab());
             TabsMenu.register(new MapwrightTab());
+            TabsMenu.register(new TrulyBestFriendsTab());
             TabsMenu.register(new FieldGuideTab());
             TabsMenu.register(new ModonomiconTab());
 

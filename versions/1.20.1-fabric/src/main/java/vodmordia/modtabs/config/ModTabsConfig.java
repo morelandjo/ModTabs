@@ -229,6 +229,16 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "1_modTabsSettings")
     public static TabDisplayVisibility completionistsIndexTabDisplayVisibility = TabDisplayVisibility.YES;
 
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerCollectionBook;
+    @Comment(category = "1_modTabsSettings") public static CommentText collectionBook;
+    @Entry(category = "1_modTabsSettings") public static boolean collectionBookTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int collectionBookTabOrder = 0;
+
+    @Entry(category = "1_modTabsSettings")
+    public static boolean collectionBookTabFeatured = false;
+    @Entry(category = "1_modTabsSettings")
+    public static TabDisplayVisibility collectionBookTabDisplayVisibility = TabDisplayVisibility.YES;
+
     @Comment(category = "1_modTabsSettings") public static CommentText spacerFieldGuide;
     @Comment(category = "1_modTabsSettings") public static CommentText fieldGuide;
     @Entry(category = "1_modTabsSettings") public static boolean fieldGuideTabEnabled = true;
@@ -250,6 +260,13 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "1_modTabsSettings") public static int jobsPlusTabOrder = 0;
     @Entry(category = "1_modTabsSettings") public static boolean jobsPlusTabFeatured = false;
     @Entry(category = "1_modTabsSettings") public static TabDisplayVisibility jobsPlusTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "1_modTabsSettings") public static CommentText spacerTrulyBestFriends;
+    @Comment(category = "1_modTabsSettings") public static CommentText trulyBestFriends;
+    @Entry(category = "1_modTabsSettings") public static boolean trulyBestFriendsTabEnabled = true;
+    @Entry(category = "1_modTabsSettings") public static int trulyBestFriendsTabOrder = 0;
+    @Entry(category = "1_modTabsSettings") public static boolean trulyBestFriendsTabFeatured = false;
+    @Entry(category = "1_modTabsSettings") public static TabDisplayVisibility trulyBestFriendsTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "1_modTabsSettings") public static CommentText spacerQuestLog;
     @Comment(category = "1_modTabsSettings") public static CommentText questLog;

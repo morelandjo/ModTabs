@@ -141,6 +141,7 @@ public class ModTabs
             TabsMenu.register(new AdvancedTeamTab());
             TabsMenu.register(new VillagerRecruitsTab());
             TabsMenu.register(new VillagerRecruitsClaimMapTab());
+            TabsMenu.register(new TrulyBestFriendsTab());
             TabsMenu.register(new FtbChunksTab());
 
             TabsMenu.register(new ReskillableReimaginedTab());
@@ -179,6 +180,7 @@ public class ModTabs
             TabsMenu.register(new BlueSkiesArcsTab());
             TabsMenu.register(new BlueSkiesJournalTab());
             TabsMenu.register(new CompletionistsIndexTab());
+            TabsMenu.register(new CollectionBookTab());
             TabsMenu.register(new SdmShopTab());
             TabsMenu.register(new JobsPlusTab());
             TabsMenu.register(new QuestLogTab());
@@ -186,6 +188,7 @@ public class ModTabs
             TabsMenu.register(new ModonomiconTab());
             TabsMenu.register(new BiologyDictionaryTab());
             TabsMenu.register(new ReliableBackpackTab());
+            TabsMenu.register(new EmeraldPouchTab());
 
             // One transient tab per nearby container block (chests, barrels, modded
             // inventories, …). Discovered fresh on every screen-init.

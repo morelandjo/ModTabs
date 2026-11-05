@@ -83,6 +83,8 @@ dependencies {
     // Biology Dictionary 1.3.2 and Reliable Backpacks 1.8.3 (1.20.1 Forge); reflection-only integrations.
     compileOnly "maven.modrinth:biology-dictionary:sUQbenNf"
     compileOnly "maven.modrinth:reliable-backpacks:jyyQGzvi"
+    // Emerald Pouch 1.2.0 (1.20.1 Forge); reflection-only integration.
+    compileOnly "maven.modrinth:emerald-pouch:Dy9Xxo0P"
     // MixinGradle's `mixin { add ... }` block registers the source set with the plugin but does
     // not add the Mixin annotation-processor jar to the `annotationProcessor` configuration. The
     // AP is what writes the refmap (Mojang → SRG name translations) that production Forge needs
@@ -154,6 +156,9 @@ dependencies {
 
     // FTB suite.
     compileOnly "curse.maven:ftb-quests-forge-289412:7909594"
+    // FTB Quests UI Overhaul 1.0.12: replaces the ScreenWrapper(QuestScreen) with OverhaulQuestScreen
+    // via ScreenEvent.Opening. Referenced by class name only.
+    compileOnly "maven.modrinth:ftb-quests-ui-overhaul:8V3JDrpf"
     compileOnly "curse.maven:ftb-teams-forge-404468:7499810"
     compileOnly "curse.maven:ftb-chunks-forge-314906:7880858"
     // Promoted to implementation so SDM Shop's runtime ftblibrary hard-dep resolves in
@@ -274,6 +279,10 @@ dependencies {
     // `implementation` also requires pinning a puzzleslib file id.
     compileOnly "curse.maven:completionists-index-852667:4613443"
 
+    // Item Collector (Skatric, modid itemcollector, Forge 1.20.1 v2.0.0; NOT Serilum/SuperMartijn's "Item Collectors").
+    // Reflection-only — CollectionBookTab opens CollectionBookScreen() directly. compileOnly (contract test only).
+    compileOnly "curse.maven:item-collector-1606992:8966052"
+
     // SDM Shop (sdmshoprework, DeusSixik / Architectury, Forge 1.20.1). Reflection-only —
     // SdmShopTab invokes SDMShopClient.openGui(boolean) via Class.forName, same path the
     // mod's own SendOpenShopScreenS2C packet uses. Promoted from compileOnly to load in
@@ -326,6 +335,10 @@ dependencies {
     // the recipe-book button. compileOnly because we never reference Field Guide types
     // at compile time.
     compileOnly "curse.maven:field-guide-1470590:8046081"
+
+    // Truly Best Friends Forever 0.2.6 (whidte, Forge 1.20.1). Reflection-only: TrulyBestFriendsTab
+    // calls ClientEvents.openPetTab() (what the mod's open-pet-screen keybind does).
+    compileOnly "curse.maven:truly-best-friends-forever-1587653:9423839"
 }
 
 sourceSets.test.java.srcDir(rootProject.file('test-support/src/test/java'))

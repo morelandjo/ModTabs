@@ -64,6 +64,7 @@ public class FtbQuestsTab extends ConfigurableItemTab {
         if (currentScreen == null) return false;
         String name = currentScreen.getClass().getName();
         if (name.startsWith("dev.ftb.mods.ftbquests.")) return true;
+        if (vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_OVERHAUL_SCREEN.equals(name)) return true;
         if (vodmordia.modtabs.utils.ScreenClasses.FTB_LIBRARY_WRAPPER.equals(name)) {
             String wrapped = FtbScreenWrapperUtil.getWrappedGuiClassName(currentScreen);
             return wrapped != null && wrapped.startsWith("dev.ftb.mods.ftbquests.");
@@ -95,5 +96,11 @@ public class FtbQuestsTab extends ConfigurableItemTab {
                 vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_QUEST_SCREEN_ALT1,
                 vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_QUEST_SCREEN_ALT2
             );
+        // FTB Quests UI Overhaul replaces ScreenWrapper(QuestScreen) with a plain Screen drawn as a
+        // 392x217 frame centred on the window (ScreenEvent.Opening swap), so use those dimensions.
+        ScreenRegistry.builder()
+            .withDimensions(p -> 392, p -> 217)
+            .inverted()
+            .registerAllTabs(vodmordia.modtabs.utils.ScreenClasses.FTB_QUESTS_OVERHAUL_SCREEN);
     }
 }

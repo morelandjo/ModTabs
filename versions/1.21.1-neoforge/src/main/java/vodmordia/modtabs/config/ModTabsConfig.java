@@ -33,6 +33,7 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean bodyDamageTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean biologyDictionaryTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean wildexTabSticky = false;
+    @Entry(category = "tabs") @Hidden public static boolean trulyBestFriendsTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean apothicAttributesTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean aetherTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean curiosTabSticky = false;
@@ -42,6 +43,7 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean epicFightTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean epicSkillsTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean completionistsIndexTabSticky = false;
+    @Entry(category = "tabs") @Hidden public static boolean collectionBookTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean sdmShopTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean jobsPlusTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean questLogTabSticky = false;
@@ -49,6 +51,7 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean fieldGuideTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean modonomiconTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean reliableBackpacksTabSticky = false;
+    @Entry(category = "tabs") @Hidden public static boolean emeraldPouchTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean quarkBackpackTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean brassworksMissionsTabSticky = false;
     @Entry(category = "tabs") @Hidden public static boolean cobblemonTabSticky = false;
@@ -88,6 +91,7 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean bodyDamageTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean biologyDictionaryTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean wildexTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean trulyBestFriendsTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean apothicAttributesTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean aetherTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean curiosTabFeatured = false;
@@ -97,6 +101,7 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean epicFightTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean epicSkillsTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean completionistsIndexTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean collectionBookTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean sdmShopTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean jobsPlusTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean questLogTabFeatured = false;
@@ -104,6 +109,7 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden public static boolean fieldGuideTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean modonomiconTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean reliableBackpacksTabFeatured = false;
+    @Entry(category = "tabs") @Hidden public static boolean emeraldPouchTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean quarkBackpackTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean brassworksMissionsTabFeatured = false;
     @Entry(category = "tabs") @Hidden public static boolean cobblemonTabFeatured = false;
@@ -362,6 +368,31 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden
     public static TabDisplayVisibility wildexTabDisplayVisibility = TabDisplayVisibility.YES;
 
+    @Comment(category = "tabs") public static CommentText spacer_trulyBestFriends;
+
+    @Comment(category = "tabs") public static CommentText trulyBestFriends;
+
+    @Entry(category = "tabs") @Hidden
+    public static boolean trulyBestFriendsTabEnabled = true;
+
+    @Entry(category = "tabs") @Hidden
+    public static String trulyBestFriendsTabCustomIcon = "";
+    @Entry(category = "tabs") @Hidden
+    public static int trulyBestFriendsTabIconScale = 100;
+    @Entry(category = "tabs") @Hidden
+    public static int trulyBestFriendsTabIconNudgeUp = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int trulyBestFriendsTabIconNudgeDown = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int trulyBestFriendsTabIconNudgeLeft = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int trulyBestFriendsTabIconNudgeRight = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int trulyBestFriendsTabOrder = 0;
+
+    @Entry(category = "tabs") @Hidden
+    public static TabDisplayVisibility trulyBestFriendsTabDisplayVisibility = TabDisplayVisibility.YES;
+
     @Comment(category = "tabs") public static CommentText spacer_apothic_attributes;
 
     @Comment(category = "tabs") public static CommentText apothicAttributes;
@@ -545,6 +576,31 @@ public class ModTabsConfig extends MidnightConfig {
     @Entry(category = "tabs") @Hidden
     public static TabDisplayVisibility completionistsIndexTabDisplayVisibility = TabDisplayVisibility.YES;
 
+    @Comment(category = "tabs") public static CommentText spacer_collection_book;
+
+    @Comment(category = "tabs") public static CommentText collectionBook;
+
+    @Entry(category = "tabs") @Hidden
+    public static boolean collectionBookTabEnabled = true;
+
+    @Entry(category = "tabs") @Hidden
+    public static String collectionBookTabCustomIcon = "";
+    @Entry(category = "tabs") @Hidden
+    public static int collectionBookTabIconScale = 100;
+    @Entry(category = "tabs") @Hidden
+    public static int collectionBookTabIconNudgeUp = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int collectionBookTabIconNudgeDown = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int collectionBookTabIconNudgeLeft = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int collectionBookTabIconNudgeRight = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int collectionBookTabOrder = 0;
+
+    @Entry(category = "tabs") @Hidden
+    public static TabDisplayVisibility collectionBookTabDisplayVisibility = TabDisplayVisibility.TUCK;
+
     @Comment(category = "tabs") public static CommentText spacer_sdm_shop;
 
     @Comment(category = "tabs") public static CommentText sdmShop;
@@ -719,6 +775,31 @@ public class ModTabsConfig extends MidnightConfig {
 
     @Entry(category = "tabs") @Hidden
     public static TabDisplayVisibility reliableBackpacksTabDisplayVisibility = TabDisplayVisibility.YES;
+
+    @Comment(category = "tabs") public static CommentText spacer_emerald_pouch;
+
+    @Comment(category = "tabs") public static CommentText emeraldPouch;
+
+    @Entry(category = "tabs") @Hidden
+    public static boolean emeraldPouchTabEnabled = true;
+
+    @Entry(category = "tabs") @Hidden
+    public static String emeraldPouchTabCustomIcon = "";
+    @Entry(category = "tabs") @Hidden
+    public static int emeraldPouchTabIconScale = 100;
+    @Entry(category = "tabs") @Hidden
+    public static int emeraldPouchTabIconNudgeUp = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int emeraldPouchTabIconNudgeDown = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int emeraldPouchTabIconNudgeLeft = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int emeraldPouchTabIconNudgeRight = 0;
+    @Entry(category = "tabs") @Hidden
+    public static int emeraldPouchTabOrder = 0;
+
+    @Entry(category = "tabs") @Hidden
+    public static TabDisplayVisibility emeraldPouchTabDisplayVisibility = TabDisplayVisibility.YES;
 
     @Comment(category = "tabs") public static CommentText spacer_quark_backpack;
 

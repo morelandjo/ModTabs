@@ -1364,8 +1364,19 @@ public class TabsMenu {
         isInTuckMode = shouldTuck;
     }
 
+    /**
+     * Config key for a screen's display visibility. Same as {@link #getConfigKeyForScreen}
+     * except for screens whose visibility is set independently of their home tab.
+     */
+    public static String getVisibilityKeyForScreen(Screen screen) {
+        if (screen != null && ScreenClasses.FTB_QUESTS_OVERHAUL_SCREEN.equals(screen.getClass().getName())) {
+            return "ftbQuestsOverhaul";
+        }
+        return getConfigKeyForScreen(screen);
+    }
+
     private static TabDisplayVisibility getTabDisplayVisibilityForScreen(Screen screen) {
-        String key = getConfigKeyForScreen(screen);
+        String key = getVisibilityKeyForScreen(screen);
         if (key == null) return TabDisplayVisibility.YES;
         try {
             java.lang.reflect.Field f = ModTabsConfig.class.getField(key + "TabDisplayVisibility");
@@ -1474,6 +1485,36 @@ public class TabsMenu {
         int w = info.width.apply(player);
         int h = info.height.apply(player);
         return new int[]{(screen.width - w) / 2, (screen.height - h) / 2, w, h};
+    }
+
+    /**
+     * Vertical space (px) the tab bar occupies above the GUI's top edge on this screen, or 0
+     * when nothing would be drawn there (bar hidden, no enabled tabs, screen-absolute anchor,
+     * rotated bar, or offsetY already pushing it inside/below the top edge). Hosts that size
+     * themselves to the window height (Sophisticated Backpacks) use this to leave room.
+     */
+    public static int tabBarHeadroom(Screen screen) {
+        if (!hasTabsForScreen(screen)) return 0;
+        if (getTabDisplayVisibilityForScreen(screen) == TabDisplayVisibility.NO) return 0;
+        ScreenLayout layout = ScreenLayoutStore.get(screen.getClass());
+        if (layout.anchor == vodmordia.modtabs.layout.Anchor.SCREEN_ABSOLUTE) return 0;
+        if (layout.rotation % 360f != 0f) return 0;
+        ScreenInfo info = tabsScreens.get(screen.getClass());
+        Player player = Minecraft.getInstance().player;
+        if (info == null || player == null) return 0;
+        boolean anyEnabled = false;
+        boolean anyFeatured = false;
+        for (List<TabBase> list : info.tabs.values()) {
+            for (TabBase tab : list) {
+                if (tab.isEnabled(player)) {
+                    anyEnabled = true;
+                    if (tab.isFeatured()) anyFeatured = true;
+                }
+            }
+        }
+        if (!anyEnabled) return 0;
+        float scale = layout.scale * (anyFeatured ? featuredScaleFactor() : 1.0f);
+        return Math.max(0, Math.round(TAB_HEIGHT * scale) - layout.offsetY);
     }
 
     public static void updateButtonsPosition(Screen screen, int guiLeft, int guiTop) {

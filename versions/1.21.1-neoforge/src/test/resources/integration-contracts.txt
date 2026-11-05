@@ -15,6 +15,7 @@ REQUIRED|journeymap|journeymap.client.ui.fullscreen.Fullscreen|||Target screen
 REQUIRED|map_atlases|pepjebs.mapatlases.item.MapAtlasItem|||Atlas item detection
 REQUIRED|puffish_skills|net.puffish.skillsmod.client.SkillsClientMod|getInstance||Client API
 REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen|||Target screen
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedcore.client.gui.StorageScreenBase|updateDimensionsAndSlotPositions|(I)V|GUI sizing re-run to leave tab bar headroom
 REQUIRED|travelersbackpack|com.tiviacz.travelersbackpack.capability.AttachmentUtils|||Backpack reflection root
 REQUIRED|xaeroworldmap|xaero.map.WorldMapSession|getCurrentSession||Map session API
 DEFERRED|aether||||Directly compiled integration; covered by compileJava
@@ -58,3 +59,9 @@ DEFERRED|sdmshop||||Directly compiled integration; covered by compileJava
 DEFERRED|skilltree||||Optional screen integration
 DEFERRED|wildex||||Dependency intentionally disabled in build script
 DEFERRED|itemcollectors||||Screen-only (ScreenRegistry by corelib wrapper FQN + predicate); no compile dependency
+REQUIRED|emeraldpouch|com.jvn.emeraldpouch.screen.PouchScreen|||Target screen
+REQUIRED|emeraldpouch|com.jvn.emeraldpouch.client.PouchClientNetworking|sendOpenFirstPouch|()V|Opens first pouch (same as N keybind)
+REQUIRED|emeraldpouch|com.jvn.emeraldpouch.api.EmeraldPouchApi|findFirstPlayerPouch|(Lnet/minecraft/world/entity/player/Inventory;)Ljava/util/Optional;|Pouch presence check
+REQUIRED|itemcollector|skatric.itemcollector.client.CollectionBookScreen|<init>|()V|Collection Book screen constructor (tab opens it; keybind B / /collection)
+REQUIRED|trulybestfriends|com.whidte.trulybestfriends.tab.TrulyScreen|||Target screen
+REQUIRED|trulybestfriends|com.whidte.trulybestfriends.client.TrulyClient|openPetTab|()V|Open-pet-screen entrypoint

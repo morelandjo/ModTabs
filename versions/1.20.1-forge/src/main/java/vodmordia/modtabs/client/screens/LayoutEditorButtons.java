@@ -76,7 +76,7 @@ public final class LayoutEditorButtons {
 
         String configKey = TabsMenu.getConfigKeyForScreen(screen);
         if (configKey != null) {
-            add.accept(new VisibilityCycle(screen, relControlX, relRow2Y, controlW, controlH, configKey));
+            add.accept(new VisibilityCycle(screen, relControlX, relRow2Y, controlW, controlH, TabsMenu.getVisibilityKeyForScreen(screen)));
             int squareW = controlH;
             int gap = 2;
             int dropW = controlW - (squareW * 2) - (gap * 2);

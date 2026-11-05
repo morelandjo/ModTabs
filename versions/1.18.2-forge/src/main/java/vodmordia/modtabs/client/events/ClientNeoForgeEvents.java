@@ -264,6 +264,12 @@ public class ClientNeoForgeEvents {
         }
     }
 
+    /** Runs before the host's init(): lets window-height-sized hosts leave room for the bar. */
+    @SubscribeEvent
+    public static void screenInitPre(ScreenEvent.InitScreenEvent.Pre event) {
+        vodmordia.modtabs.client.tabs_menu.SophisticatedBackpacksTab.reserveTabBarHeadroom(event.getScreen());
+    }
+
     @SubscribeEvent
     public static void screenInitPost(ScreenEvent.InitScreenEvent.Post event) {
         TabsMenu.initScreenButtons(event);

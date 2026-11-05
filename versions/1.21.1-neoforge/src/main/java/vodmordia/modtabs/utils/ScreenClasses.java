@@ -206,6 +206,16 @@ public final class ScreenClasses {
     public static final String BIOLOGY_DICTIONARY_CONFIGS_MANAGER =
             "io.github.xienaoban.biologydictionary.config.ConfigsManager";
 
+    // -- Emerald Pouch (mod id "emeraldpouch") ----------------------------
+    public static final String EMERALD_POUCH_SCREEN =
+            "com.jvn.emeraldpouch.screen.PouchScreen";
+    /** Static {@code sendOpenFirstPouch()}, same path the mod's own keybind uses. */
+    public static final String EMERALD_POUCH_CLIENT_NETWORKING =
+            "com.jvn.emeraldpouch.client.PouchClientNetworking";
+    /** Public API: {@code findFirstPlayerPouch(Inventory)} (includes Curios/Accessories). */
+    public static final String EMERALD_POUCH_API =
+            "com.jvn.emeraldpouch.api.EmeraldPouchApi";
+
     // -- Reliable Backpacks -----------------------------------------------
     public static final String RELIABLE_BACKPACKS_ITEM =
             "com.evandev.reliable_backpacks.common.items.BackpackItem";
@@ -218,6 +228,14 @@ public final class ScreenClasses {
             "org.violetmoon.quark.addons.oddities.item.BackpackItem";
     public static final String QUARK_BACKPACK_SCREEN =
             "org.violetmoon.quark.addons.oddities.client.screen.BackpackInventoryScreen";
+
+    // -- Truly Best Friends Forever ---------------------------------------
+    /** Main pet management screen (plain {@code Screen}); the radial SummonWheelScreen is deliberately not used. */
+    public static final String TRULY_BEST_FRIENDS_SCREEN =
+            "com.whidte.trulybestfriends.tab.TrulyScreen";
+    /** Class holding the public static {@code openPetTab()} the mod's open-tab keybind calls. */
+    public static final String TRULY_BEST_FRIENDS_OPENER =
+            "com.whidte.trulybestfriends.client.TrulyClient";
 
     // -- Wildex Bestiary --------------------------------------------------
     public static final String WILDEX_SCREEN =
@@ -308,6 +326,12 @@ public final class ScreenClasses {
      *  — different from the 1.20.1 Forge build's {@code onScreenInit$Post$1/2}. */
     public static final String COMPLETIONISTS_INDEX_BUTTON_HANDLER =
             "fuzs.completionistsindex.client.handler.IndexButtonHandler";
+
+    // -- Item Collector (Skatric, modid itemcollector) ---------------------
+    /** "The Collection Book" — plain {@code Screen} subclass with a public no-arg constructor
+     *  (opened by keybind B or {@code /collection}). */
+    public static final String COLLECTION_BOOK_SCREEN =
+            "skatric.itemcollector.client.CollectionBookScreen";
 
     // -- SDM Shop (sdmshop, "sdmshopa" 3.x line, NeoForge 1.21.1) ----------
     // Built from DeusSixik/SDMShop:master (3.2.4+) — NOT the 1.21.1 branch (still on

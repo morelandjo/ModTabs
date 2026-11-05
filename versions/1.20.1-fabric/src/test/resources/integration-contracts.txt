@@ -6,6 +6,7 @@ DEFERRED|travelersbackpack||||The supported Fabric artifact lacks AttachmentUtil
 REQUIRED|map_atlases|pepjebs.mapatlases.item.MapAtlasItem|||Atlas item detection
 REQUIRED|puffish_skills|net.puffish.skillsmod.client.SkillsClientMod|getInstance||Client API
 REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen|||Target screen
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedcore.client.gui.StorageScreenBase|updateDimensionsAndSlotPositions|(I)V|GUI sizing re-run to leave tab bar headroom
 REQUIRED|xaeroworldmap|xaero.map.WorldMapSession|getCurrentSession||Map session API
 DEFERRED|ars_elixirum||||No 1.20.1 Fabric artifact in this target
 DEFERRED|ars_nouveau||||Integration currently uses item fallback only
@@ -54,3 +55,6 @@ REQUIRED|sdmshop|net.sixik.sdmshop.client.SDMShopClient|openGui||Open-shop entry
 REQUIRED|jobsplus|com.daqem.jobsplus.networking.c2s.PacketOpenMenuC2S|<init>|()V|Open-menu packet
 REQUIRED|questlog|org.infernalstudios.questlog.client.gui.screen.QuestlogScreen|||Target screen
 REQUIRED|modonomicon|com.klikli_dev.modonomicon.client.gui.BookGuiManager|openBook||Book open entrypoint
+REQUIRED|itemcollector|skatric.itemcollector.client.CollectionBookScreen|<init>|()V|Collection Book screen constructor (tab opens it; keybind B / /collection)
+REQUIRED|trulybestfriends|com.whidte.trulybestfriends.tab.TrulyScreen|||Target screen
+REQUIRED|trulybestfriends|com.whidte.trulybestfriends.client.ClientEvents|openPetTab|()V|Open-pet-screen entrypoint

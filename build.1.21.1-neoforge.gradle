@@ -232,6 +232,9 @@ dependencies {
     // Reliable Backpacks
     compileOnly("curse.maven:reliable-backpacks-1484454:7946525")
 
+    // Emerald Pouch 1.2.0 (NeoForge 1.21.1); reflection-only integration.
+    compileOnly("maven.modrinth:emerald-pouch:DsbhzhiJ")
+
     // Modular Golems
     compileOnly("curse.maven:modulargolems-690937:6965174")
 
@@ -309,6 +312,10 @@ dependencies {
     // here so swapping to `implementation` also requires pinning a puzzleslib file id.
     compileOnly("curse.maven:completionists-index-852667:5736854")
 
+    // Item Collector (Skatric, modid itemcollector, NeoForge 1.21.1 v2.0.0; NOT Serilum/SuperMartijn's "Item Collectors").
+    // Reflection-only — CollectionBookTab opens CollectionBookScreen() directly. compileOnly (contract test only).
+    compileOnly("curse.maven:item-collector-1606992:8966044")
+
     // SDM Shop (sdmshoprework, DeusSixik / Architectury, NeoForge 1.21.1). Reflection-only —
     // SdmShopTab invokes SDMShopClient.openGui(boolean) via Class.forName, same path the
     // mod's own SendOpenShopScreenS2C packet uses. Hard-deps FTB Library + architectury at
@@ -348,6 +355,10 @@ dependencies {
     // types at compile time (and runtime jar pulls in veil, sable-companion, etc. we don't
     // want polluting dev).
     compileOnly("curse.maven:mapwright-1361711:8051003")
+
+    // Truly Best Friends Forever 0.2.6 (whidte, NeoForge 1.21.1). Reflection-only: TrulyBestFriendsTab
+    // calls TrulyClient.openPetTab() (what the mod's open-pet-screen keybind does).
+    compileOnly("curse.maven:truly-best-friends-forever-1587653:9423845")
 
     // Sinytra Connector (for Fabric mod compatibility)
     //runtimeOnly "curse.maven:sinytra-connector-890127:6944771"

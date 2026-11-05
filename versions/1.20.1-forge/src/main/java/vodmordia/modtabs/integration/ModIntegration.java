@@ -14,6 +14,7 @@ public enum ModIntegration {
     RESKILLABLE("rereskillable", "Rereskillable"),
     RESKILLABLE_REIMAGINED("reskillable", "Reskillable Reimagined"),
     FTB_QUESTS("ftbquests", "FTB Quests"),
+    FTB_QUESTS_UI_OVERHAUL("ftbquestsvisualoverhaul", "FTB Quests UI Overhaul"),
     FTB_TEAMS("ftbteams", "FTB Teams"),
     FTB_CHUNKS("ftbchunks", "FTB Chunks"),
     QUARK_ODDITIES("quarkoddities", "Quark Oddities"),
@@ -43,6 +44,7 @@ public enum ModIntegration {
     RUNIC_SKILLS("runicskills", "Runic Skills"),
     ADVANCED_TEAM("teams", "Advanced Team"),
     VILLAGER_RECRUITS("recruits", "Villager Recruits"),
+    TRULY_BEST_FRIENDS("trulybestfriends", "Truly Best Friends Forever"),
     APOTHIC_ATTRIBUTES("attributeslib", "Apothic Attributes"),
     AETHER("aether", "The Aether"),
     EPIC_FIGHT("epicfight", "Epic Fight"),
@@ -58,7 +60,9 @@ public enum ModIntegration {
     QUARK("quark", "Quark"),
     BIOLOGY_DICTIONARY("biologydictionary", "Biology Dictionary"),
     RELIABLE_BACKPACKS("reliable_backpacks", "Reliable Backpacks"),
-    ITEM_COLLECTORS("itemcollectors", "Item Collectors");
+    ITEM_COLLECTORS("itemcollectors", "Item Collectors"),
+    EMERALD_POUCH("emeraldpouch", "Emerald Pouch"),
+    ITEM_COLLECTOR("itemcollector", "Item Collector");
 
     private final String modId;
     private final String displayName;

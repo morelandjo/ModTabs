@@ -28,12 +28,14 @@ public enum ModIntegration {
     LEVELZ("levelz"),
     ORIGINS("origins"),
     PUFFERFISH_SKILLS("puffish_skills"),
+    TRULY_BEST_FRIENDS("trulybestfriends"),
 
     // Equipment and inventory mods
     SOPHISTICATED_BACKPACKS("sophisticatedbackpacks"),
     COSMETIC_ARMOR("cosmeticarmor"),
     YTTR("yttr"),
     ITEM_COLLECTORS("itemcollectors"),
+    ITEM_COLLECTOR("itemcollector"),
     BIOLOGY_DICTIONARY("biologydictionary"),
     RELIABLE_BACKPACKS("reliable_backpacks"),
     BULKING("bulking"),

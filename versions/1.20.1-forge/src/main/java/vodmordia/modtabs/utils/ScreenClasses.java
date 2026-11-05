@@ -113,6 +113,8 @@ public final class ScreenClasses {
             "dev.ftb.mods.ftbquests.client.screens.QuestScreen";
     public static final String FTB_QUESTS_QUEST_SCREEN_ALT2 =
             "dev.ftb.mods.ftbquests.client.QuestScreen";
+    public static final String FTB_QUESTS_OVERHAUL_SCREEN =
+            "dev.ftb.mods.ftbquestsvisualoverhaul.client.screen.OverhaulQuestScreen";
     public static final String FTB_TEAMS_SCREEN =
             "dev.ftb.mods.ftbteams.client.gui.TeamsScreen";
     public static final String FTB_TEAMS_SCREEN_ALT1 =
@@ -213,6 +215,18 @@ public final class ScreenClasses {
     public static final String BIOLOGY_DICTIONARY_CONFIGS_MANAGER =
             "io.github.xienaoban.biologydictionary.config.ConfigsManager";
 
+    // -- Emerald Pouch (mod id "emeraldpouch") ----------------------------
+    public static final String EMERALD_POUCH_SCREEN =
+            "com.jvn.emeraldpouch.screen.PouchScreen";
+    /** Forge: holder of the SimpleChannel {@code CHANNEL} the mod's own keybind sends on. */
+    public static final String EMERALD_POUCH_NETWORK =
+            "com.jvn.emeraldpouch.network.ModNetwork";
+    public static final String EMERALD_POUCH_OPEN_PACKET =
+            "com.jvn.emeraldpouch.network.OpenFirstPouchPayload";
+    /** Same lookup the server-side open handler uses (includes Curios belt slot). */
+    public static final String EMERALD_POUCH_INVENTORY_ACCESS =
+            "com.jvn.emeraldpouch.pouch.PouchInventoryAccess";
+
     // -- Reliable Backpacks -----------------------------------------------
     public static final String RELIABLE_BACKPACKS_ITEM =
             "com.evandev.reliable_backpacks.common.items.BackpackItem";
@@ -244,6 +258,14 @@ public final class ScreenClasses {
      *  {@code level.dimension() == Level.OVERWORLD}, so the tab replicates that check. */
     public static final String VILLAGER_RECRUITS_WORLD_MAP_SCREEN =
             "com.talhanation.recruits.client.gui.worldmap.WorldMapScreen";
+
+    // -- Truly Best Friends Forever ---------------------------------------
+    /** Main pet management screen (plain {@code Screen}); the radial SummonWheelScreen is deliberately not used. */
+    public static final String TRULY_BEST_FRIENDS_SCREEN =
+            "com.whidte.trulybestfriends.tab.TrulyScreen";
+    /** Class holding the public static {@code openPetTab()} the mod's open-tab keybind calls. */
+    public static final String TRULY_BEST_FRIENDS_OPENER =
+            "com.whidte.trulybestfriends.client.ClientEvents";
 
     // -- Diet / Bulking ---------------------------------------------------
     /** Diet's main player UI screen. Constructor: {@code DietScreen(boolean fromInventory)}.
@@ -386,6 +408,12 @@ public final class ScreenClasses {
      *  is the inventory variant we suppress via {@code IndexButtonHandlerMixin}. */
     public static final String COMPLETIONISTS_INDEX_BUTTON_HANDLER =
             "fuzs.completionistsindex.client.handler.IndexButtonHandler";
+
+    // -- Item Collector (Skatric, modid itemcollector) ---------------------
+    /** "The Collection Book" — plain {@code Screen} subclass with a public no-arg constructor
+     *  (opened by keybind B or {@code /collection}). */
+    public static final String COLLECTION_BOOK_SCREEN =
+            "skatric.itemcollector.client.CollectionBookScreen";
 
     // -- SDM Shop (sdmshop, DeusSixik / Architectury, 7.x rebrand) ---------
     // The mod was rebranded around v7.0 — old modid `sdmshoprework` and package

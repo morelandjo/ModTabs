@@ -39,6 +39,7 @@ DEFERRED|l2complements||||1.18.2 port phase 1: integration not yet ported to 1.1
 DEFERRED|l2artifacts||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 DEFERRED|l2tabs||||1.18.2 port phase 1: integration not yet ported to 1.18.2 Forge
 REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.client.gui.BackpackScreen|||Target screen
+REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedcore.client.gui.StorageScreenBase|updateDimensionsAndSlotPositions|(I)V|GUI sizing re-run to leave tab bar headroom
 REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackItem|||Backpack item detection
 REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.network.BackpackOpenMessage|<init>|(ILjava/lang/String;Ljava/lang/String;)V|Open-backpack packet (slot, identifier, handler)
 REQUIRED|sophisticatedbackpacks|net.p3pp3rf1y.sophisticatedbackpacks.network.SBPPacketHandler|INSTANCE|Lnet/p3pp3rf1y/sophisticatedbackpacks/network/SBPPacketHandler;|Packet send entrypoint

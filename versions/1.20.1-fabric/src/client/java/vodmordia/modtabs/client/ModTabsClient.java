@@ -40,6 +40,10 @@ public class ModTabsClient implements ClientModInitializer {
             }
         });
 
+        // Before the host's init(): lets window-height-sized hosts leave room for the bar.
+        net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) ->
+            SophisticatedBackpacksTab.reserveTabBarHeadroom(screen, scaledHeight));
+
         // Register Fabric screen events using global registration
         net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
             FabricScreenEvents.onScreenInit(screen);
@@ -105,9 +109,11 @@ public class ModTabsClient implements ClientModInitializer {
         TabsMenu.register(new BulkingTab());
         TabsMenu.register(new AetherTab());
         TabsMenu.register(new CompletionistsIndexTab());
+        TabsMenu.register(new CollectionBookTab());
         TabsMenu.register(new FieldGuideTab());
         TabsMenu.register(new SdmShopTab());
         TabsMenu.register(new JobsPlusTab());
+        TabsMenu.register(new TrulyBestFriendsTab());
         TabsMenu.register(new QuestLogTab());
         TabsMenu.register(new ModonomiconTab());
 
